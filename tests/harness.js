@@ -15,7 +15,7 @@ const clickSeg=(id,txt)=>{const b=[...document.querySelectorAll('#'+id+' button'
 const snapStep=()=>{window.__STEPS.push(JSON.stringify({kind:'lamp',p:{...curP,part:'all'}}));};
 
 // ---------- A. 啟動與介面 ----------
-T('A 啟動與介面','載入完成、6 個步驟按鈕',()=>({ok:document.querySelectorAll('.stb').length===6,detail:'步驟按鈕數：'+document.querySelectorAll('.stb').length}));
+T('A 啟動與介面','載入完成、8 個步驟按鈕',()=>({ok:document.querySelectorAll('.stb').length===8,detail:'步驟按鈕數：'+document.querySelectorAll('.stb').length}));
 T('A 啟動與介面','預設主題為明亮（body 沒有 dark）',()=>{applyTheme(false);return {ok:!document.body.classList.contains('dark')};});
 T('A 啟動與介面','切換暗色主題 + 場景背景同步',()=>{applyTheme(true);const ok=document.body.classList.contains('dark')&&scene.background.getHex()===0x0b0f17;applyTheme(false);return {ok,detail:'暗色背景 0x0b0f17'};});
 T('A 啟動與介面','進階選項開關：隱藏／顯示進階欄位（列印平台）與個別調整',()=>{reset();P.advanced=false;sync();const r=[...document.querySelectorAll('.row')].find(x=>x.dataset.k==='bedW');const off=r.style.display==='none';
@@ -166,7 +166,7 @@ T('M 大門','大門高度不超過樓層高度',()=>{setDoor({doorH:70});const 
 const stairState=(o)=>{reset();P.floors=2;P.slabOn=true;sync();P.stairs[0].on=true;Object.assign(P.stairs[0],o||{});sync();};
 T('N 樓梯','每層樓各有一個開關：3 層樓 → 2 組',()=>{reset();P.floors=3;sync();return {ok:P.stairs.length>=2&&document.querySelectorAll('#stairList .stairBox').length===2,detail:`樓梯設定 ${P.stairs.length}，卡片 ${document.querySelectorAll('#stairList .stairBox').length}`};});
 T('N 樓梯','單層樓時沒有樓梯、顯示提示',()=>{reset();P.floors=1;sync();return {ok:document.querySelectorAll('#stairList .stairBox').length===0&&$('stairList').textContent.includes('兩層樓'),detail:$('stairList').textContent.slice(0,30)};});
-T('N 樓梯','開啟樓梯：產生踏步實體',()=>{stairState();const sb=stairBoxes(curP),g=stairGeo(curP,P.stairs[0],0);return {ok:sb.steps.length===g.n&&g.n>=3&&extraGeoms.length>=g.n,detail:`${g.n} 階，每階高 ${g.riser.toFixed(2)}，踏深 ${g.tread.toFixed(2)}，長 ${g.run.toFixed(1)}`};});
+T('N 樓梯','開啟樓梯：產生踏步實體',()=>{stairState();const sb=stairBoxes(curP),g=stairGeo(curP,P.stairs[0],0);return {ok:sb.steps.length===g.n&&g.n>=3&&buildStairs(curP).length>=1,detail:`${g.n} 階，每階高 ${g.riser.toFixed(2)}，踏深 ${g.tread.toFixed(2)}，長 ${g.run.toFixed(1)}`};});
 T('N 樓梯','卡片上的階數與長度為有效數字（無 NaN）',()=>{stairState();renderStairList();const t=$('stairList').textContent;return {ok:!t.includes('NaN')&&/\d+ 階/.test(t),detail:t.replace(/\s+/g,' ').slice(0,90)};});
 T('N 樓梯','關閉樓梯：沒有踏步',()=>{stairState();P.stairs[0].on=false;sync();return {ok:stairBoxes(curP).steps.length===0,detail:'steps=0'};});
 T('N 樓梯','斜度越陡：階數不變、長度越短',()=>{stairState({slope:30});const a=stairGeo(curP,P.stairs[0],0);stairState({slope:50});const b=stairGeo(curP,P.stairs[0],0);return {ok:b.run<a.run*0.7&&a.n===b.n,detail:`30° 長 ${a.run.toFixed(1)}；50° 長 ${b.run.toFixed(1)}`};});
@@ -183,7 +183,7 @@ function g_n(){return stairGeo(curP,P.stairs[0],0).n;}
 T('N 樓梯','平面圖拖曳：移動起點與旋轉方向',()=>{stairState({x:0,z:0,dir:'+x'});const op=planPoint;PDRAG={stair:0,start:[0,0],x0:0,z0:0};planPoint=()=>[6,-4];planMove({});const a=[P.stairs[0].x,P.stairs[0].z];PDRAG={sdir:0,start:[0,0]};planPoint=()=>[2,-20];planMove({});const dir=P.stairs[0].dir;planPoint=op;PDRAG=null;return {ok:a[0]===6&&a[1]===-4&&dir==='-z',detail:`起點 ${a}，方向 ${dir}`};});
 T('N 樓梯','雷射：側板×2＋踏板＋立板',()=>{stairState({print:'laser'});P.print='laser';sync();const g=stairGeo(curP,P.stairs[0],0),pn=laserPanels(curP).filter(p=>p.name.includes('樓梯')||p.name.includes('踏板')||p.name.includes('踢板'));return {ok:pn.length===2+2*g.n,detail:`零件 ${pn.length}（${g.n} 階）`};});
 T('N 樓梯','STL 匯出包含樓梯',()=>{reset();P.floors=2;P.slabOn=true;sync();const a=stlBytes(collectGeoms('all'));P.stairs[0].on=true;sync();const b=stlBytes(collectGeoms('all'));return {ok:b>a,detail:`${(a/1024).toFixed(0)}KB → ${(b/1024).toFixed(0)}KB`};});
-T('N 樓梯','重設步驟⑤會清除樓梯',()=>{stairState();resetStep(5);ensureStairs();return {ok:!P.stairs.some(s=>s.on),detail:'樓梯全部關閉'};});
+T('N 樓梯','重設步驟⑥會清除樓梯',()=>{stairState();resetStep(6);ensureStairs();return {ok:!P.stairs.some(s=>s.on),detail:'樓梯全部關閉'};});
 
 
 // ---------- Q. 材質預覽 ----------
@@ -292,7 +292,7 @@ T('W 記憶體釋放','貼皮縮圖只在貼皮步驟產生（省記憶體）',(
 // ---------- X. 分片列印與紋理薄片 ----------
 const gbx=g=>{g.computeBoundingBox();return g.boundingBox;};
 const skinned=()=>{reset();P.mode='3d';sync();SEL.clear();SEL.add(FACES[0].name);P.skinType='brick';applySkin(false);sync();};
-T('X 分片與紋理','選項存在且預設關閉；按鈕依勾選顯示',()=>{reset();sync();const a=$('exportPanels').style.display==='none'&&$('exportTex').style.display==='none'&&P.splitPanels===false&&P.texPlate===false;goStep(6);P.splitPanels=true;P.texPlate=true;sync();const b=$('exportPanels').style.display!=='none'&&$('exportTex').style.display!=='none';P.splitPanels=false;P.texPlate=false;sync();return {ok:a&&b,detail:`預設隱藏=${a}，勾選後顯示=${b}`};});
+T('X 分片與紋理','選項存在且預設關閉；按鈕依勾選顯示',()=>{reset();sync();const a=$('exportPanels').style.display==='none'&&$('exportTex').style.display==='none'&&P.splitPanels===false&&P.texPlate===false;goStep(8);P.splitPanels=true;P.texPlate=true;sync();const b=$('exportPanels').style.display!=='none'&&$('exportTex').style.display!=='none';P.splitPanels=false;P.texPlate=false;sync();return {ok:a&&b,detail:`預設隱藏=${a}，勾選後顯示=${b}`};});
 T('X 分片與紋理','分片牆板：每片平放、底面在 z=0、厚度＝板厚',()=>{reset();P.panelT=2.4;sync();const {geoms,lay,t}=buildPanelSolids(curP,0);const ok=geoms.length===lay.items.length&&geoms.length>=5&&geoms.every(g=>{const b=gbx(g);return Math.abs(b.min.z)<1e-6&&Math.abs(b.max.z-2.4)<1e-6;});return {ok,detail:`${geoms.length} 片，板厚 ${t}`};});
 T('X 分片與紋理','分片牆板：窗洞、燈孔以挖孔保留',()=>{reset();P.splitPanels=true;sync();const {lay}=panelLayoutFor(curP);const holes=lay.items.reduce((a,i)=>a+i.holes.length+i.circles.length,0);return {ok:holes>0,detail:'孔洞總數 '+holes};});
 T('X 分片與紋理','分片牆板：拼版不超出列印平台寬度',()=>{reset();P.bedW=256;sync();const {lay}=panelLayoutFor(curP);return {ok:lay.W<=256+1e-6||lay.items.some(i=>i.w+10>256),detail:`拼版寬 ${lay.W.toFixed(0)}`};});
@@ -306,8 +306,8 @@ T('X 分片與紋理','紋理薄片：避開窗洞（窗位置不長浮雕）',(
 T('X 分片與紋理','紋理薄片：拼版寬度不超過列印平台',()=>{skinned();P.bedW=256;const r=buildTexPlates(curP,0.6,0.8);return {ok:r.plates.length>0&&r.W===256,detail:`拼版 ${r.W}×${r.H.toFixed(0)}`};});
 T('X 分片與紋理','整體 STL：勾獨立紋理後不再把浮雕黏在本體上',()=>{skinned();P.texPlate=true;sync();const s=P.mode==='plate'||P.texPlate;P.texPlate=false;return {ok:s===true,detail:'texPlate 時略過本體貼皮'};});
 T('X 分片與紋理','STL 輸出為有效二進位（三角形數與檔長相符）',()=>{reset();sync();const {geoms}=buildPanelSolids(curP,0);const dv=stlFlat(geoms),n=new DataView(dv.buffer||dv).getUint32(80,true),len=(dv.byteLength!==undefined?dv.byteLength:dv.length);return {ok:n>100&&len===84+n*50,detail:`${n} 三角形，${len} bytes`};});
-T('X 分片與紋理','列印檢查顯示分片／薄片資訊',()=>{skinned();P.splitPanels=true;P.texPlate=true;goStep(6);sync();const t=document.body.innerText;P.splitPanels=false;P.texPlate=false;sync();return {ok:t.includes('分片列印')&&t.includes('紋理薄片'),detail:'檢查區含兩項說明'};});
-T('X 分片與紋理','步驟⑥ 勾分片時預設顯示平面拼版',()=>{reset();P.splitPanels=true;goStep(6);sync();const v=defaultView();P.splitPanels=false;return {ok:v==='flat',detail:'預設視圖 '+v};});
+T('X 分片與紋理','列印檢查顯示分片／薄片資訊',()=>{skinned();P.splitPanels=true;P.texPlate=true;goStep(8);sync();const t=document.body.innerText;P.splitPanels=false;P.texPlate=false;sync();return {ok:t.includes('分片列印')&&t.includes('紋理薄片'),detail:'檢查區含兩項說明'};});
+T('X 分片與紋理','步驟⑥ 勾分片時預設顯示平面拼版',()=>{reset();P.splitPanels=true;goStep(8);sync();const v=defaultView();P.splitPanels=false;return {ok:v==='flat',detail:'預設視圖 '+v};});
 
 
 // ---------- Y. 多扇門 ----------
@@ -347,6 +347,57 @@ T('Z 零件選項','屋頂步驟出現預覽／輸出解析度，且與貼皮步
 T('Z 零件選項','屋頂解析度改變 → 屋頂紋路三角面數改變',()=>{reset();P.roofStyle='clay';P.skinRes='0.8';sync();runSkins(curP);const a=skinGeoms.filter(g=>g.userData.roof).reduce((s,g)=>s+g.attributes.position.count,0);P.skinRes='0.5';sync();runSkins(curP);const b=skinGeoms.filter(g=>g.userData.roof).reduce((s,g)=>s+g.attributes.position.count,0);return {ok:a>0&&b>a*1.5,detail:`0.8mm ${a/3|0} → 0.5mm ${b/3|0} 三角面`};});
 T('Z 零件選項','屋頂步驟顯示屋頂紋路面數資訊',()=>{reset();P.roofStyle='clay';goStep(2);sync();runSkins(curP);return {ok:$('roofInfo').textContent.includes('三角面'),detail:$('roofInfo').textContent.slice(0,40)};});
 T('Z 零件選項','存檔載入保留窗戶本體與門板設定',()=>{baseDoor();P.doorLeaf=true;P.doorType='grille';P.doorHandle='lever';P.winGlass=true;const j=JSON.stringify(P);applyState(JSON.parse(j));return {ok:P.doorType==='grille'&&P.doorHandle==='lever'&&P.winGlass===true,detail:P.doorType};});
+
+
+// ---------- AA. 樓梯 v3、戶外樓梯、地板紋路 ----------
+const stN=(o,over)=>{reset();P.floors=2;P.slabOn=true;P.floorOn=true;ensureStairs();Object.assign(P.stairs[0],{on:true,...o});Object.assign(P,over||{});sync();return P.stairs[0];};
+const ymaxOf=gs=>Math.max(...gs.map(g=>{g.computeBoundingBox();return g.boundingBox.max.y;}));
+const ymin=gs=>Math.min(...gs.map(g=>{g.computeBoundingBox();return g.boundingBox.min.y;}));
+['solid','slab','saw','stringer','cant'].forEach(sc=>T('AA 樓梯 v3',`結構 ${sc}：產生實體並到達上層樓面`,()=>{const st=stN({struct:sc,rail:'none'});const g=buildStairs(curP);const top=curP.floorH*2? (curP.floorH+curP.floorT):0;return {ok:g.length>=1&&Math.abs(ymaxOf(g)-top)<0.8,detail:`${g.length} 個零件，最高 ${ymaxOf(g).toFixed(2)}（樓面 ${top.toFixed(2)}）`};}));
+['balu','horiz','glass','wall'].forEach(rs=>T('AA 樓梯 v3',`欄杆樣式 ${rs}：比無欄杆多出零件，且高於踏面`,()=>{const st=stN({struct:'stringer',rail:'both',railStyle:'none'});const a=buildStairs(curP).length;st.railStyle=rs;sync();const g=buildStairs(curP);return {ok:g.length>a&&ymaxOf(g)>curP.floorH+curP.floorT,detail:`${a} → ${g.length}`};}));
+T('AA 樓梯 v3','扶手是斜的：扶手上緣高度隨樓梯上升（不是階梯狀方塊）',()=>{const st=stN({struct:'stringer',rail:'right',railStyle:'balu'});const g=buildStairs(curP);const lo=g.filter(x=>{x.computeBoundingBox();const b=x.boundingBox;return b.max.y-b.min.y<2&&(b.max.x-b.min.x>8||b.max.z-b.min.z>8);});return {ok:lo.length>=1,detail:'斜長條零件 '+lo.length};});
+T('AA 樓梯 v3','扶手只在指定側：左／右／兩側數量',()=>{const st=stN({struct:'stringer',rail:'none'});const c=k=>{st.rail=k;sync();return buildStairs(curP).length;};const n0=c('none'),l=c('left'),r=c('right'),b=c('both');return {ok:l>n0&&r>n0&&b>l&&b>r,detail:`none ${n0}／左 ${l}／右 ${r}／兩側 ${b}`};});
+T('AA 樓梯 v3','L 型：平台護欄只在外側邊（接入處不擋）',()=>{const st=stN({type:'L',struct:'slab',rail:'both',railStyle:'balu'},{width:120,depth:120,wallH:60,floorH:60});st.width=8;const n1=buildStairs(curP).length;st.rail='none';sync();const n0=buildStairs(curP).length;return {ok:n1>n0+10,detail:`${n0} → ${n1}`};});
+T('AA 樓梯 v3','轉角扇形踏階：3 塊扇形踏階取代平台',()=>{const st=stN({type:'L',struct:'solid',winder:true,rail:'none'},{width:120,depth:120,wallH:60,floorH:60});const lay=resolveStairs(curP)[0].lay;const a=buildStairs(curP).length;st.winder=false;sync();const b=buildStairs(curP).length;return {ok:!!lay.winder&&lay.fl[1].base>lay.fl[0].base+lay.fl[0].n*lay.g.riser+lay.g.riser*2.5&&a>b,detail:`扇形 ${a} 件、平台 ${b} 件`};});
+T('AA 樓梯 v3','U 型與直跑總高度相同（到達上層）',()=>{const out={};for(const t of ['straight','L','U']){stN({type:t,struct:'slab',rail:'none'},{width:140,depth:140,wallH:50,floorH:50});out[t]=ymaxOf(buildStairs(curP));}const top=curP.floorH+curP.floorT;return {ok:Object.values(out).every(v=>Math.abs(v-top)<0.8),detail:JSON.stringify(out)};});
+T('AA 樓梯 v3','旋轉梯：中柱＋扇形踏階＋欄杆、樓板開圓洞',()=>{const st=stN({type:'spiral',struct:'stringer',rail:'both',spiralR:10,colR:1.6,x:0,z:0});const g=buildStairs(curP);const hs=spiralHoles(curP);return {ok:g.length>st.spiralR&&hs.length===1&&ymaxOf(g)>=curP.floorH+curP.floorT-0.05,detail:`${g.length} 件，開口 ${hs.length}`};});
+T('AA 樓梯 v3','旋轉梯：順／逆時針、總角度可調',()=>{const st=stN({type:'spiral',struct:'stringer',rail:'none',x:0,z:0});const a=buildStairs(curP);st.spiralCW=false;st.spiralDeg=270;sync();const b=buildStairs(curP);return {ok:a.length===b.length&&b.length>8,detail:`${a.length}/${b.length}`};});
+T('AA 樓梯 v3','台灣住宅標準預設：斜度約 35°、階高依樓高換算',()=>{const st=stN({});applyStairPreset(st,'tw');const s=curP.floorH/3000;return {ok:st.slope===35&&Math.abs(st.riserH-175*s)<0.02&&st.struct==='slab'&&st.railStyle==='balu',detail:`riserH=${st.riserH} slope=${st.slope}`};});
+T('AA 樓梯 v3','卡片上的預設按鈕可套用並更新',()=>{stN({});goStep(6);renderStairList();const b=document.querySelector('#stairList [data-preset="steel"]');b.click();return {ok:P.stairs[0].struct==='stringer'&&P.stairs[0].railStyle==='horiz',detail:P.stairs[0].struct};});
+T('AA 樓梯 v3','STEP 方塊仍可用（直跑／L／U），旋轉梯不進 STEP',()=>{const a=stN({type:'straight'});const n1=stairBoxes(curP).steps.length;a.type='spiral';sync();const n2=stairBoxes(curP).steps.length;return {ok:n1>3&&n2===0,detail:`直跑 ${n1} 塊、旋轉 ${n2}`};});
+// 戶外
+const outS=(kind,over)=>{reset();P.floors=2;P.slabOn=true;P.floorOn=true;ensureStairs();P.outStairs=[Object.assign(newOutStair(kind),over||{})];sync();return P.outStairs[0];};
+['entry','straight','L','U','spiral'].forEach(k=>T('AB 戶外樓梯',`${k}：產生實體、落在地面、最高達到目標樓面`,()=>{const o=outS(k);const g=buildOutStairs(curP);const top=o.lev>0?o.lev*curP.floorH+curP.floorT:o.entryH;return {ok:g.length>3&&ymin(g)>=-0.05&&Math.abs(ymaxOf(g)-top)<Math.max(0.8,curP.floorH*0.03+0.5)+(o.railH||0),detail:`${g.length} 件，最低 ${ymin(g).toFixed(2)}，最高 ${ymaxOf(g).toFixed(2)}，目標 ${top.toFixed(2)}`};}));
+T('AB 戶外樓梯','位於外牆之外（不侵入建築）',()=>{const o=outS('straight',{wall:'front'});const gs=buildOutStairs(curP);let zmin=999;for(const g of gs){g.computeBoundingBox();zmin=Math.min(zmin,g.boundingBox.min.z);}return {ok:zmin>=curP.depth/2-0.05,detail:`最內側 z=${zmin.toFixed(2)}（外牆 ${curP.depth/2}）`};});
+['front','back','left','right'].forEach(w=>T('AB 戶外樓梯',`靠 ${w} 牆：實體都在該牆外側`,()=>{outS('U',{wall:w});const gs=buildOutStairs(curP);let ok=true,v=0;for(const g of gs){g.computeBoundingBox();const b=g.boundingBox;v=w==='front'?b.min.z-curP.depth/2:w==='back'?-curP.depth/2-b.max.z:w==='left'?-curP.width/2-b.max.x:b.min.x-curP.width/2;if(v<-0.05)ok=false;}return {ok,detail:'全部在牆外'};}));
+T('AB 戶外樓梯','沿牆位置 c 可平移',()=>{const o=outS('straight',{wall:'front',c:0});const a=buildOutStairs(curP).map(g=>{g.computeBoundingBox();return (g.boundingBox.min.x+g.boundingBox.max.x)/2;}).reduce((s,v)=>s+v,0);o.c=20;sync();const b=buildOutStairs(curP).map(g=>{g.computeBoundingBox();return (g.boundingBox.min.x+g.boundingBox.max.x)/2;}).reduce((s,v)=>s+v,0);return {ok:b>a+10,detail:`${a.toFixed(1)} → ${b.toFixed(1)}`};});
+T('AB 戶外樓梯','平台護欄：靠牆那一邊不加',()=>{outS('straight',{wall:'front',rail:'both',railStyle:'wall'});const gs=buildOutStairs(curP);let zin=999;for(const g of gs){g.computeBoundingBox();zin=Math.min(zin,g.boundingBox.min.z);}return {ok:zin>=curP.depth/2-0.05,detail:'護欄未侵入牆內'};});
+T('AB 戶外樓梯','入口台階（lev=0）與通到 2F（lev=1）高度不同',()=>{const o=outS('entry');const a=ymaxOf(buildOutStairs(curP));o.lev=1;sync();const b=ymaxOf(buildOutStairs(curP));return {ok:b>a+5,detail:`${a.toFixed(1)} → ${b.toFixed(1)}`};});
+T('AB 戶外樓梯','新增／移除按鈕與卡片',()=>{reset();P.floors=2;ensureStairs();P.outStairs=[];goStep(6);renderStairList();document.querySelector('#outAddBtns [data-oa="U"]').click();const n1=P.outStairs.length;const cards=document.querySelectorAll('#outStairList .stairBox').length;return {ok:n1===1&&cards===1,detail:`${n1} 座、${cards} 張卡片`};});
+T('AB 戶外樓梯','平面圖顯示戶外樓梯（步驟⑥）',()=>{outS('L');goStep(6);setView('flat');renderFlat();const h=$('flat').innerHTML;return {ok:h.includes('戶外1'),detail:'含戶外標籤'};});
+T('AB 戶外樓梯','存檔載入保留戶外樓梯設定',()=>{outS('U',{wall:'left',lev:1});const j=JSON.stringify(P);applyState(JSON.parse(j));return {ok:P.outStairs.length===1&&P.outStairs[0].wall==='left'&&P.outStairs[0].type==='U',detail:P.outStairs[0].wall};});
+T('AB 戶外樓梯','戶外樓梯進入輸出零件',()=>{reset();P.floors=2;ensureStairs();P.outStairs=[];sync();const a=extraGeoms.length;P.outStairs=[newOutStair('U')];sync();return {ok:extraGeoms.length>a+5,detail:`${a} → ${extraGeoms.length}`};});
+// 地板
+const flo=(tex,over)=>{reset();P.floorOn=true;P.floorT=2;P.floorTex=tex;Object.assign(P,over||{});sync();};
+['grid','bond','cycle','basket','plank'].forEach(t=>T('AC 地板紋路',`${t}：產生磚塊、都在地板範圍內且彼此不重疊`,()=>{flo(t,{tileL:8,tileW:5});const d=floorTileData(curP,0),W=d.W,D=d.D;let ok=d.rects.length>10,ov=0;
+ for(const r of d.rects){if(r[0]<-W/2-1e-6||r[1]>W/2+1e-6||r[2]<-D/2-1e-6||r[3]>D/2+1e-6)ok=false;}
+ for(let i=0;i<d.rects.length&&i<400;i++)for(let j=i+1;j<d.rects.length&&j<400;j++){const a=d.rects[i],b=d.rects[j];if(a[0]<b[1]-1e-6&&b[0]<a[1]-1e-6&&a[2]<b[3]-1e-6&&b[2]<a[3]-1e-6)ov++;}
+ return {ok:ok&&ov===0,detail:`${d.rects.length} 塊，重疊 ${ov}`};}));
+T('AC 地板紋路','無紋路時不產生磚',()=>{flo('none');return {ok:buildFloorTiles(curP).length===0,detail:'0'};});
+T('AC 地板紋路','磚塊高度＝凸出量，且貼在地板面上',()=>{flo('grid',{tileRelief:0.5});const g=buildFloorTiles(curP);const top=curP.floorT;return {ok:g.length>5&&Math.abs(ymaxOf(g)-(top+0.5))<1e-3&&Math.abs(ymin(g)-(top-0.01))<1e-3,detail:`頂 ${ymaxOf(g).toFixed(2)}`};});
+T('AC 地板紋路','錯位：奇數排相對偶數排位移（0% 與 50% 不同）',()=>{flo('bond',{tileOff:0});const a=floorTileData(curP,0).rects.filter(r=>Math.abs(r[2]-(-curP.depth/2+curP.wall-0.25+0.3))<0.5).map(r=>r[0].toFixed(2)).join();flo('bond',{tileOff:50});const b=floorTileData(curP,0).rects.map(r=>r[0].toFixed(2)).join();return {ok:a!==b,detail:'位移量改變後排列不同'};});
+T('AC 地板紋路','長寬循環：同時出現兩種長度',()=>{flo('cycle',{tileL:8,tileL2:4,tileW:6,tileW2:3});const rs=floorTileData(curP,0).rects;const ls=new Set(rs.map(r=>(r[1]-r[0]).toFixed(1)));const ws=new Set(rs.map(r=>(r[3]-r[2]).toFixed(1)));return {ok:ls.size>=3&&ws.size>=2,detail:`長度種類 ${ls.size}、寬度種類 ${ws.size}`};});
+T('AC 地板紋路','縫寬：磚間距＝縫寬',()=>{flo('grid',{tileL:10,tileW:10,tileJoint:1});const rs=floorTileData(curP,0).rects.filter(r=>r[1]-r[0]>8&&r[3]-r[2]>8).sort((a,b)=>a[2]-b[2]||a[0]-b[0]);let g=null;for(let i=1;i<rs.length;i++)if(Math.abs(rs[i][2]-rs[i-1][2])<1e-6&&rs[i][0]>rs[i-1][1]){g=rs[i][0]-rs[i-1][1];break;}return {ok:g!==null&&Math.abs(g-1)<1e-6,detail:'縫 '+(g||0).toFixed(3)};});
+T('AC 地板紋路','避開樓梯開口',()=>{reset();P.floors=2;P.slabOn=true;P.floorOn=true;P.floorTex='grid';P.tileL=3;P.tileW=3;ensureStairs();P.stairs[0].on=true;sync();const hs=stairBoxes(curP).holes.filter(h=>h.level===1);const d=floorTileData(curP,1);const h=hs[0];let bad=0;for(const r of d.rects)if(r[0]<h.cx+h.sx/2-1e-6&&r[1]>h.cx-h.sx/2+1e-6&&r[2]<h.cz+h.sz/2-1e-6&&r[3]>h.cz-h.sz/2+1e-6)bad++;return {ok:hs.length===1&&bad===0,detail:`開口內磚 ${bad}`};});
+T('AC 地板紋路','避開燈孔（一樓地板）',()=>{reset();P.lampOn=true;P.lampTarget='floor';P.lampD=14;P.floorOn=true;P.floorTex='grid';P.tileL=3;P.tileW=3;sync();const hs=floorHoles(curP,0);const d=floorTileData(curP,0);let bad=0;for(const r of d.rects)for(const h of hs)if(r[0]<h[1]-1e-6&&r[1]>h[0]+1e-6&&r[2]<h[3]-1e-6&&r[3]>h[2]+1e-6)bad++;return {ok:hs.length>=1&&bad===0,detail:`孔 ${hs.length}，重疊磚 ${bad}`};});
+T('AC 地板紋路','只貼一樓／所有樓層',()=>{reset();P.floors=3;P.slabOn=true;P.floorOn=true;P.floorTex='grid';P.tileLevels='all';sync();const a=floorLevels(curP).length;P.tileLevels='ground';sync();const b=floorLevels(curP).length;return {ok:a===3&&b===1,detail:`${a} → ${b}`};});
+T('AC 地板紋路','沒有地板時不產生磚（並提示）',()=>{reset();P.floorOn=false;P.slabOn=false;P.lampOn=false;P.floorTex='grid';goStep(7);sync();return {ok:buildFloorTiles(curP).length===0&&$('floorInfo').textContent.includes('沒有地板'),detail:$('floorInfo').textContent.slice(0,20)};});
+T('AC 地板紋路','磚太小時自動放大，避免超過 6000 塊',()=>{flo('grid',{tileL:1,tileW:1});return {ok:floorTileData(curP,0).rects.length<=7000,detail:floorTileData(curP,0).rects.length+' 塊'};});
+T('AC 地板紋路','地板紋路進入輸出零件（內部零件）',()=>{flo('none');const a=extraGeoms.length;P.floorTex='grid';sync();return {ok:extraGeoms.length===a+1||extraGeoms.length>a,detail:`${a} → ${extraGeoms.length}`};});
+T('AC 地板紋路','步驟⑦欄位顯示規則（循環／錯位／木地板）',()=>{reset();P.floorOn=true;goStep(7);P.floorTex='grid';sync();const el=k=>document.querySelector('#panel [data-k="'+k+'"]').style.display;const a=el('tileL2')==='none'&&el('tileOff')==='none';P.floorTex='cycle';sync();const b=el('tileL2')!=='none'&&el('tileOff')!=='none';P.floorTex='plank';sync();const c=el('tileSeed')!=='none';return {ok:a&&b&&c,detail:`${a}/${b}/${c}`};});
+T('AC 地板紋路','平面預覽顯示磚的排列',()=>{flo('bond');goStep(7);setView('flat');renderFlat();const h=$('flat').innerHTML;return {ok:h.includes('floorSvg')&&h.includes('塊磚'),detail:'含磚塊 SVG'};});
+T('AC 地板紋路','存檔載入保留地板設定',()=>{flo('basket',{tileL:12,tileOff:30});const j=JSON.stringify(P);applyState(JSON.parse(j));return {ok:P.floorTex==='basket'&&P.tileL===12,detail:P.floorTex};});
+T('AC 地板紋路','步驟⑥、⑦存在且順序為 室內→樓梯→地板→輸出',()=>{const t=[...document.querySelectorAll('.stb')].map(b=>b.textContent.replace(/^\d/,'')).join(',');return {ok:t.includes('室內,樓梯,地板,輸出'),detail:t};});
 
 // ---------- 蒐集 STEP 測試狀態 ----------
 T('J 蒐集 STEP 測試','產生 9 組 STEP 輸入',()=>{
