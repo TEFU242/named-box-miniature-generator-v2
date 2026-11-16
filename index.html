@@ -168,7 +168,7 @@ button.edgeLbl.on{border-color:var(--cy);color:var(--cy);background:var(--sel)}
      <h2>屋簷外伸與屋頂厚度</h2><div id="f2e"></div>
      <h2>雙折／複折（穀倉、法式屋頂）</h2><div id="f2g"></div>
      <h2>屋脊蓋與煙囪</h2><div id="f2h"></div>
-     <h2>屋頂紋路款式（最常見 4 種，單選）</h2><div class="seg" id="roofStyleSeg" style="grid-template-columns:repeat(3,1fr)"></div><div id="f2b"></div>
+     <h2>屋頂紋路款式（最常見 4 種，單選）</h2><div class="seg" id="roofStyleSeg" style="grid-template-columns:repeat(3,1fr)"></div><div id="f2b"></div><div id="roofInfo" class="hint" style="white-space:pre-line"></div>
      <div class="hint">依搜尋結果：瀝青瓦（美國約 8 成住宅）、陶瓦、石板瓦、金屬立縫板為最常見屋面材。</div>
      <h2>屋頂分離（可拆卸獨立零件）</h2><div id="f2d"></div>
      <div class="hint">分離後屋頂與本體在牆頂線切開：可各自選 3D 列印或雷射切割（例如本體雷射、屋頂光固化）。</div>
@@ -188,7 +188,7 @@ button.edgeLbl.on{border-color:var(--cy);color:var(--cy);background:var(--sel)}
      <div class="quick"><button id="winToManual">轉為個別調整</button><button id="winToParam">回到參數化</button><button id="winAdd">＋ 新增一扇</button></div>
      <div id="winList"></div></div>
      <div class="hint">也可直接在右側「牆面正視圖」拖曳窗戶：拖方塊移動、拖白色小方塊縮放、雙擊空白處新增、Delete 刪除。</div>
-     <h2>窗框與窗台（外加零件，較後面才做）</h2><div id="f3f"></div></section>
+     <h2>窗戶本體、窗框與窗台（外加零件，牆體開口不變）</h2><div id="f3f"></div></section>
    <section data-step="4"><h2 class="big">④ 貼皮（拆成平面）</h2>
      <div class="seg" id="toolSeg" style="grid-template-columns:repeat(4,1fr)"></div>
      <div class="hint" id="toolHint"></div>
@@ -262,7 +262,7 @@ const P={mode:'lamp',step:1,roof:'gable',print:'fdm',width:100,depth:100,wallH:2
  winW:14,winH:12,winSill:5,winRows:1,winGap:4,nFront:2,nBack:1,nLeft:1,nRight:1,winWall:{front:true,back:false,left:true,right:true},winStyle:'fixed',winManual:null,
  skins:{},skinType:'brick',skinRelief:0.8,skinScale:1,skinRes:'0.5',skinResOut:'0.3',skinAge:0,skinSeed:7,roofAge:0,snapOn:true,snapTH:4,tool:'face',
  iwalls:[],iwT:1.6,planFloor:0,elevFloor:'all',annex:[],
- stairs:[],doorOn:false,doorN:1,doorGap:4,doorDir:'right',doorFront:false,doorBack:false,doorLeft:false,doorRight:false,doorWall:'front',doorStyle:'single',doorW:14,doorH:18,doorC:0,floorOn:false,floorT:2,slabOn:false,roofScale:1,roofSplit:false,roofLift:0,roofOut:'same',exportPart:'all',frameOn:false,frameW:2,frameD:1.2,sillOn:true,
+ stairs:[],doorOn:false,doorLeaf:false,doorType:'wood',doorHandle:'trumpet',winGlass:false,winBars:false,winBodyT:0.8,doorN:1,doorGap:4,doorDir:'right',doorFront:false,doorBack:false,doorLeft:false,doorRight:false,doorWall:'front',doorStyle:'single',doorW:14,doorH:18,doorC:0,floorOn:false,floorT:2,slabOn:false,roofScale:1,roofSplit:false,roofLift:0,roofOut:'same',exportPart:'all',frameOn:false,frameW:2,frameD:1.2,sillOn:true,
  T:3,kerf:0.15,finger:8,sheetW:600,engrave:true,bedW:256,bedD:256,nozzle:0.4,
  plate:'brick',pw:80,ph:60,relief:0.8,pbase:1.5};
 const DEFAULT_P=JSON.parse(JSON.stringify(P));
@@ -270,6 +270,8 @@ const SKINRES_OUT={'0.5':'0.5mm（小檔）','0.3':'0.3mm（建議）','0.2':'0.
 const ROOFS={flat:'平頂',shed:'單斜',gable:'雙斜',hip:'四面斜',gambrel:'雙折（穀倉）',mansard:'複折（四面）'};
 const ROOFSTYLES={none:'無',asphalt:'瀝青瓦',clay:'陶瓦',slate:'石板瓦',metal:'金屬立縫板'};
 const ROOFSKIN={asphalt:'usShingle',clay:'clay',slate:'slate',metal:'metal'};
+const DOORTYPES={wood:'木門（含嵌板）',steel:'鐵門（平板＋加強肋）',grille:'鐵花門（欄杆）',glass:'玻璃門（框＋玻璃）',roller:'鐵捲門（含捲門盒）',sectional:'分節式車庫門',plain:'平板門'};
+const DOORHANDLES={trumpet:'喇叭鎖（球形）',lever:'把手鎖（橫把）',bar:'推拉直把',none:'不加門把'};
 const DOORSTYLES={single:'單扇門',double:'雙開門（中間門框）',arch:'拱形門'};
 const STAIRDIRS={'+x':'向右（+X）','-x':'向左（−X）','+z':'向前（+Z）','-z':'向後（−Z）'};
 const WINSTYLES={fixed:'固定窗（單片）',hung:'上下推拉窗',cross:'十字格窗',arch:'拱形窗'};
@@ -287,14 +289,14 @@ const F2G=[['gbBreak','折點位置（離屋脊）',0.25,0.8,0.01],['gbHeight','
 const F2H=[['ridgeCap','加屋脊蓋','chk'],['chimOn','加煙囪','chk'],['chimX','煙囪位置 X',-150,150,0.5],['chimZ','煙囪位置 Z',-150,150,0.5],['chimW','煙囪寬',3,40,0.5],['chimD','煙囪深',3,40,0.5],['chimH','煙囪高出屋面',2,40,0.5]];
 const F2B=[['roofRelief','屋頂紋路浮雕深度',0.2,3,0.05],['roofScale','屋頂紋路密度（倍率，小=更密）',0.2,3,0.05],['roofAge','屋頂舊化／裂痕程度',0,100,1]];
 const F2D=[['roofSplit','屋頂做成可拆卸獨立零件','chk'],['roofLift','預覽拉開距離（步驟②、⑥）',0,40,1]];
-const F3F=[['frameOn','加窗框（凸出外牆）','chk'],['frameW','窗框寬度',1,6,0.5],['frameD','窗框凸出量',0.5,4,0.1],['sillOn','加窗台（窗下凸出）','chk']];
+const F3F=[['winGlass','生成窗戶玻璃片（外加零件，不改牆）','chk'],['winBars','生成窗扇框與窗格條','chk'],['winBodyT','窗戶本體厚度',0.4,2,0.1],['frameOn','加窗框（凸出外牆）','chk'],['frameW','窗框寬度',1,6,0.5],['frameD','窗框凸出量',0.5,4,0.1],['sillOn','加窗台（窗下凸出）','chk']];
 const F2C=[
  ['lampOn','產生燈孔','chk'],['lampTarget','裝在哪裡','sel',{floor:'地板（正確位置）',roof:'屋頂'}],['lampShape','形狀','sel',LAMPSHAPE],['lampLayout','排列','sel',LAMPLAYOUT],['lampN','每列數量',1,8,1],['lampRows','行數',1,6,1],['lampPos','位置','sel',LAMPPOS],['lampD','孔徑／邊長',1,120,0.5],
  ['lampX','自訂偏移 X',-100,100,0.5],['lampZ','自訂偏移 Z',-100,100,0.5]];
 const F3S=[['snapOn','🧲 拖曳窗戶時自動吸附（按住 Shift 暫時反轉）','chk'],['snapTH','吸附距離（mm）',1,10,0.5]];
 const F3=[['winW','寬度',3,60,0.5],['winH','高度',3,60,0.5],['winSill','位置高度（0=門）',0,60,0.5],['winRows','每層上下排數',1,5,1],['winGap','排間距',1,30,0.5]];
 const F5=[['iwT','室內牆厚度',0.8,4,0.1]];
-const F3D=[['doorOn','加大門（主入口）','chk'],['doorWall','大門所在牆','sel',{front:'前牆 +Z',back:'後牆 −Z',left:'左牆 −X',right:'右牆 +X'}],['doorStyle','大門款式','sel',DOORSTYLES],['doorN','同一面牆的門數量（並排）',1,4,1],['doorGap','門與門的間距',1,30,0.5],['doorDir','並排方向','sel',{right:'向右排',left:'向左排'}],['doorFront','另在前牆加一扇門','chk'],['doorBack','另在後牆加一扇門','chk'],['doorLeft','另在左牆加一扇門','chk'],['doorRight','另在右牆加一扇門','chk'],['doorW','大門寬度',8,40,0.5],['doorH','大門高度',10,70,0.5],['doorC','大門位置（沿牆，0=置中）',-150,150,0.5]];
+const F3D=[['doorOn','加大門（主入口）','chk'],['doorWall','大門所在牆','sel',{front:'前牆 +Z',back:'後牆 −Z',left:'左牆 −X',right:'右牆 +X'}],['doorStyle','開口外形（單扇／雙開／拱形）','sel',DOORSTYLES],['doorLeaf','生成門板本體（外加零件，不改牆）','chk'],['doorType','門的款式','sel',DOORTYPES],['doorHandle','門把／鎖具','sel',DOORHANDLES],['doorN','同一面牆的門數量（並排）',1,4,1],['doorGap','門與門的間距',1,30,0.5],['doorDir','並排方向','sel',{right:'向右排',left:'向左排'}],['doorFront','另在前牆加一扇門','chk'],['doorBack','另在後牆加一扇門','chk'],['doorLeft','另在左牆加一扇門','chk'],['doorRight','另在右牆加一扇門','chk'],['doorW','大門寬度',8,40,0.5],['doorH','大門高度',10,70,0.5],['doorC','大門位置（沿牆，0=置中）',-150,150,0.5]];
 const F6=[
  ['#','雷射切割（板材）','laser'],
  ['T','板厚',1.5,10,0.5,'laser'],['kerf','刀縫補償',0,0.5,0.01,'laser'],
@@ -1178,6 +1180,7 @@ function runSkins(Pe){
 }
 function renderSkinInfo(n,tris){
  const res=parseFloat(P.skinRes)||0.5;
+ {const rt=skinGeoms.filter(g=>g.userData.roof).reduce((a,g)=>a+g.attributes.position.count/3,0),ri=$('roofInfo');if(ri)ri.textContent=P.roofStyle==='none'?'':`屋頂紋路：${Math.round(rt).toLocaleString()} 三角面（預覽格距 ${res}mm；輸出 ${P.skinResOut}mm 會更細、面數更多）`;}
  $('skinInfo').textContent=n?`✅ 已貼皮 ${n} 面（${tris.toLocaleString()} 三角面，格距 ${res}mm）\n⚠️ 貼皮是浮雕，只會輸出到 STL；STEP 為不含貼皮的精確本體。`:'工具：選面／框選／畫線，再按「套用貼皮」。屋頂款式（步驟②）會自動貼在屋頂面。';
 }
 function applySkin(remove){
@@ -1209,6 +1212,8 @@ function clearAllSkins(){lastPushT=0;P.skins={};P.roofStyle='none';P.noRoofSkin=
 $('skinClearAll').onclick=clearAllSkins;
 const SKINRES2={'0.8':'快速（0.8mm）','0.5':'標準（0.5mm）','0.3':'細（0.3mm）','0.2':'高（0.2mm）','0.12':'超高（0.12mm，慢）'};
 addFields($('skinFields'),[['skinType','材質','sel',SKINS],['skinRelief','浮雕深度',0.2,3,0.05],['skinScale','紋理比例（小=更細密）',0.2,3,0.05],['skinAge','舊化／裂痕程度（閾值）',0,100,1],['skinSeed','舊化隨機種子',1,99,1],['skinRes','預覽解析度（格距）','sel',SKINRES2]]);
+addFields($('f2b'),[['skinRes','紋路預覽解析度（格距＝面數）','sel',SKINRES2],['skinResOut','紋路輸出解析度（匯出時重算）','sel',SKINRES_OUT]]);
+$('f2b').querySelectorAll('[data-k="skinRes"],[data-k="skinResOut"]').forEach(e=>e.dataset.rr='1');
 
 // ---------- 展開圖版面（貼皮、窗戶正視圖共用）----------
 function wallOfFace(f){const n=f.n;if(Math.abs(n[1])>0.05)return null;return Math.abs(n[2])>=Math.abs(n[0])?(n[2]>0?'front':'back'):(n[0]>0?'right':'left');}
@@ -1813,6 +1818,77 @@ function buildFrames(p){
  }
  return out;
 }
+// ---------- 窗戶本體（玻璃片／窗格條）與門板本體：外加零件，不改牆體開口 ----------
+const wallFrameOf=(p,wall)=>{const zW=wall==='front'||wall==='back',sg=(wall==='front'||wall==='right')?1:-1;return {zW,sg,surf:sg*((zW?p.depth:p.width)/2)};};
+// 局部座標：x＝沿牆（相對開口中心）、y＝高、z＝向外（0＝外牆面，負＝牆內）→ 放到世界座標
+function placeLocal(g,p,w){
+ const f=wallFrameOf(p,w.wall);
+ if(f.zW){if(f.sg<0)g.rotateY(Math.PI);g.translate(w.c,0,f.surf);}
+ else{g.rotateY(f.sg>0?Math.PI/2:-Math.PI/2);g.translate(f.surf,0,w.c);}
+ return g;
+}
+const lbox=(cx,cy,cz,w,h,d)=>{const g=new THREE.BoxGeometry(Math.max(0.01,w),Math.max(0.01,h),Math.max(0.01,d)).toNonIndexed();g.translate(cx,cy,cz);return g;};
+const lcyl=(cx,cy,cz,rt,rb,len)=>{const g=new THREE.CylinderGeometry(rt,rb,len,18).toNonIndexed();g.rotateX(Math.PI/2);g.translate(cx,cy,cz);return g;}; // 軸向＝z，rt 在 +z（外）端
+function lpoly(pts,cz,t){const sh=new THREE.Shape();pts.forEach((q,i)=>i?sh.lineTo(q[0],q[1]):sh.moveTo(q[0],q[1]));const g=new THREE.ExtrudeGeometry(sh,{depth:t,bevelEnabled:false,curveSegments:1});g.translate(0,0,cz-t/2);return g;}
+function buildWinBodies(p){
+ if(p.plateMode||(!p.winGlass&&!p.winBars))return [];
+ const out=[],T=Math.max(0.3,Math.min(+p.winBodyT||0.8,p.wall*0.9)),cz=-p.wall/2;
+ for(const w of windowList(p)){
+  if(w.main||w.y0<=0.01)continue;
+  const loc=[],y0=w.y0,y1=w.y0+w.h,ym=(y0+y1)/2,W=w.w,H=w.h;
+  if(p.winGlass){
+   const polys=winPolys({...w,c:0});
+   const shape=(w.style==='arch'&&polys.length===1)?polys[0]:rectPoly(0,ym,W,H);
+   loc.push(lpoly(shape,cz,Math.min(T,0.8)));
+  }
+  if(p.winBars){
+   const bt=T+0.4,r=1.0;
+   loc.push(lbox(0,y1-r/2,cz,W,r,bt),lbox(0,y0+r/2,cz,W,r,bt),lbox(-W/2+r/2,ym,cz,r,H,bt),lbox(W/2-r/2,ym,cz,r,H,bt));
+   if(w.style==='dbl'||w.style==='cross')loc.push(lbox(0,ym,cz,1.2,H,bt));
+   if(w.style==='hung'||w.style==='cross')loc.push(lbox(0,ym,cz,W,1.2,bt));
+  }
+  for(const g of loc)out.push(placeLocal(g,p,w));
+ }
+ return out;
+}
+function leafParts(type,cx,W,H,tl,cz,arch){
+ const L=[],top=cz+tl/2,dz=0.4,zc=top+dz/2,y0=0;
+ const slab=()=>{if(arch&&H>W/2+2){const r=W/2,bh=H-r,pts=[[cx-r,0],[cx-r,bh]];for(let i=1;i<16;i++){const a=Math.PI-Math.PI*i/16;pts.push([cx+r*Math.cos(a),bh+r*Math.sin(a)]);}pts.push([cx+r,bh],[cx+r,0]);return lpoly(pts,cz,tl);}return lbox(cx,H/2,cz,W,H,tl);};
+ const m=1.3;
+ if(type==='plain')L.push(slab());
+ else if(type==='wood'){L.push(slab());const cols=W>=9?2:1,rows=H>=14?2:1,gx=1.0,pw=(W-2*m-(cols-1)*gx)/cols,gy=1.0,ph=(H-2*m-(rows-1)*gy)/rows;
+  if(pw>1&&ph>1)for(let i=0;i<cols;i++)for(let j=0;j<rows;j++)L.push(lbox(cx-W/2+m+pw/2+i*(pw+gx),m+ph/2+j*(ph+gy),zc,pw,ph,dz));}
+ else if(type==='steel'){L.push(slab());const n=Math.max(2,Math.round(H/6));for(let j=1;j<n;j++)L.push(lbox(cx,j*H/n,zc,W-1.2,0.8,dz));L.push(lbox(cx-W/2+0.6,H/2,zc,1.2,H,dz),lbox(cx+W/2-0.6,H/2,zc,1.2,H,dz));}
+ else if(type==='grille'){const b=1.0;L.push(lbox(cx,H-b/2,cz,W,b,tl),lbox(cx,b/2,cz,W,b,tl),lbox(cx-W/2+b/2,H/2,cz,b,H,tl),lbox(cx+W/2-b/2,H/2,cz,b,H,tl),lbox(cx,H/2,cz,W,b,tl));
+  const n=Math.max(1,Math.round(W/2.4));for(let i=1;i<n;i++)L.push(lbox(cx-W/2+i*W/n,H/2,cz,0.7,H-2*b,tl));}
+ else if(type==='glass'){const b=1.6;L.push(lbox(cx,H-b/2,cz,W,b,tl),lbox(cx,b/2,cz,W,b,tl),lbox(cx-W/2+b/2,H/2,cz,b,H,tl),lbox(cx+W/2-b/2,H/2,cz,b,H,tl),lbox(cx,H/2,cz,W-2*b+0.2,H-2*b+0.2,0.6));}
+ else if(type==='roller'){const sh=1.2,gp=0.25,n=Math.floor(H/(sh+gp));for(let j=0;j<n;j++)L.push(lbox(cx,j*(sh+gp)+sh/2,cz,W-2,sh,tl*0.8));L.push(lbox(cx-W/2+0.5,H/2,cz,1,H,tl),lbox(cx+W/2-0.5,H/2,cz,1,H,tl),lbox(cx,H+1,cz+0.6,W+2,2,tl+1.6));}
+ else if(type==='sectional'){L.push(slab());const n=4;for(let j=1;j<n;j++)L.push(lbox(cx,j*H/n,zc,W,0.5,dz));const wn=Math.max(2,Math.round(W/8));for(let i=0;i<wn;i++)L.push(lbox(cx-W/2+(i+0.5)*W/wn,H*0.86,zc,W/wn*0.55,H*0.1,dz));}
+ return L;
+}
+function buildDoorLeaves(p){
+ if(p.plateMode||!p.doorOn||!p.doorLeaf)return [];
+ const out=[],type=p.doorType||'wood',hd=p.doorHandle||'trumpet',tl=Math.min(1.4,p.wall*0.8),cz=-p.wall/2;
+ for(const dd of doorEntries(p)){
+  const W=dd.w,H=dd.h,dbl=dd.style==='dbl',arch=dd.style==='arch',loc=[],top=cz+tl/2;
+  const leaves=dbl?[[-(W/4+0.2),W/2-0.4,-1],[(W/4+0.2),W/2-0.4,1]]:[[0,W,1]];
+  for(const [cx,w,side] of leaves)loc.push(...leafParts(type,cx,w,H,tl,cz,arch&&!dbl));
+  const solid=['wood','steel','plain','sectional','glass'].includes(type);
+  if(hd!=='none'&&type!=='roller'&&type!=='sectional'){
+   const hy=Math.min(H*0.5,H-3);
+   const hx=dbl?[(0.4+2.0)*-1,(0.4+2.0)]:[W/2-2.4];
+   for(const x of hx){
+    const zb=top+(type==='wood'||type==='steel'?0.4:0);
+    loc.push(lcyl(x,hy,zb+0.2,1.5,1.5,0.4));
+    if(hd==='trumpet'){loc.push(lcyl(x,hy,zb+1.4,0.55,1.1,2.0),lcyl(x,hy,zb+2.7,1.15,0.55,0.6));}
+    else if(hd==='lever'){loc.push(lcyl(x,hy,zb+0.9,0.5,0.5,1.0),lbox(x+(x<0?1.6:-1.6)*0+(dbl?(x<0?1.6:-1.6):-1.6),hy,zb+1.4,3.4,0.7,0.7));}
+    else if(hd==='bar'){loc.push(lbox(x,hy,zb+1.4,0.8,6,0.8),lbox(x,hy+2.4,zb+0.7,0.8,0.8,1.0),lbox(x,hy-2.4,zb+0.7,0.8,0.8,1.0));}
+   }
+  }
+  for(const g of loc)out.push(placeLocal(g,p,dd));
+ }
+ return out;
+}
 // 屋頂分離：在牆頂線（平頂為頂板下緣）把外殼切成「本體」與「屋頂」
 function splitRoofCSG(g,p){
  const H=p.wallH,y=p.roof==='flat'?H-p.wall:H,top=H+(p.roof==='flat'?0:p.rise)+10;
@@ -2175,6 +2251,8 @@ function sync(){
   if(k==='winGap')show=P.winRows>1&&!P.winManual;if(k==='winRows')show=!P.winManual;if(k==='roofRelief'||k==='roofScale')show=P.roofStyle!=='none';
   if(k==='roofLift')show=P.roofSplit;if(k==='floorT')show=P.floorOn||P.slabOn||(P.lampOn&&P.lampTarget!=='roof');
   if(k==='frameW'||k==='frameD'||k==='sillOn')show=P.frameOn;
+  if(k==='winBodyT')show=P.winGlass||P.winBars;if(k==='doorType'||k==='doorHandle')show=P.doorLeaf;
+  if(el.dataset.rr)show=P.roofStyle!=='none';
   if(['lampShape','lampLayout','lampPos','lampD','lampN','lampRows'].includes(k))show=P.lampOn;
   if(k==='lampX'||k==='lampZ')show=P.lampOn&&P.lampPos==='custom';
   if(ADV_KEYS.has(k)&&!P.advanced)show=false;
@@ -2205,7 +2283,7 @@ function sync(){
  edges.visible=!!(P.showEdges||P.xray);if(roofEdges)roofEdges.visible=!!(P.showEdges||P.xray);applyXray();
  skinRoofGroup.position.y=lift;
  rebuildInterior(Pe);
- clearGroup(extraGroup);const slabG=buildSlabs(Pe),stairG=buildStairs(Pe),frameG=buildFrames(Pe),innerCount=slabG.length+stairG.length;annexItems=buildAnnexes(Pe);Pe.annexes=annexItems.map(it=>({type:it.a.type,cx:it.cx,cz:it.cz,fx:it.fx,fz:it.fz,h:it.a.h,p:{...it.pe,roofPlanes:it.planes,roofV:it.v},door:it.door,posts:it.posts,deck:it.deck,roofOnly:it.a.type==='porch'||it.a.type==='carport'}));
+ clearGroup(extraGroup);const slabG=buildSlabs(Pe),stairG=buildStairs(Pe),frameG=[...buildFrames(Pe),...buildWinBodies(Pe),...buildDoorLeaves(Pe)],innerCount=slabG.length+stairG.length;annexItems=buildAnnexes(Pe);Pe.annexes=annexItems.map(it=>({type:it.a.type,cx:it.cx,cz:it.cz,fx:it.fx,fz:it.fz,h:it.a.h,p:{...it.pe,roofPlanes:it.planes,roofV:it.v},door:it.door,posts:it.posts,deck:it.deck,roofOnly:it.a.type==='porch'||it.a.type==='carport'}));
  extraGeoms=[...slabG,...stairG,...frameG,...annexItems.flatMap(it=>it.geoms)];
  extraGeoms.forEach((g,k)=>{const m=new THREE.Mesh(g,k<innerCount?innerMat():mat);m.userData.inner=k<innerCount;extraGroup.add(m);});
  afterFaces(Pe);
@@ -2409,7 +2487,7 @@ function dataURLtoBlob(u){const a=u.split(','),b=atob(a[1]),n=new Uint8Array(b.l
 const STEP_KEYS={
  1:['annex','width','depth','floors','wallH','wall','floorOn','floorT','slabOn','lampOn','lampTarget','lampShape','lampLayout','lampN','lampRows','lampPos','lampD','lampX','lampZ'],
  2:['roof','rise','ridge','eaveX','eaveZ','roofT','gbBreak','gbHeight','ridgeCap','chimOn','chimX','chimZ','chimW','chimD','chimH','roofStyle','roofRelief','roofScale','roofAge','roofSplit','roofLift','noRoofSkin'],
- 3:['doorOn','doorN','doorGap','doorDir','doorFront','doorBack','doorLeft','doorRight','doorWall','doorStyle','doorW','doorH','doorC','winW','winH','winSill','winRows','winGap','nFront','nBack','nLeft','nRight','winWall','winStyle','winManual','frameOn','frameW','frameD','sillOn'],
+ 3:['doorOn','doorN','doorGap','doorDir','doorFront','doorBack','doorLeft','doorRight','doorWall','doorStyle','doorW','doorH','doorC','winW','winH','winSill','winRows','winGap','nFront','nBack','nLeft','nRight','winWall','winStyle','winManual','frameOn','frameW','frameD','sillOn','winGlass','winBars','winBodyT','doorLeaf','doorType','doorHandle'],
  4:['skins','skinType','skinRelief','skinScale','skinRes','skinAge','skinSeed','tool','roofStyle','roofRelief','roofScale','roofAge','noRoofSkin'],
  5:['iwalls','iwT','stairs'],
  6:['print','roofOut','exportPart','T','kerf','finger','sheetW','engrave','bedW','bedD','nozzle','skinResOut']};

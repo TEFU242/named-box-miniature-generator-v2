@@ -323,6 +323,31 @@ T('Y 多扇門','3D 開口：多扇門都實際切出（本體體積隨門數下
 T('Y 多扇門','立面圖與平面圖會顯示所有門',()=>{reset();P.doorOn=true;P.doorN=3;P.width=160;P.doorBack=true;sync();goStep(3);setView('flat');renderFlat();const e=$('flat').innerHTML;goStep(5);setView('flat');renderFlat();const pl=$('flat').innerHTML;return {ok:(e.match(/#8bc34a/g)||[]).length>=3,detail:'立面綠色門面 '+(e.match(/#8bc34a/g)||[]).length};});
 T('Y 多扇門','存檔載入保留多門設定',()=>{reset();P.doorOn=true;P.doorN=3;P.doorBack=true;const j=JSON.stringify(P);applyState(JSON.parse(j));return {ok:P.doorN===3&&P.doorBack===true,detail:`doorN=${P.doorN}`};});
 
+
+// ---------- Z. 窗戶本體、門板款式、屋頂紋路解析度 ----------
+const exN=()=>extraGeoms.length;
+const baseDoor=()=>{reset();P.doorOn=true;P.doorW=16;P.doorH=20;P.wallH=30;P.floorH=30;sync();};
+const gbb=g=>{g.computeBoundingBox();return g.boundingBox;};
+T('Z 零件選項','預設不產生窗戶本體與門板（牆體開口維持原樣）',()=>{baseDoor();P.nFront=2;sync();return {ok:buildWinBodies(curP).length===0&&buildDoorLeaves(curP).length===0,detail:'0 / 0'};});
+T('Z 零件選項','窗戶玻璃片：每扇窗一片，位於牆厚中間、不凸出外牆',()=>{reset();P.nFront=2;P.winGlass=true;sync();const g=buildWinBodies(curP),n=windowList(curP).filter(w=>!w.main).length;const zmax=Math.max(...g.map(x=>gbb(x).max.z));return {ok:g.length===n&&zmax<=curP.depth/2+1e-6,detail:`玻璃 ${g.length}／窗 ${n}，最外 z=${zmax.toFixed(2)}`};});
+T('Z 零件選項','窗格條：十字窗比固定窗多出零件',()=>{reset();P.nFront=1;P.nBack=0;P.nLeft=0;P.nRight=0;P.winBars=true;P.winStyle='fixed';sync();const a=buildWinBodies(curP).length;P.winStyle='cross';sync();const b=buildWinBodies(curP).length;return {ok:b>a,detail:`固定 ${a} → 十字 ${b}`};});
+T('Z 零件選項','窗戶本體不改牆：牆體體積與勾選前相同',()=>{reset();P.nFront=2;sync();const a=vol(cur.g);P.winGlass=true;P.winBars=true;sync();const b=vol(cur.g);return {ok:Math.abs(a-b)<1e-6,detail:`${a.toFixed(0)} = ${b.toFixed(0)}`};});
+T('Z 零件選項','窗戶本體進入輸出零件（extraGeoms 增加）',()=>{reset();P.nFront=2;sync();const a=exN();P.winGlass=true;sync();return {ok:exN()>a,detail:`${a} → ${exN()}`};});
+T('Z 零件選項','門板：七種款式皆可產生、零件數量合理',()=>{baseDoor();P.doorLeaf=true;const r={};for(const t of Object.keys(DOORTYPES)){P.doorType=t;P.doorHandle='none';sync();r[t]=buildDoorLeaves(curP).length;}return {ok:Object.values(r).every(n=>n>=1),detail:JSON.stringify(r)};});
+T('Z 零件選項','門板：木門有嵌板、平板門只有一片',()=>{baseDoor();P.doorLeaf=true;P.doorHandle='none';P.doorType='plain';sync();const a=buildDoorLeaves(curP).length;P.doorType='wood';sync();const b=buildDoorLeaves(curP).length;return {ok:a===1&&b>3,detail:`平板 ${a}、木門 ${b}`};});
+T('Z 零件選項','門把：喇叭鎖／把手鎖／直把／無',()=>{baseDoor();P.doorLeaf=true;P.doorType='wood';const r={};for(const h of Object.keys(DOORHANDLES)){P.doorHandle=h;sync();r[h]=buildDoorLeaves(curP).length;}return {ok:r.none<r.trumpet&&r.none<r.lever&&r.none<r.bar,detail:JSON.stringify(r)};});
+T('Z 零件選項','鐵捲門與分節式車庫門不加門把',()=>{baseDoor();P.doorLeaf=true;P.doorHandle='trumpet';P.doorType='wood';sync();const w=buildDoorLeaves(curP).length;P.doorType='roller';sync();const a=buildDoorLeaves(curP);P.doorType='sectional';sync();const b=buildDoorLeaves(curP);return {ok:a.length>3&&b.length>3,detail:`鐵捲門 ${a.length}、分節 ${b.length}`};});
+T('Z 零件選項','雙開門：兩片門板各一組門把',()=>{baseDoor();P.doorLeaf=true;P.doorType='plain';P.doorHandle='trumpet';P.doorStyle='double';sync();const d=buildDoorLeaves(curP).length;P.doorStyle='single';sync();const s1=buildDoorLeaves(curP).length;return {ok:d>s1,detail:`雙開 ${d}、單扇 ${s1}`};});
+T('Z 零件選項','門板位於門洞範圍內，且不凸出牆面超過 4mm（含門把）',()=>{baseDoor();P.doorLeaf=true;P.doorType='wood';P.doorHandle='trumpet';sync();const g=buildDoorLeaves(curP),D=curP.depth/2;let zmax=-999,zmin=999;for(const x of g){const b=gbb(x);zmax=Math.max(zmax,b.max.z);zmin=Math.min(zmin,b.min.z);}return {ok:zmax<=D+4&&zmin>=D-curP.wall-0.01,detail:`z ${zmin.toFixed(2)}~${zmax.toFixed(2)}（牆面 ${D}）`};});
+T('Z 零件選項','側牆的門板方向正確（左右牆）',()=>{baseDoor();P.doorLeaf=true;P.doorType='plain';P.doorHandle='none';P.doorWall='right';sync();const b1=gbb(buildDoorLeaves(curP)[0]);const W=curP.width/2;P.doorWall='left';sync();const b2=gbb(buildDoorLeaves(curP)[0]);return {ok:b1.max.x<=W+0.01&&b1.min.x>=W-curP.wall-0.01&&b2.min.x>=-W-0.01&&b2.max.x<=-W+curP.wall+0.01,detail:`右牆 x ${b1.min.x.toFixed(1)}~${b1.max.x.toFixed(1)}；左牆 x ${b2.min.x.toFixed(1)}~${b2.max.x.toFixed(1)}`};});
+T('Z 零件選項','多扇門／其他牆的門都有門板',()=>{baseDoor();P.width=160;P.doorLeaf=true;P.doorType='plain';P.doorHandle='none';P.doorN=2;P.doorBack=true;sync();return {ok:buildDoorLeaves(curP).length===3,detail:'門板 '+buildDoorLeaves(curP).length};});
+T('Z 零件選項','門板不改牆：牆體體積不變',()=>{baseDoor();const a=vol(cur.g);P.doorLeaf=true;sync();return {ok:Math.abs(a-vol(cur.g))<1e-6,detail:'體積相同'};});
+T('Z 零件選項','選項顯示：未勾門板時隱藏款式與門把',()=>{baseDoor();P.doorLeaf=false;goStep(3);sync();const el=k=>document.querySelector('#panel [data-k="'+k+'"]').style.display;const a=el('doorType')==='none'&&el('doorHandle')==='none';P.doorLeaf=true;sync();const b=el('doorType')!=='none';return {ok:a&&b,detail:`隱藏=${a}，顯示=${b}`};});
+T('Z 零件選項','屋頂步驟出現預覽／輸出解析度，且與貼皮步驟共用同一數值',()=>{reset();P.roofStyle='clay';goStep(2);sync();const els=[...document.querySelectorAll('#panel [data-rr="1"]')];const vis=els.length===2&&els.every(e=>e.style.display!=='none');P.roofStyle='none';sync();const hid=els.every(e=>e.style.display==='none');return {ok:vis&&hid,detail:`有款式時顯示=${vis}，無款式隱藏=${hid}`};});
+T('Z 零件選項','屋頂解析度改變 → 屋頂紋路三角面數改變',()=>{reset();P.roofStyle='clay';P.skinRes='0.8';sync();runSkins(curP);const a=skinGeoms.filter(g=>g.userData.roof).reduce((s,g)=>s+g.attributes.position.count,0);P.skinRes='0.5';sync();runSkins(curP);const b=skinGeoms.filter(g=>g.userData.roof).reduce((s,g)=>s+g.attributes.position.count,0);return {ok:a>0&&b>a*1.5,detail:`0.8mm ${a/3|0} → 0.5mm ${b/3|0} 三角面`};});
+T('Z 零件選項','屋頂步驟顯示屋頂紋路面數資訊',()=>{reset();P.roofStyle='clay';goStep(2);sync();runSkins(curP);return {ok:$('roofInfo').textContent.includes('三角面'),detail:$('roofInfo').textContent.slice(0,40)};});
+T('Z 零件選項','存檔載入保留窗戶本體與門板設定',()=>{baseDoor();P.doorLeaf=true;P.doorType='grille';P.doorHandle='lever';P.winGlass=true;const j=JSON.stringify(P);applyState(JSON.parse(j));return {ok:P.doorType==='grille'&&P.doorHandle==='lever'&&P.winGlass===true,detail:P.doorType};});
+
 // ---------- 蒐集 STEP 測試狀態 ----------
 T('J 蒐集 STEP 測試','產生 9 組 STEP 輸入',()=>{
  reset();sync();snapStep();
