@@ -10,12 +10,20 @@ body.dark{--bg:#0b0f17;--panel:#111723;--line:#1f2a3d;--txt:#d7e2f0;--mut:#7f90a
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.5 -apple-system,"PingFang TC",sans-serif;display:flex;flex-direction:column;height:100vh}
 #top{display:flex;align-items:center;gap:14px;padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
-.brand{color:var(--cy);font-weight:700;white-space:nowrap}
-#stepbar{display:flex;gap:6px;flex:1;justify-content:center;flex-wrap:wrap}
-.stb{padding:6px 14px;border:1px solid var(--line);background:var(--inp);color:var(--txt);border-radius:18px;cursor:pointer;font-size:13px;white-space:nowrap}
-.stb i{font-style:normal;color:var(--gr);margin-right:5px}
-.stb.on{border-color:var(--cy);color:var(--cy);background:var(--sel)}
-.stb:hover{border-color:var(--cy)}
+.brand{color:var(--cy);font-weight:800;font-size:16px;letter-spacing:.04em;white-space:nowrap}
+.tools{margin-left:auto}
+#stepbar{display:flex;gap:0;flex:1 0 100%;order:3;justify-content:flex-start;align-items:center;flex-wrap:nowrap;overflow-x:auto;padding:6px 2px 2px;scrollbar-width:none}
+#stepbar::-webkit-scrollbar{display:none}
+.stb{position:relative;display:flex;align-items:center;gap:8px;padding:5px 14px 5px 5px;border:0;background:transparent;color:var(--mut);border-radius:999px;cursor:pointer;font-size:13px;font-weight:500;white-space:nowrap;transition:background .15s,color .15s}
+.stb i{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-style:normal;font-size:12px;font-weight:700;color:var(--mut);background:var(--inp);border:1.5px solid var(--line);transition:all .15s}
+.stb:not(:last-child){margin-right:26px}
+.stb:not(:last-child)::after{content:"";position:absolute;right:-22px;top:50%;width:18px;height:2px;border-radius:2px;background:var(--line)}
+.stb.done i{background:var(--gr);border-color:var(--gr);color:#fff}
+.stb.done:not(:last-child)::after{background:var(--gr)}
+.stb.done{color:var(--txt)}
+.stb.on{color:var(--cy);background:var(--sel);font-weight:700}
+.stb.on i{background:var(--cy);border-color:var(--cy);color:#fff;box-shadow:0 0 0 4px var(--sel)}
+.stb:hover{color:var(--cy)}.stb:hover i{border-color:var(--cy)}
 .tools{display:flex;gap:6px;align-items:center}
 .tools>button{background:var(--inp);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px}
 .tools>button:hover{border-color:var(--cy);color:var(--cy)}
@@ -2137,7 +2145,7 @@ function sync(){
  $('plateUI').style.display=plateMode?'':'none';
  $('stepbar').style.display=plateMode?'none':'';$('stepNav').style.display=plateMode?'none':'';
  document.querySelectorAll('section[data-step]').forEach(sec=>sec.classList.toggle('on',+sec.dataset.step===P.step));
- document.querySelectorAll('.stb').forEach(b=>b.classList.toggle('on',+b.dataset.s===P.step));
+ document.querySelectorAll('.stb').forEach(b=>{b.classList.toggle('on',+b.dataset.s===P.step);b.classList.toggle('done',+b.dataset.s<P.step);});
  $('prevStep').disabled=P.step<=1;$('nextStep').disabled=P.step>=6;
  $('toolHint').textContent=TOOLHINT[P.tool]||'';
  $('roofOutWrap').style.display=P.roofSplit?'':'none';
