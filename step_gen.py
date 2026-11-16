@@ -5,7 +5,7 @@ json: {"kind":"lamp","p":{...}} 或 {"kind":"brick","p":{...}}
 座標：Z 向上，+X 右，前牆朝 −Y（對應網頁 3D 的 +Z 前牆）。
 """
 import sys, json, math
-from build123d import (Box, Cylinder, Pos, Axis, Align, Vector, Wire, Face, Solid,
+from build123d import (Box, Cylinder, Pos, Rot, Axis, Align, Vector, Wire, Face, Solid, Location, Plane,
                        export_step, Compound)
 
 MIN = Align.MIN
@@ -129,6 +129,78 @@ def lamp_cutter(x, z, d, shape, rot, h, zc):
     return Pos(x, -z, zc) * Cylinder(d / 2, h)
 
 
+def win_cutters(wd, w, d, t):
+    """窗／門的刀具清單（款式：fixed / hung / cross / arch）。座標：前牆 −Y、後牆 +Y、左牆 −X、右牆 +X。"""
+    door = wd['y0'] <= 0.01
+    y0 = -2 if door else wd['y0']
+    y1 = wd['y0'] + wd['h']
+    hh = y1 - y0
+    wall = wd['wall']
+    zw = wall in ('front', 'back')
+    pos = {'front': -d / 2, 'back': d / 2, 'left': -w / 2, 'right': w / 2}[wall]
+    T4, c, ww = t * 4, wd['c'], wd['w']
+
+    def box(a, zc, wid, h):
+        if zw:
+            return Pos(c + a, pos, zc) * Box(wid, T4, h)
+        return Pos(pos, -(c + a), zc) * Box(T4, wid, h)
+
+    def cyl(zc, r):
+        if zw:
+            return Pos(c, pos, zc) * Rot(90, 0, 0) * Cylinder(r, T4)
+        return Pos(pos, -c, zc) * Rot(0, 90, 0) * Cylinder(r, T4)
+
+    st = 'fixed' if (door and not wd.get('main')) else wd.get('style', 'fixed')
+    if st == 'dbl':
+        bar = 1.4
+        pw = (ww - bar) / 2
+        return [box(-(pw + bar) / 2, (y0 + y1) / 2, pw, hh), box((pw + bar) / 2, (y0 + y1) / 2, pw, hh)]
+    if st == 'hung':
+        bar = 1.4
+        ph = (hh - bar) / 2
+        return [box(0, y0 + ph / 2, ww, ph), box(0, y1 - ph / 2, ww, ph)]
+    if st == 'cross':
+        bar = 1.2
+        pw, ph = (ww - bar) / 2, (hh - bar) / 2
+        return [box(sx * (pw + bar) / 2, (y0 + y1) / 2 + sy * (ph + bar) / 2, pw, ph) for sx in (-1, 1) for sy in (-1, 1)]
+    if st == 'arch' and hh > ww / 2 + 2:
+        r = ww / 2
+        bh = hh - r
+        return [box(0, y0 + bh / 2, ww, bh), cyl(y0 + bh, r)]
+    return [box(0, (y0 + y1) / 2, ww, hh)]
+
+
+def iw_span(p, iw, t, w, d):
+    iwT = p.get('iwT', 1.6)
+    half = ((w - 2 * t) if iw['axis'] == 'x' else (d - 2 * t)) / 2
+    lim = max(0, ((d - 2 * t) if iw['axis'] == 'x' else (w - 2 * t)) / 2 - iwT / 2)
+    if 'a0' in iw:
+        a0, a1 = iw['a0'], iw['a1']
+    else:
+        ln = iw['len'] if iw.get('len', 0) > 0 else 2 * half
+        c = iw.get('c', 0)
+        a0, a1 = c - ln / 2, c + ln / 2
+    if a0 > a1:
+        a0, a1 = a1, a0
+    return max(-half, a0), min(half, a1), max(-lim, min(lim, iw['pos']))
+
+
+def solid_under(planes, fx, fy, z0, ztop, shift):
+    """CAD 座標（Z 向上）：footprint ±fx × ±fy，位於所有屋頂平面（下移 shift）之下。
+    平面（網頁 3D 座標）y = a*x + b*z + c  →  CAD：Z = a*X - b*Y + c。"""
+    s = Pos(0, 0, (z0 + ztop) / 2) * Box(2 * fx, 2 * fy, ztop - z0)
+    for pl in planes:
+        a, b, c = pl['a'], pl['b'], pl['c']
+        n = Vector(-a, b, 1).normalized()
+        hs = (Pos(0, 0, 3000) * Box(6000, 6000, 6000)).moved(Location(Plane(origin=(0, 0, c - shift), z_dir=n)))
+        s = s - hs
+    return s
+
+
+def top_y(planes, x, z):
+    return min(pl['a'] * x + pl['b'] * z + pl['c'] for pl in planes)
+
+
 def make_lamp(p):
     w, d, H, t = p['width'], p['depth'], p['wallH'], p['wall']
     if p.get('plateMode'):  # 牆高 < 3mm：平板
@@ -140,43 +212,132 @@ def make_lamp(p):
     R = 0 if roof == 'flat' else p['rise']
     swap = w > d
     W, D = (d, w) if swap else (w, d)
-    run = W if roof == 'shed' else W / 2
-    sl = R / run if run else 0
-    v = t * math.sqrt(1 + sl * sl)
-    L = D if roof == 'gable' else max(0, (D - W) * p['ridge'] / 100)
+    planes, v = p['roofPlanes'], p['roofV']
+    eX, eZ = p.get('eaveX', 0), p.get('eaveZ', 0)
+    ytop = H + R + 6
 
-    outer = outer_solid(roof, W, D, H, R, L)
-    big = Box(W - 2 * t, D - 2 * t, H + R + 40, align=(Align.CENTER, Align.CENTER, MIN)).translate((0, 0, -20))
-    inner = outer.translate((0, 0, -v)) & big
-    shell = outer - inner
+    # 本體（牆）：外框柱體在屋頂下緣之下，扣掉底部開口的空腔
+    body = solid_under(planes, W / 2, D / 2, 0, ytop, v) - solid_under(planes, W / 2 - t, D / 2 - t, -3, ytop, v - 0.5)
+    # 屋頂厚板（含外伸）：頂面與下緣之間
+    fx, fy = W / 2 + eX, D / 2 + eZ
+    z0 = max(-3, min(top_y(planes, cx, cz) for cx in (-fx, fx) for cz in (-fy, fy)) - v - 3)
+    slab = solid_under(planes, fx, fy, z0, ytop, 0) - solid_under(planes, fx, fy, z0, ytop, v)
     if swap:
-        shell = shell.rotate(Axis.Z, 90)
+        body = body.rotate(Axis.Z, 90)
+        slab = slab.rotate(Axis.Z, 90)
+    for ex in p.get('roofExtras', []):  # 屋脊蓋、煙囪（最終座標：網頁 y→Z、網頁 z→−Y）
+        slab = slab + Pos(ex['x'], -ex['z'], (ex['y0'] + ex['y1']) / 2) * Box(ex['w'], ex['d'], ex['y1'] - ex['y0'])
+    if p.get('lampOn', True) and p.get('lampTarget', 'floor') == 'roof':
+        top = H + R + 10
+        for x, z, dia, shp, rot in lamp_list(p, t):
+            slab = slab - lamp_cutter(x, z, dia, shp, rot, top * 2, top / 2)
+    shell = body
 
-    n_rows = max(1, int(round(p.get('winRows', 1))))
-    gap = p.get('winGap', 4)
-    sill = min(p['winSill'], max(0, H - 4))
-    wh = max(1.5, min(p['winH'], (H - sill - 1.5 - (n_rows - 1) * gap) / n_rows))
-    rows = []
-    for i in range(n_rows):
-        y0 = sill + i * (wh + gap)
-        y1 = y0 + wh
-        if y1 > H - 1.5 + 1e-6:
-            break
-        rows.append((-2 if (i == 0 and sill <= 0.01) else y0, y1))
-    walls = [('nFront', w, 'x', -1), ('nBack', w, 'x', 1), ('nLeft', d, 'y', -1), ('nRight', d, 'y', 1)]
-    for key, Lw, axis, sgn in walls:
-        for c, ww in win_layout(Lw, t, int(p.get(key, 0)), p['winW']):
-            for z0, z1 in rows:
-                zc, zh = (z0 + z1) / 2, z1 - z0
-                if axis == 'x':
-                    cut = Pos(c, sgn * d / 2, zc) * Box(ww, t * 4, zh)
-                else:
-                    cut = Pos(sgn * w / 2, c, zc) * Box(t * 4, ww, zh)
-                shell = shell - cut
+    for wd in p.get('wins', []):
+        for cut in win_cutters(wd, w, d, t):
+            shell = shell - cut
 
-    top = H + R
-    for x, z, dia, shp, rot in lamp_list(p, t):
-        shell = shell - lamp_cutter(x, z, dia, shp, rot, top * 3, top / 2)
+    # 地板／樓板（嵌入外牆 0.25mm）；燈孔（預設）開在底層地板
+    floors = max(1, int(round(p.get('floors', 1))))
+    Hf = p.get('floorH', H)
+    FT = p.get('floorT', 2)
+    levels = ([0] if p.get('floorEff', p.get('floorOn')) else []) + (list(range(1, floors)) if p.get('slabOn') else [])
+    for f in levels:
+        slab_f = Pos(0, 0, f * Hf + FT / 2) * Box(w - 2 * t + 0.5, d - 2 * t + 0.5, FT)
+        if f == 0 and p.get('lampOn', True) and p.get('lampTarget', 'floor') != 'roof':
+            for x, z, dia, shp, rot in lamp_list(p, t):
+                slab_f = slab_f - lamp_cutter(x, z, dia, shp, rot, FT * 3, FT / 2)
+        for hb in p.get('stairBoxes', {}).get('holes', []):
+            if hb['level'] == f:
+                slab_f = slab_f - Pos(hb['cx'], -hb['cz'], hb['cy']) * Box(hb['sx'], hb['sz'], hb['sy'])
+        shell = shell + slab_f
+    for sb in p.get('stairBoxes', {}).get('steps', []) + p.get('stairBoxes', {}).get('rails', []):  # 樓梯踏步、平台、扶手
+        shell = shell + Pos(sb['cx'], -sb['cz'], sb['cy']) * Box(sb['sx'], sb['sz'], sb['sy'])
+
+    # 窗框＋窗台（外加實體，嵌入牆面 0.3mm）
+    if p.get('frameOn'):
+        fw, fd = p.get('frameW', 2), p.get('frameD', 1.2)
+        for wd in p.get('wins', []):
+            door = wd['y0'] <= 0.01
+            y0 = wd['y0']
+            y1 = y0 + wd['h']
+            c, ww, wall = wd['c'], wd['w'], wd['wall']
+            zw = wall in ('front', 'back')
+            surf = {'front': -d / 2, 'back': d / 2, 'left': -w / 2, 'right': w / 2}[wall]
+            dr = {'front': -1, 'back': 1, 'left': -1, 'right': 1}[wall]
+
+            def bar(a, zc, wid, h, prot):
+                th = prot + 0.3
+                off = surf + dr * (prot - 0.3) / 2
+                if zw:
+                    return Pos(c + a, off, zc) * Box(wid, th, h)
+                return Pos(off, -(c + a), zc) * Box(th, wid, h)
+
+            bars = [bar(0, y1 + fw / 2, ww + 2 * fw, fw, fd),
+                    bar(-(ww / 2 + fw / 2), (y0 + y1) / 2, fw, wd['h'], fd),
+                    bar(ww / 2 + fw / 2, (y0 + y1) / 2, fw, wd['h'], fd)]
+            if not door:
+                bars.append(bar(0, y0 - fw / 2, ww + 2 * fw, fw, fd + 1.2 if p.get('sillOn', True) else fd))
+            for bb in bars:
+                shell = shell + bb
+
+    # 室內牆：獨立樓層圖層（floor）或舊版貫穿；先挖門，再與外殼融合（兩端嵌入 0.25mm）
+    for iw in p.get('iwalls', []):
+        lo, hi, pos = iw_span(p, iw, t, w, d)
+        if hi - lo < 2:
+            continue
+        iwT = p.get('iwT', 1.6)
+        lo -= 0.25
+        hi += 0.25
+        L, mid = hi - lo, (lo + hi) / 2
+        fl = iw.get('floor')
+        if fl is None:
+            yb, yt, fs = 0, H, list(range(floors))
+        else:
+            fl = max(0, min(floors - 1, int(fl)))
+            yb, yt, fs = fl * Hf, (fl + 1) * Hf + (0.3 if (fl < floors - 1 and p.get('slabOn')) else 0), [fl]
+        hh = yt - yb
+        wall = Pos(mid, -pos, yb + hh / 2) * Box(L, iwT, hh) if iw['axis'] == 'x' else Pos(pos, -mid, yb + hh / 2) * Box(iwT, L, hh)
+        for f in fs:
+            for dr in iw.get('doors', []):
+                y0 = f * Hf
+                y1 = y0 + min(dr['h'], Hf - 1.5)
+                z0 = -2 if y0 <= 0.01 else y0
+                zc, zh = (z0 + y1) / 2, y1 - z0
+                cut = (Pos(dr['c'], -pos, zc) * Box(dr['w'], iwT * 3, zh)) if iw['axis'] == 'x' \
+                    else (Pos(pos, -dr['c'], zc) * Box(iwT * 3, dr['w'], zh))
+                wall = wall - cut
+        shell = shell + wall
+
+    # 周邊小型建築（附屬車庫、工具棚、門廊、車棚）：各自以同一套屋頂平面組建構後融合到本體
+    for an in p.get('annexes', []):
+        sub = dict(an['p'])
+        sub.update({'lampOn': False, 'roofSplit': False, 'iwalls': [], 'wins': [], 'stairs': [], 'floorEff': False,
+                    'frameOn': False, 'part': 'all', 'stairBoxes': {}, 'annexes': [], 'roofExtras': []})
+        if an.get('roofOnly'):
+            sub['roofSplit'] = True
+            sub['part'] = 'roof'
+        shp = make_lamp(sub)
+        if an.get('door'):
+            dd = an['door']
+            shp = shp - Pos(0, -an['fz'] / 2, dd['h'] / 2) * Box(dd['w'], sub['wall'] * 4, dd['h'])
+        shp = Pos(an['cx'], -an['cz'], 0) * shp
+        for pb in an.get('posts', []):
+            shp = shp + Pos(pb['cx'], -pb['cz'], (pb['y0'] + pb['y1']) / 2) * Box(pb['sx'], pb['sz'], pb['y1'] - pb['y0'])
+        if an.get('deck'):
+            dk = an['deck']
+            shp = shp + Pos(dk['cx'], -dk['cz'], (dk['y0'] + dk['y1']) / 2) * Box(dk['sx'], dk['sz'], dk['y1'] - dk['y0'])
+        shell = shell + shp
+
+    # 屋頂分離：本體與屋頂各自為獨立實體
+    part = p.get('part', 'all')
+    if p.get('roofSplit'):
+        if part == 'roof':
+            return slab
+        if part == 'body':
+            return shell
+        return Compound([shell, slab])
+    shell = shell + slab
     return shell
 
 
