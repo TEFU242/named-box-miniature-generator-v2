@@ -14,7 +14,7 @@ body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.5 -apple-system,
 .tools{margin-left:auto}
 #stepbar{display:flex;gap:0;flex:1 0 100%;order:3;justify-content:flex-start;align-items:center;flex-wrap:nowrap;overflow-x:auto;padding:6px 2px 2px;scrollbar-width:none}
 #stepbar::-webkit-scrollbar{display:none}
-.stb{position:relative;display:flex;align-items:center;gap:8px;padding:5px 14px 5px 5px;border:0;background:transparent;color:var(--mut);border-radius:999px;cursor:pointer;font-size:13px;font-weight:500;white-space:nowrap;transition:background .15s,color .15s}
+.stb{position:relative;display:flex;align-items:center;gap:8px;padding:5px 14px 5px 6px;border:0;background:transparent;color:var(--mut);border-radius:999px;cursor:pointer;font-size:13px;font-weight:500;white-space:nowrap;transition:background .15s,color .15s}
 .stb i{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-style:normal;font-size:12px;font-weight:700;color:var(--mut);background:var(--inp);border:1.5px solid var(--line);transition:all .15s}
 .stb:not(:last-child){margin-right:26px}
 .stb:not(:last-child)::after{content:"";position:absolute;right:-22px;top:50%;width:18px;height:2px;border-radius:2px;background:var(--line)}
@@ -106,6 +106,15 @@ button.edgeLbl.on{border-color:var(--cy);color:var(--cy);background:var(--sel)}
 #memPanel h4{margin:0 0 6px;color:var(--cy)}#memPanel .mr{display:flex;justify-content:space-between;padding:2px 0;color:var(--mut)}#memPanel .mr b{color:var(--txt)}
 #memPanel button{display:block;width:100%;text-align:left;margin:5px 0;padding:7px 9px;background:var(--inp);border:1px solid var(--line);border-radius:7px;color:var(--txt);cursor:pointer}
 #memPanel button:hover{border-color:var(--cy)}#memPanel button.pri{background:var(--gr);color:#04170f;border:0;font-weight:700}#memPanel small{display:block;color:var(--mut);margin-top:2px}
+.stb .stk{width:15px;height:15px;margin:0 0 0 6px;accent-color:var(--gr);cursor:pointer}
+.stb.off{opacity:.5}.stb.off i{border-style:dashed}.stb.off{text-decoration:line-through}
+.offBar{display:none;background:#fff4e5;border:1px solid #ffb74d;color:#8a5a00;border-radius:8px;padding:6px 8px;margin:6px 0;font-size:12px}
+.offBar button{margin-left:8px;border:1px solid #ffb74d;background:#fff;border-radius:6px;cursor:pointer;padding:2px 8px}
+section.secoff .offBar{display:block}
+section.secoff>*:not(h2.big):not(.offBar){opacity:.38;pointer-events:none}
+.dgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:4px 0 8px}
+.dbtn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 2px;border:1px solid var(--line);background:var(--inp);border-radius:8px;cursor:pointer;color:var(--txt);font-size:11px;line-height:1.2}
+.dbtn:hover{border-color:var(--cy)}.dbtn.on{border-color:var(--cy);background:var(--sel);color:var(--cy);font-weight:700}
 .stairBox{border:1px dashed var(--line);border-radius:8px;padding:6px 8px;margin:6px 0}
 .chips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
 .chip{padding:2px 9px;border:1px solid var(--line);border-radius:12px;font-size:11px;cursor:pointer;color:var(--txt);background:var(--inp)}
@@ -176,8 +185,6 @@ button.edgeLbl.on{border-color:var(--cy);color:var(--cy);background:var(--sel)}
    <section data-step="3"><h2 class="big">③ 窗戶位置與數量</h2>
      <h2>哪些牆面要開窗（勾選並設定每面數量）</h2><div id="winWalls"></div>
      <h2>窗戶款式（最常見 4 種）</h2><div class="seg" id="winStyleSeg" style="grid-template-columns:repeat(2,1fr)"></div>
-     <h2>大門（主入口，貼地開口）</h2><div id="f3d"></div>
-     <div class="hint">大門可在正視圖拖曳左右移動（Shift 吸附到牆中心與窗戶中心）；大門位置的參數化窗戶會自動讓開。</div>
      <h2>窗戶尺寸／位置</h2><div id="f3"></div><div class="hint" id="winModeHint"></div>
      <h2>樓層圖層（正視圖只操作選定樓層，其他樓層淡化）</h2><div class="seg" id="elevTabs" style="grid-template-columns:repeat(auto-fit,minmax(46px,1fr))"></div>
      <h2>吸附與對齊</h2><div id="f3s"></div>
@@ -189,7 +196,13 @@ button.edgeLbl.on{border-color:var(--cy);color:var(--cy);background:var(--sel)}
      <div id="winList"></div></div>
      <div class="hint">也可直接在右側「牆面正視圖」拖曳窗戶：拖方塊移動、拖白色小方塊縮放、雙擊空白處新增、Delete 刪除。</div>
      <h2>窗戶本體、窗框與窗台（外加零件，牆體開口不變）</h2><div id="f3f"></div></section>
-   <section data-step="4"><h2 class="big">④ 貼皮（拆成平面）</h2>
+   <section data-step="4"><h2 class="big">④ 門</h2>
+     <h2>門的款式（點選縮圖）</h2><div id="doorTypeGrid" class="dgrid"></div>
+     <h2>位置、數量與開口</h2><div id="f3d"></div>
+     <div class="hint">門可在右側正視圖拖曳左右移動（Shift 吸附到牆中心與窗戶中心）；門位置的參數化窗戶會自動讓開。勾「生成門板本體」才會做出門板、門把；門板是外加零件，牆上的開口不變。</div>
+     <h2>門框・氣窗・側窗・門簷・門前階（外加零件）</h2><div id="f4x"></div>
+     <div class="hint">🚪 氣窗與側窗會把牆的開口加大；側窗只有在勾選「生成門板本體」時才會做出玻璃。</div></section>
+   <section data-step="5"><h2 class="big">⑤ 貼皮（拆成平面）</h2>
      <div class="seg" id="toolSeg" style="grid-template-columns:repeat(4,1fr)"></div>
      <div class="hint" id="toolHint"></div>
      <div id="skinChips" class="chips"></div>
@@ -200,7 +213,7 @@ button.edgeLbl.on{border-color:var(--cy);color:var(--cy);background:var(--sel)}
      <div class="quick"><button id="skinApply" class="primary">套用貼皮</button><button id="skinClear">移除選取貼皮</button><button id="skinClearAll" style="color:#d93a3a">清除全部貼皮</button></div>
      <div id="regEdit" class="card" style="display:none"></div>
      <div id="skinInfo" class="hint" style="white-space:pre-line"></div></section>
-   <section data-step="5"><h2 class="big">⑤ 室內牆壁與門</h2>
+   <section data-step="6"><h2 class="big">⑥ 室內牆壁與門</h2>
      <h2>樓層圖層（每一層各有獨立平面，避免圖面重疊）</h2><div class="seg" id="floorTabs" style="grid-template-columns:repeat(auto-fit,minmax(46px,1fr))"></div>
      <div class="quick"><button id="copyFloor">複製此層的牆到其他樓層</button></div>
      <div class="quick"><button id="addWallX">＋ 橫牆（沿 X）</button><button id="addWallZ">＋ 直牆（沿 Z）</button></div>
@@ -208,14 +221,14 @@ button.edgeLbl.on{border-color:var(--cy);color:var(--cy);background:var(--sel)}
      <div id="f5"></div><div data-advanced id="iwWrap"><div id="iwList"></div></div>
      <div class="hint">右側平面圖：拖曳牆壁可移動位置，拖曳綠色門可沿牆滑動。門會在每層樓重複。</div>
 </section>
-   <section data-step="6"><h2 class="big">⑥ 樓梯（室內＋戶外）</h2>
+   <section data-step="7"><h2 class="big">⑦ 樓梯（室內＋戶外）</h2>
      <h2>室內樓梯（每層樓可獨立開關）</h2><div id="stairList"></div>
      <h2>戶外樓梯（從地面通到某一層樓的陽台／入口平台）</h2><div id="outStairList"></div>
      <div class="quick" id="outAddBtns"></div>
      <div class="hint">🪜 平面圖上可拖曳室內樓梯。台灣住宅常見：級高 16～20cm、級深 25～28cm、梯寬 ≥75cm（共用梯 ≥120cm）、扶手高約 90cm、欄杆間距 ≤11cm。按卡片上的「台灣住宅標準」會依你的樓高換算成模型尺寸。</div></section>
-   <section data-step="7"><h2 class="big">⑦ 地板紋路</h2>
+   <section data-step="8"><h2 class="big">⑧ 地板紋路</h2>
      <div id="f7"></div><div id="floorInfo" class="hint" style="white-space:pre-line"></div></section>
-   <section data-step="8"><h2 class="big">⑧ 輸出模式</h2>
+   <section data-step="9"><h2 class="big">⑨ 輸出模式</h2>
      <div class="seg" id="printSeg" style="grid-template-columns:1fr 1fr 1fr"></div>
      <div id="roofOutWrap" style="display:none"><h2>屋頂輸出方式（屋頂已分離）</h2><div class="seg" id="roofOutSeg" style="grid-template-columns:1fr 1fr 1fr"></div>
       <h2>匯出哪一部分</h2><div class="seg" id="partSeg" style="grid-template-columns:1fr 1fr 1fr"></div></div>
@@ -268,7 +281,7 @@ const P={mode:'lamp',step:1,roof:'gable',print:'fdm',width:100,depth:100,wallH:2
  winW:14,winH:12,winSill:5,winRows:1,winGap:4,nFront:2,nBack:1,nLeft:1,nRight:1,winWall:{front:true,back:false,left:true,right:true},winStyle:'fixed',winManual:null,
  skins:{},skinType:'brick',skinRelief:0.8,skinScale:1,skinRes:'0.5',skinResOut:'0.3',skinAge:0,skinSeed:7,roofAge:0,snapOn:true,snapTH:4,tool:'face',
  iwalls:[],iwT:1.6,planFloor:0,elevFloor:'all',annex:[],
- stairs:[],outStairs:[],floorTex:'none',tileL:8,tileW:8,tileL2:0,tileW2:0,tileOff:50,tileJoint:0.6,tileRelief:0.4,tileSeed:3,tileLevels:'all',doorOn:false,doorLeaf:false,doorType:'wood',doorHandle:'trumpet',winGlass:false,winBars:false,winBodyT:0.8,doorN:1,doorGap:4,doorDir:'right',doorFront:false,doorBack:false,doorLeft:false,doorRight:false,doorWall:'front',doorStyle:'single',doorW:14,doorH:18,doorC:0,floorOn:false,floorT:2,slabOn:false,roofScale:1,roofSplit:false,roofLift:0,roofOut:'same',exportPart:'all',frameOn:false,frameW:2,frameD:1.2,sillOn:true,
+ stairs:[],stepOff:[],outStairs:[],floorTex:'none',tileL:8,tileW:8,tileL2:0,tileW2:0,tileOff:50,tileJoint:0.6,tileRelief:0.4,tileSeed:3,tileLevels:'all',doorOn:false,doorLeaf:false,doorType:'wood',doorType2:'same',doorFrameOn:false,doorFrameW:1.4,doorTransomH:0,doorSide:0,doorCanopy:'none',doorCanopyD:5,doorStep:0,doorHandle:'trumpet',winGlass:false,winBars:false,winBodyT:0.8,doorN:1,doorGap:4,doorDir:'right',doorFront:false,doorBack:false,doorLeft:false,doorRight:false,doorWall:'front',doorStyle:'single',doorW:14,doorH:18,doorC:0,floorOn:false,floorT:2,slabOn:false,roofScale:1,roofSplit:false,roofLift:0,roofOut:'same',exportPart:'all',frameOn:false,frameW:2,frameD:1.2,sillOn:true,
  T:3,kerf:0.15,finger:8,sheetW:600,engrave:true,bedW:256,bedD:256,nozzle:0.4,
  plate:'brick',pw:80,ph:60,relief:0.8,pbase:1.5};
 const DEFAULT_P=JSON.parse(JSON.stringify(P));
@@ -276,9 +289,10 @@ const SKINRES_OUT={'0.5':'0.5mm（小檔）','0.3':'0.3mm（建議）','0.2':'0.
 const ROOFS={flat:'平頂',shed:'單斜',gable:'雙斜',hip:'四面斜',gambrel:'雙折（穀倉）',mansard:'複折（四面）'};
 const ROOFSTYLES={none:'無',asphalt:'瀝青瓦',clay:'陶瓦',slate:'石板瓦',metal:'金屬立縫板'};
 const ROOFSKIN={asphalt:'usShingle',clay:'clay',slate:'slate',metal:'metal'};
-const DOORTYPES={wood:'木門（含嵌板）',steel:'鐵門（平板＋加強肋）',grille:'鐵花門（欄杆）',glass:'玻璃門（框＋玻璃）',roller:'鐵捲門（含捲門盒）',sectional:'分節式車庫門',plain:'平板門'};
+const DOORTYPES={wood:'木門（含嵌板）',steel:'鐵門／不鏽鋼門（平板＋加強肋）',grille:'鐵花門（欄杆）',glass:'玻璃門（框＋玻璃）',french:'法式玻璃雙扇門（格條）',dutch:'上下分開門（Dutch door）',slider:'玻璃推拉門（鋁框）',shoji:'日式拉門（格柵＋紙）',screen:'紗門',louver:'百葉門',saloon:'彈簧門（半截）',barn:'穀倉滑門（Z 斜撐＋滑軌）',roller:'鐵捲門（含捲門盒）',sectional:'分節式車庫門',plain:'平板門'};
 const DOORHANDLES={trumpet:'喇叭鎖（球形）',lever:'把手鎖（橫把）',bar:'推拉直把',none:'不加門把'};
-const DOORSTYLES={single:'單扇門',double:'雙開門（中間門框）',arch:'拱形門'};
+const DOORSTYLES={single:'單扇門',double:'雙開門（中間門框）',mother:'子母門（一大一小）',arch:'拱形門'};
+const DOORCANOPY={none:'無',flat:'平板雨遮',pitch:'斜面雨遮',bracket:'平板雨遮＋斜撐'};
 const STAIRDIRS={'+x':'向右（+X）','-x':'向左（−X）','+z':'向前（+Z）','-z':'向後（−Z）'};
 const WINSTYLES={fixed:'固定窗（單片）',hung:'上下推拉窗',cross:'十字格窗',arch:'拱形窗'};
 const TOOLS={face:'選面',rect:'框選',poly:'畫線',edit:'調整區域'};
@@ -295,6 +309,7 @@ const F2G=[['gbBreak','折點位置（離屋脊）',0.25,0.8,0.01],['gbHeight','
 const F2H=[['ridgeCap','加屋脊蓋','chk'],['chimOn','加煙囪','chk'],['chimX','煙囪位置 X',-150,150,0.5],['chimZ','煙囪位置 Z',-150,150,0.5],['chimW','煙囪寬',3,40,0.5],['chimD','煙囪深',3,40,0.5],['chimH','煙囪高出屋面',2,40,0.5]];
 const F2B=[['roofRelief','屋頂紋路浮雕深度',0.2,3,0.05],['roofScale','屋頂紋路密度（倍率，小=更密）',0.2,3,0.05],['roofAge','屋頂舊化／裂痕程度',0,100,1]];
 const F2D=[['roofSplit','屋頂做成可拆卸獨立零件','chk'],['roofLift','預覽拉開距離（步驟②、⑥）',0,40,1]];
+const F4X=[['doorFrameOn','加門框（凸出外牆）','chk'],['doorFrameW','門框寬度',0.8,4,0.1],['doorTransomH','氣窗（門上方玻璃）高度（0=無）',0,16,0.5],['doorSide','側窗（門兩側玻璃）寬度（0=無）',0,16,0.5],['doorCanopy','門簷／雨遮','sel',DOORCANOPY],['doorCanopyD','雨遮凸出深度',2,14,0.5],['doorStep','門前階高度（0=無）',0,5,0.1]];
 const F3F=[['winGlass','生成窗戶玻璃片（外加零件，不改牆）','chk'],['winBars','生成窗扇框與窗格條','chk'],['winBodyT','窗戶本體厚度',0.4,2,0.1],['frameOn','加窗框（凸出外牆）','chk'],['frameW','窗框寬度',1,6,0.5],['frameD','窗框凸出量',0.5,4,0.1],['sillOn','加窗台（窗下凸出）','chk']];
 const F2C=[
  ['lampOn','產生燈孔','chk'],['lampTarget','裝在哪裡','sel',{floor:'地板（正確位置）',roof:'屋頂'}],['lampShape','形狀','sel',LAMPSHAPE],['lampLayout','排列','sel',LAMPLAYOUT],['lampN','每列數量',1,8,1],['lampRows','行數',1,6,1],['lampPos','位置','sel',LAMPPOS],['lampD','孔徑／邊長',1,120,0.5],
@@ -302,7 +317,7 @@ const F2C=[
 const F3S=[['snapOn','🧲 拖曳窗戶時自動吸附（按住 Shift 暫時反轉）','chk'],['snapTH','吸附距離（mm）',1,10,0.5]];
 const F3=[['winW','寬度',3,60,0.5],['winH','高度',3,60,0.5],['winSill','位置高度（0=門）',0,60,0.5],['winRows','每層上下排數',1,5,1],['winGap','排間距',1,30,0.5]];
 const F5=[['iwT','室內牆厚度',0.8,4,0.1]];
-const F3D=[['doorOn','加大門（主入口）','chk'],['doorWall','大門所在牆','sel',{front:'前牆 +Z',back:'後牆 −Z',left:'左牆 −X',right:'右牆 +X'}],['doorStyle','開口外形（單扇／雙開／拱形）','sel',DOORSTYLES],['doorLeaf','生成門板本體（外加零件，不改牆）','chk'],['doorType','門的款式','sel',DOORTYPES],['doorHandle','門把／鎖具','sel',DOORHANDLES],['doorN','同一面牆的門數量（並排）',1,4,1],['doorGap','門與門的間距',1,30,0.5],['doorDir','並排方向','sel',{right:'向右排',left:'向左排'}],['doorFront','另在前牆加一扇門','chk'],['doorBack','另在後牆加一扇門','chk'],['doorLeft','另在左牆加一扇門','chk'],['doorRight','另在右牆加一扇門','chk'],['doorW','大門寬度',8,40,0.5],['doorH','大門高度',10,70,0.5],['doorC','大門位置（沿牆，0=置中）',-150,150,0.5]];
+const F3D=[['doorOn','加大門（主入口）','chk'],['doorWall','大門所在牆','sel',{front:'前牆 +Z',back:'後牆 −Z',left:'左牆 −X',right:'右牆 +X'}],['doorStyle','開口外形（單扇／雙開／拱形）','sel',DOORSTYLES],['doorLeaf','生成門板本體（外加零件，不改牆）','chk'],['doorType','門的款式（也可點上方縮圖）','sel',DOORTYPES],['doorType2','其他牆的門款式','sel',{same:'同主門款式',...DOORTYPES}],['doorHandle','門把／鎖具','sel',DOORHANDLES],['doorN','同一面牆的門數量（並排）',1,4,1],['doorGap','門與門的間距',1,30,0.5],['doorDir','並排方向','sel',{right:'向右排',left:'向左排'}],['doorFront','另在前牆加一扇門','chk'],['doorBack','另在後牆加一扇門','chk'],['doorLeft','另在左牆加一扇門','chk'],['doorRight','另在右牆加一扇門','chk'],['doorW','大門寬度',8,40,0.5],['doorH','大門高度',10,70,0.5],['doorC','大門位置（沿牆，0=置中）',-150,150,0.5]];
 const F6=[
  ['#','雷射切割（板材）','laser'],
  ['T','板厚',1.5,10,0.5,'laser'],['kerf','刀縫補償',0,0.5,0.01,'laser'],
@@ -353,7 +368,7 @@ function addFields(el,fields){
   if(steps){steps.dataset.k=k;el.appendChild(steps);}}
 }
 const $=id=>document.getElementById(id);
-addFields($('f1'),F1);addFields($('f2'),F2);addFields($('f2e'),F2E);addFields($('f2g'),F2G);addFields($('f2h'),F2H);addFields($('f2b'),F2B);addFields($('f2c'),F2C);addFields($('f2d'),F2D);addFields($('f3f'),F3F);seg('roofOutSeg',{same:'跟隨本體','3d':'3D 列印',laser:'雷射切割'},'roofOut');seg('partSeg',{all:'全部',body:'本體',roof:'屋頂'},'exportPart');addFields($('f3'),F3);addFields($('f3s'),F3S);addFields($('f5'),F5);addFields($('f3d'),F3D);addFields($('f6'),F6);
+addFields($('f1'),F1);addFields($('f2'),F2);addFields($('f2e'),F2E);addFields($('f2g'),F2G);addFields($('f2h'),F2H);addFields($('f2b'),F2B);addFields($('f2c'),F2C);addFields($('f2d'),F2D);addFields($('f3f'),F3F);addFields($('f4x'),F4X);seg('roofOutSeg',{same:'跟隨本體','3d':'3D 列印',laser:'雷射切割'},'roofOut');seg('partSeg',{all:'全部',body:'本體',roof:'屋頂'},'exportPart');addFields($('f3'),F3);addFields($('f3s'),F3S);addFields($('f5'),F5);addFields($('f3d'),F3D);addFields($('f6'),F6);
 addFields($('pdims'),PFIELDS);
 
 // ---------- 共用幾何參數（建構座標：脊線沿 Z，W 為短邊）----------
@@ -556,8 +571,8 @@ function windowList(p){
 function doorEntry(p){
  if(!p.doorOn||p.plateMode)return null;
  const Hf=p.floorH||p.wallH,L=(p.doorWall==='front'||p.doorWall==='back')?p.width:p.depth;
- const w=Math.max(6,Math.min(p.doorW,L-2*p.wall-4)),h=Math.max(8,Math.min(p.doorH,Hf-1.5-(p.roofT||2)*1.6)),lim=(L-2*p.wall-w)/2-1;
- return {wall:p.doorWall,c:Math.max(-lim,Math.min(lim,p.doorC)),w,h,y0:0,style:p.doorStyle==='double'?'dbl':p.doorStyle==='arch'?'arch':'fixed',main:true};
+ const w=Math.max(6,Math.min(p.doorW,L-2*p.wall-4)),hMax=Hf-1.5-(p.roofT||2)*1.6,tr0=Math.max(0,+p.doorTransomH||0),h=Math.max(8,Math.min(p.doorH+tr0,hMax)),tr=Math.min(tr0,Math.max(0,h-8)),lim=(L-2*p.wall-w)/2-1;
+ return {wall:p.doorWall,c:Math.max(-lim,Math.min(lim,p.doorC)),w,h,y0:0,style:p.doorStyle==='double'?'dbl':p.doorStyle==='arch'?'arch':'fixed',main:true,tr,lf:p.doorStyle==='mother'?'mother':''};
 }
 // 多扇門：同一面牆可並排 1~4 扇（第 1 扇為可拖曳的主門），其他牆可各加一扇置中的門
 function doorEntries(p){
@@ -566,7 +581,10 @@ function doorEntries(p){
  for(let k=1;k<n;k++){const c=d0.c+k*(d0.w+gap)*(p.doorDir==='left'?-1:1);if(Math.abs(c)<=lim+0.01)out.push({...d0,c,extra:true});}
  for(const [wall,key] of [['front','doorFront'],['back','doorBack'],['left','doorLeft'],['right','doorRight']]){
   if(!p[key]||wall===d0.wall)continue;
-  const L2=(wall==='front'||wall==='back')?p.width:p.depth,w=Math.max(6,Math.min(d0.w,L2-2*p.wall-4));out.push({...d0,wall,c:0,w,extra:true});}
+  const L2=(wall==='front'||wall==='back')?p.width:p.depth,w=Math.max(6,Math.min(d0.w,L2-2*p.wall-4));out.push({...d0,wall,c:0,w,extra:true,ow:true});}
+ const sw=+p.doorSide||0;
+ if(sw>=2){const gap=(p.doorFrameOn?(+p.doorFrameW||1.4):0)+1.2,sh=Math.max(6,(d0.h-d0.tr)*0.78),y0=Math.min(2,d0.h-sh-1);
+  for(const sg of [-1,1]){const c=d0.c+sg*(d0.w/2+gap+sw/2);if(Math.abs(c)+sw/2<=lim+d0.w/2+0.5)out.push({wall:d0.wall,c,w:sw,h:y0+sh,y0,style:'fixed',main:false,side:true,extra:true});}}
  return out;
 }
 // 窗戶外形在牆面座標（u 沿牆、y 向上）的多邊形（供雷射平面圖）
@@ -1053,7 +1071,7 @@ function buildSkinLayers(face,layers,Pe,res){
 function skinLayersFor(f){
  const out=[];
  if(P.roofStyle!=='none'&&Math.abs(f.n[1])>=0.05&&!(P.noRoofSkin||[]).includes(f.name))out.push({type:ROOFSKIN[P.roofStyle],relief:+P.roofRelief,scale:+P.roofScale||1,age:+P.roofAge||0,seed:+P.skinSeed||7,regions:null});
- const u=P.skins[f.name];if(u)out.push(...(Array.isArray(u)?u:[u]));
+ const u=stepOn(5)?P.skins[f.name]:null;if(u)out.push(...(Array.isArray(u)?u:[u]));
  return out;
 }
 // ---------- 分片列印（牆壁一片一片平放）與獨立紋理薄片 ----------
@@ -1139,7 +1157,7 @@ let hoverMesh=null;
 function setHover(name,e){
  if(hoverMesh){scene.remove(hoverMesh);hoverMesh.geometry.dispose();hoverMesh=null;}
  const tip=$('hoverTip');
- if(!name||P.step!==4){tip.style.display='none';ren.domElement.style.cursor='';return;}
+ if(!name||P.step!==5){tip.style.display='none';ren.domElement.style.cursor='';return;}
  const f=FACES.find(x=>x.name===name);if(!f)return;
  hoverMesh=new THREE.Mesh(polyGeo(f,0.25),hovMat);scene.add(hoverMesh);
  const r=view.getBoundingClientRect(),ls=skinLayersFor(f);tip.textContent=name+(ls.length?`（${ls.length} 層貼皮）`:'')+(SEL.has(name)?' ✓':'');
@@ -1148,7 +1166,7 @@ function setHover(name,e){
 function renderSel(){
  clearGroup(selGroup);
  for(const f of FACES)if(SEL.has(f.name))selGroup.add(new THREE.Mesh(polyGeo(f,0.2),selMat));
- renderChips();renderRegion3D();renderRegEdit();if(P.step===4&&viewMode!=='3d')renderFlat();
+ renderChips();renderRegion3D();renderRegEdit();if(P.step===5&&viewMode!=='3d')renderFlat();
 }
 function renderChips(){
  const el=$('skinChips');el.innerHTML='';
@@ -1205,8 +1223,8 @@ const ray=new THREE.Raycaster(),mv2=new THREE.Vector2();let downXY=null;
 function pickAt(ev){const r=ren.domElement.getBoundingClientRect();mv2.set((ev.clientX-r.left)/r.width*2-1,-((ev.clientY-r.top)/r.height)*2+1);
  ray.setFromCamera(mv2,cam);const h=ray.intersectObjects(pickMeshes,false)[0];return h?h.object.userData.name:null;}
 ren.domElement.addEventListener('pointerdown',e=>{downXY=[e.clientX,e.clientY];});
-ren.domElement.addEventListener('pointerup',e=>{if(!downXY||e.button!==0||P.step!==4)return;const mvd=Math.hypot(e.clientX-downXY[0],e.clientY-downXY[1]);downXY=null;if(mvd>4)return;const n=pickAt(e);if(n)toggleSel(n);});
-ren.domElement.addEventListener('pointermove',e=>{if(e.buttons)return;setHover(P.step===4?pickAt(e):null,e);});
+ren.domElement.addEventListener('pointerup',e=>{if(!downXY||e.button!==0||P.step!==5)return;const mvd=Math.hypot(e.clientX-downXY[0],e.clientY-downXY[1]);downXY=null;if(mvd>4)return;const n=pickAt(e);if(n)toggleSel(n);});
+ren.domElement.addEventListener('pointermove',e=>{if(e.buttons)return;setHover(P.step===5?pickAt(e):null,e);});
 ren.domElement.addEventListener('pointerleave',()=>setHover(null));
 document.querySelectorAll('#quickSel [data-q]').forEach(b=>b.onclick=()=>{
  const q=b.dataset.q;SEL.clear();
@@ -1252,7 +1270,7 @@ function patSwatch(type,scale,age,seed,relief,size,mm){
 let swSig='';
 function refreshSwatches(force){
  const el=$('swatches');if(!el)return;
- if(P.step!==4&&!force){return;} // 只在貼皮步驟才產生縮圖，省記憶體
+ if(P.step!==5&&!force){return;} // 只在貼皮步驟才產生縮圖，省記憶體
  const sig=[P.skinScale,P.skinAge,P.skinSeed,P.skinRelief].join('|');
  if(!force&&sig===swSig&&el.children.length){el.querySelectorAll('.sw').forEach(b=>b.classList.toggle('on',b.dataset.t===P.skinType));return;}
  swSig=sig;el.innerHTML='';
@@ -2184,43 +2202,111 @@ function buildWinBodies(p){
  }
  return out;
 }
-function leafParts(type,cx,W,H,tl,cz,arch){
- const L=[],top=cz+tl/2,dz=0.4,zc=top+dz/2,y0=0;
- const slab=()=>{if(arch&&H>W/2+2){const r=W/2,bh=H-r,pts=[[cx-r,0],[cx-r,bh]];for(let i=1;i<16;i++){const a=Math.PI-Math.PI*i/16;pts.push([cx+r*Math.cos(a),bh+r*Math.sin(a)]);}pts.push([cx+r,bh],[cx+r,0]);return lpoly(pts,cz,tl);}return lbox(cx,H/2,cz,W,H,tl);};
- const m=1.3;
+// ---------- 門板本體（多種款式）與門的外加零件（門框、氣窗、側窗、門簷、門階）----------
+function lglass(cx,y0,y1,w,cz,t){return lbox(cx,(y0+y1)/2,cz,w,y1-y0,t);}
+function ringBars(cx,W,H,b,cz,tl,y0){y0=y0||0;return [lbox(cx,y0+H-b/2,cz,W,b,tl),lbox(cx,y0+b/2,cz,W,b,tl),lbox(cx-W/2+b/2,y0+H/2,cz,b,H,tl),lbox(cx+W/2-b/2,y0+H/2,cz,b,H,tl)];}
+function leafParts(type,cx,W,H,tl,cz,arch,y0){
+ y0=y0||0;const L=[],top=cz+tl/2,dz=0.4,zc=top+dz/2,m=1.3;
+ const slab=()=>{if(arch&&H>W/2+2){const r=W/2,bh=H-r,pts=[[cx-r,0],[cx-r,bh]];for(let i=1;i<16;i++){const a=Math.PI-Math.PI*i/16;pts.push([cx+r*Math.cos(a),bh+r*Math.sin(a)]);}pts.push([cx+r,bh],[cx+r,0]);return lpoly(pts,cz,tl);}return lbox(cx,y0+H/2,cz,W,H,tl);};
+ if(arch&&!['wood','plain','steel','sectional','glass'].includes(type))type='wood';
  if(type==='plain')L.push(slab());
  else if(type==='wood'){L.push(slab());const cols=W>=9?2:1,rows=H>=14?2:1,gx=1.0,pw=(W-2*m-(cols-1)*gx)/cols,gy=1.0,ph=(H-2*m-(rows-1)*gy)/rows;
-  if(pw>1&&ph>1)for(let i=0;i<cols;i++)for(let j=0;j<rows;j++)L.push(lbox(cx-W/2+m+pw/2+i*(pw+gx),m+ph/2+j*(ph+gy),zc,pw,ph,dz));}
- else if(type==='steel'){L.push(slab());const n=Math.max(2,Math.round(H/6));for(let j=1;j<n;j++)L.push(lbox(cx,j*H/n,zc,W-1.2,0.8,dz));L.push(lbox(cx-W/2+0.6,H/2,zc,1.2,H,dz),lbox(cx+W/2-0.6,H/2,zc,1.2,H,dz));}
- else if(type==='grille'){const b=1.0;L.push(lbox(cx,H-b/2,cz,W,b,tl),lbox(cx,b/2,cz,W,b,tl),lbox(cx-W/2+b/2,H/2,cz,b,H,tl),lbox(cx+W/2-b/2,H/2,cz,b,H,tl),lbox(cx,H/2,cz,W,b,tl));
-  const n=Math.max(1,Math.round(W/2.4));for(let i=1;i<n;i++)L.push(lbox(cx-W/2+i*W/n,H/2,cz,0.7,H-2*b,tl));}
- else if(type==='glass'){const b=1.6;L.push(lbox(cx,H-b/2,cz,W,b,tl),lbox(cx,b/2,cz,W,b,tl),lbox(cx-W/2+b/2,H/2,cz,b,H,tl),lbox(cx+W/2-b/2,H/2,cz,b,H,tl),lbox(cx,H/2,cz,W-2*b+0.2,H-2*b+0.2,0.6));}
- else if(type==='roller'){const sh=1.2,gp=0.25,n=Math.floor(H/(sh+gp));for(let j=0;j<n;j++)L.push(lbox(cx,j*(sh+gp)+sh/2,cz,W-2,sh,tl*0.8));L.push(lbox(cx-W/2+0.5,H/2,cz,1,H,tl),lbox(cx+W/2-0.5,H/2,cz,1,H,tl),lbox(cx,H+1,cz+0.6,W+2,2,tl+1.6));}
- else if(type==='sectional'){L.push(slab());const n=4;for(let j=1;j<n;j++)L.push(lbox(cx,j*H/n,zc,W,0.5,dz));const wn=Math.max(2,Math.round(W/8));for(let i=0;i<wn;i++)L.push(lbox(cx-W/2+(i+0.5)*W/wn,H*0.86,zc,W/wn*0.55,H*0.1,dz));}
+  if(pw>1&&ph>1)for(let i=0;i<cols;i++)for(let j=0;j<rows;j++)L.push(lbox(cx-W/2+m+pw/2+i*(pw+gx),y0+m+ph/2+j*(ph+gy),zc,pw,ph,dz));}
+ else if(type==='steel'){L.push(slab());const n=Math.max(2,Math.round(H/6));for(let j=1;j<n;j++)L.push(lbox(cx,y0+j*H/n,zc,W-1.2,0.8,dz));L.push(lbox(cx-W/2+0.6,y0+H/2,zc,1.2,H,dz),lbox(cx+W/2-0.6,y0+H/2,zc,1.2,H,dz));}
+ else if(type==='grille'){const b=1.0;L.push(...ringBars(cx,W,H,b,cz,tl,y0),lbox(cx,y0+H/2,cz,W,b,tl));const n=Math.max(1,Math.round(W/2.4));for(let i=1;i<n;i++)L.push(lbox(cx-W/2+i*W/n,y0+H/2,cz,0.7,H-2*b,tl));}
+ else if(type==='glass'){const b=1.6;L.push(...ringBars(cx,W,H,b,cz,tl,y0),lbox(cx,y0+H/2,cz,W-2*b+0.2,H-2*b+0.2,0.6));}
+ else if(type==='roller'){const sh=1.2,gp=0.25,n=Math.floor(H/(sh+gp));for(let j=0;j<n;j++)L.push(lbox(cx,y0+j*(sh+gp)+sh/2,cz,W-2,sh,tl*0.8));L.push(lbox(cx-W/2+0.5,y0+H/2,cz,1,H,tl),lbox(cx+W/2-0.5,y0+H/2,cz,1,H,tl),lbox(cx,y0+H+1,cz+0.6,W+2,2,tl+1.6));}
+ else if(type==='sectional'){L.push(slab());const n=4;for(let j=1;j<n;j++)L.push(lbox(cx,y0+j*H/n,zc,W,0.5,dz));const wn=Math.max(2,Math.round(W/8));for(let i=0;i<wn;i++)L.push(lbox(cx-W/2+(i+0.5)*W/wn,y0+H*0.86,zc,W/wn*0.55,H*0.1,dz));}
+ else if(type==='french'){const b=1.4;L.push(...ringBars(cx,W,H,b,cz,tl,y0),lglass(cx,y0+b-0.1,y0+H-b+0.1,W-2*b+0.2,cz,0.5));
+  const cols=Math.max(1,Math.round(W/4)),rows=Math.max(2,Math.round(H/5));
+  for(let i=1;i<cols;i++)L.push(lbox(cx-W/2+b+i*(W-2*b)/cols,y0+H/2,zc-0.1,0.5,H-2*b,0.5));
+  for(let j=1;j<rows;j++)L.push(lbox(cx,y0+b+j*(H-2*b)/rows,zc-0.1,W-2*b,0.5,0.5));}
+ else if(type==='dutch'){const g=0.3,hm=H/2;L.push(lbox(cx,y0+(hm-g)/2,cz,W,hm-g,tl));const b=1.3,y1=y0+hm+g;L.push(...ringBars(cx,W,H-hm-g,b,cz,tl,y1),lglass(cx,y1+b-0.1,y0+H-b+0.1,W-2*b+0.2,cz,0.5));L.push(lbox(cx,y0+hm,top+0.5,W+0.8,0.6,1.4));}
+ else if(type==='slider'){const pw=W*0.56,b=1.2;for(const [dx,off] of [[-W*0.22,-tl*0.22],[W*0.22,tl*0.22]]){L.push(...ringBars(cx+dx,pw,H-1.2,b,cz+off,tl*0.5,y0+0.6),lglass(cx+dx,y0+0.6+b-0.1,y0+H-0.6-b+0.1,pw-2*b+0.2,cz+off,0.4));}
+  L.push(lbox(cx,y0+0.3,cz,W,0.6,tl),lbox(cx,y0+H-0.3,cz,W,0.6,tl));}
+ else if(type==='shoji'){const b=1.1;L.push(...ringBars(cx,W,H,b,cz,tl,y0),lbox(cx,y0+H/2,cz-0.1,W-2*b+0.2,H-2*b+0.2,0.35));
+  const cols=Math.max(2,Math.round(W/4)),rows=Math.max(3,Math.round(H/4.5));
+  for(let i=1;i<cols;i++)L.push(lbox(cx-W/2+i*W/cols,y0+H/2,zc,0.5,H-2*b,0.5));for(let j=1;j<rows;j++)L.push(lbox(cx,y0+j*H/rows,zc,W-2*b,0.5,0.5));}
+ else if(type==='screen'){const b=1.0;L.push(...ringBars(cx,W,H,b,cz,0.9,y0),lbox(cx,y0+H*0.45,cz,W,b,0.9),lbox(cx,y0+H*0.12,cz,W-1,H*0.22,0.7));
+  const n=Math.max(2,Math.round(W/1.3));for(let i=1;i<n;i++)L.push(lbox(cx-W/2+i*W/n,y0+H*0.7,cz,0.35,H*0.5,0.4));}
+ else if(type==='louver'){const b=1.4;L.push(...ringBars(cx,W,H,b,cz,tl,y0));const n=Math.max(2,Math.floor((H-2*b)/1.7));
+  for(let j=0;j<n;j++){const y=y0+b+(j+0.5)*(H-2*b)/n;L.push(segB([cx,y-0.5,cz-tl*0.4],[cx,y+0.5,cz+tl*0.4],0.35,W-2*b+0.4));}}
+ else if(type==='saloon'){const hh=H*0.62,ya=y0+H*0.2;L.push(...ringBars(cx,W,hh,1.2,cz,tl,ya));const n=Math.max(3,Math.floor((hh-2.4)/1.5));
+  for(let j=0;j<n;j++){const y=ya+1.2+(j+0.5)*(hh-2.4)/n;L.push(segB([cx,y-0.4,cz-tl*0.35],[cx,y+0.4,cz+tl*0.35],0.3,W-2.4));}}
+ else if(type==='barn'){const sw=W+3,hh=H+1.2,bz=0.9,t2=1.2;L.push(lbox(cx,y0+hh/2,bz,sw,hh,t2));
+  L.push(lbox(cx,y0+hh-0.9,bz+0.7,sw,1.5,0.5),lbox(cx,y0+0.9,bz+0.7,sw,1.5,0.5),lbox(cx,y0+hh/2,bz+0.7,sw,1.5,0.5));
+  L.push(segB([cx-sw/2+1,y0+1.2,bz+0.8],[cx+sw/2-1,y0+hh-1.2,bz+0.8],1.4,0.5));
+  L.push(lbox(cx,y0+hh+1.6,bz+0.6,W*2+4,0.8,0.8),lbox(cx-sw/3,y0+hh+0.9,bz+0.3,0.8,1.4,0.8),lbox(cx+sw/3,y0+hh+0.9,bz+0.3,0.8,1.4,0.8));}
  return L;
 }
+function doorHandlePieces(hd,x,hy,zb,dbl){
+ const L=[];if(hd==='none')return L;
+ L.push(lcyl(x,hy,zb+0.2,1.5,1.5,0.4));
+ if(hd==='trumpet')L.push(lcyl(x,hy,zb+1.4,0.55,1.1,2.0),lcyl(x,hy,zb+2.7,1.15,0.55,0.6));
+ else if(hd==='lever'){const sd=dbl?(x<0?1.6:-1.6):-1.6;L.push(lcyl(x,hy,zb+0.9,0.5,0.5,1.0),lbox(x+sd,hy,zb+1.4,3.4,0.7,0.7));}
+ else if(hd==='bar')L.push(lbox(x,hy,zb+1.4,0.8,6,0.8),lbox(x,hy+2.4,zb+0.7,0.8,0.8,1.0),lbox(x,hy-2.4,zb+0.7,0.8,0.8,1.0));
+ return L;
+}
+const NOHANDLE=['roller','sectional','saloon','louver','screen'];
+const FORCEDBL=['french','saloon'];
 function buildDoorLeaves(p){
  if(p.plateMode||!p.doorOn||!p.doorLeaf)return [];
- const out=[],type=p.doorType||'wood',hd=p.doorHandle||'trumpet',tl=Math.min(1.4,p.wall*0.8),cz=-p.wall/2;
+ const out=[],hd=p.doorHandle||'trumpet',tl=Math.min(1.4,p.wall*0.8),cz=-p.wall/2;
  for(const dd of doorEntries(p)){
-  const W=dd.w,H=dd.h,dbl=dd.style==='dbl',arch=dd.style==='arch',loc=[],top=cz+tl/2;
-  const leaves=dbl?[[-(W/4+0.2),W/2-0.4,-1],[(W/4+0.2),W/2-0.4,1]]:[[0,W,1]];
-  for(const [cx,w,side] of leaves)loc.push(...leafParts(type,cx,w,H,tl,cz,arch&&!dbl));
-  const solid=['wood','steel','plain','sectional','glass'].includes(type);
-  if(hd!=='none'&&type!=='roller'&&type!=='sectional'){
-   const hy=Math.min(H*0.5,H-3);
-   const hx=dbl?[(0.4+2.0)*-1,(0.4+2.0)]:[W/2-2.4];
-   for(const x of hx){
-    const zb=top+(type==='wood'||type==='steel'?0.4:0);
-    loc.push(lcyl(x,hy,zb+0.2,1.5,1.5,0.4));
-    if(hd==='trumpet'){loc.push(lcyl(x,hy,zb+1.4,0.55,1.1,2.0),lcyl(x,hy,zb+2.7,1.15,0.55,0.6));}
-    else if(hd==='lever'){loc.push(lcyl(x,hy,zb+0.9,0.5,0.5,1.0),lbox(x+(x<0?1.6:-1.6)*0+(dbl?(x<0?1.6:-1.6):-1.6),hy,zb+1.4,3.4,0.7,0.7));}
-    else if(hd==='bar'){loc.push(lbox(x,hy,zb+1.4,0.8,6,0.8),lbox(x,hy+2.4,zb+0.7,0.8,0.8,1.0),lbox(x,hy-2.4,zb+0.7,0.8,0.8,1.0));}
-   }
+  const W=dd.w,Ht=dd.h,tr=dd.tr||0,H=Ht-tr,loc=[],top=cz+tl/2;
+  if(dd.side){loc.push(...ringBars(0,W,Ht-dd.y0,1.0,cz,tl,dd.y0),lglass(0,dd.y0+0.9,Ht-0.9,W-1.8+0.2,cz,0.5));for(const g of loc)out.push(placeLocal(g,p,dd));continue;}
+  const type=dd.ow&&p.doorType2&&p.doorType2!=='same'?p.doorType2:(p.doorType||'wood'),arch=dd.style==='arch';
+  let leaves;
+  if(dd.style==='dbl'||FORCEDBL.includes(type))leaves=[[-(W/4+0.2),W/2-0.4,-1],[(W/4+0.2),W/2-0.4,1]];
+  else if(dd.lf==='mother'){const big=W*0.66,sm=W-big-0.4;leaves=[[-W/2+big/2,big,-1],[W/2-sm/2,sm,1]];}
+  else leaves=[[0,W,1]];
+  for(const [cx,w] of leaves)loc.push(...leafParts(type,cx,w,H,tl,cz,arch&&leaves.length===1));
+  if(tr>0.8){const b=1.0;loc.push(lbox(0,H+b/2,cz,W,b,tl),lglass(0,H+b-0.05,Ht-0.0,W-0.2,cz,0.5));if(W>10)loc.push(lbox(0,H+tr/2,cz,0.8,tr,tl*0.7));}
+  if(!NOHANDLE.includes(type)&&hd!=='none'){
+   const hy=Math.min(H*0.5,H-3),zb=top+(['wood','steel'].includes(type)?0.4:0);
+   const xs=leaves.length>1?(leaves.length===2&&dd.lf==='mother'?[leaves[0][0]+leaves[0][1]/2-2.0,leaves[1][0]-leaves[1][1]/2+1.6]:[-2.4,2.4]):[W/2-2.4];
+   for(const x of xs)loc.push(...doorHandlePieces(hd,x,hy,type==='barn'?2.2:zb,leaves.length>1));
   }
   for(const g of loc)out.push(placeLocal(g,p,dd));
  }
  return out;
+}
+function buildDoorExtras(p){
+ if(p.plateMode||!p.doorOn)return [];
+ const out=[];
+ for(const dd of doorEntries(p)){
+  if(dd.side)continue;
+  const W=dd.w,Ht=dd.h,loc=[];
+  const fw=Math.max(0.8,+p.doorFrameW||1.4);
+  if(p.doorFrameOn){const d=0.8,zc=0.1;loc.push(lbox(0,Ht+fw/2,zc,W+2*fw,fw,d),lbox(-(W/2+fw/2),Ht/2,zc,fw,Ht,d),lbox(W/2+fw/2,Ht/2,zc,fw,Ht,d));}
+  const cd=+p.doorCanopyD||5,cy=Ht+(p.doorFrameOn?fw:0)+1.2,cw=W+2*(p.doorFrameOn?fw:0)+5;
+  if(p.doorCanopy==='flat'||p.doorCanopy==='bracket'){loc.push(lbox(0,cy,cd/2,cw,0.9,cd));}
+  if(p.doorCanopy==='pitch'){loc.push(segB([0,cy+1.6,0.2],[0,cy-0.4,cd],0.8,cw));}
+  if(p.doorCanopy==='bracket'){for(const sx of [-1,1])loc.push(segB([sx*(cw/2-0.8),cy-3.2,0.2],[sx*(cw/2-0.8),cy-0.5,cd-0.4],0.7,0.8));}
+  if(+p.doorStep>0){const sh=+p.doorStep,sd=Math.max(3,sh*2.2+1);loc.push(lbox(0,sh/2,sd/2,W+4,sh,sd));}
+  for(const g of loc)out.push(placeLocal(g,p,dd));
+ }
+ return out;
+}
+// 門型縮圖（選擇器用）
+function doorThumb(t,on){
+ const c=on?'#0a74d6':'#7a8a9c',f=on?'#dbeafe':'#f1f5f9',P_=(d)=>`<path d="${d}" fill="none" stroke="${c}" stroke-width="1"/>`;
+ let s=`<rect x="3" y="2" width="24" height="38" fill="${f}" stroke="${c}" stroke-width="1.6"/>`;
+ if(t==='wood')s+=P_('M7 6h7v13H7zM16 6h7v13h-7zM7 22h7v14H7zM16 22h7v14h-7z');
+ else if(t==='steel')s+=P_('M5 12h20M5 22h20M5 32h20')+`<circle cx="21" cy="7" r="1.2" fill="${c}"/>`;
+ else if(t==='grille')s+=P_('M8 3v37M12 3v37M16 3v37M20 3v37M5 20h20');
+ else if(t==='glass'||t==='french')s+=P_('M7 6h16v30H7z')+(t==='french'?P_('M15 6v30M7 14h16M7 22h16M7 30h16'):'');
+ else if(t==='roller')s+=P_('M4 8h22M4 12h22M4 16h22M4 20h22M4 24h22M4 28h22M4 32h22M4 36h22');
+ else if(t==='sectional')s+=P_('M3 12h24M3 22h24M3 32h24M7 5h4M13 5h4M19 5h4');
+ else if(t==='plain')s+='';
+ else if(t==='barn')s+=P_('M3 3h24M5 8h20v30H5zM5 8l20 30M5 24h20');
+ else if(t==='dutch')s+=P_('M6 4h18v14H6zM3 21h24M6 24h18v14H6z');
+ else if(t==='slider')s+=P_('M3 4h14v34H3zM13 4h14v34H13z');
+ else if(t==='shoji')s+=P_('M7 6h16v30H7zM12 6v30M18 6v30M7 14h16M7 22h16M7 30h16');
+ else if(t==='screen')s+=P_('M6 5h18v32H6zM6 22h18')+P_('M9 5v17M12 5v17M15 5v17M18 5v17M21 5v17');
+ else if(t==='louver')s+=P_('M6 6l18 2M6 11l18 2M6 16l18 2M6 21l18 2M6 26l18 2M6 31l18 2');
+ else if(t==='saloon')s+=P_('M5 14h9v16H5zM16 14h9v16h-9z')+P_('M7 17l5 2M7 22l5 2M18 17l5 2M18 22l5 2');
+ return `<svg viewBox="0 0 30 42" width="34" height="46" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
 }
 // 屋頂分離：在牆頂線（平頂為頂板下緣）把外殼切成「本體」與「屋頂」
 function splitRoofCSG(g,p){
@@ -2243,22 +2329,39 @@ function setView(m){viewMode=m;
  $('zoomBar').style.display=m==='3d'?'none':'flex';
  if(m!=='3d')renderFlat();updateInset();}
 document.querySelectorAll('#vsw button').forEach(b=>b.onclick=()=>setView(b.dataset.v));
-const STEPS=[[1,'樓層'],[2,'屋頂'],[3,'窗戶'],[4,'貼皮'],[5,'室內'],[6,'樓梯'],[7,'地板'],[8,'輸出']];
-for(const [n,t] of STEPS){const b=document.createElement('button');b.className='stb';b.dataset.s=n;b.innerHTML=`<i>${n}</i>${t}`;b.onclick=()=>goStep(n);$('stepbar').appendChild(b);}
+const STEPS=[[1,'樓層'],[2,'屋頂'],[3,'窗戶'],[4,'門'],[5,'貼皮'],[6,'室內'],[7,'樓梯'],[8,'地板'],[9,'輸出']];
+const STEP_LOCKED=[1,2,9],stepOn=n=>!(P.stepOff||[]).includes(n);
+function setStepOn(n,on){P.stepOff=(P.stepOff||[]).filter(x=>x!==n);if(!on&&!STEP_LOCKED.includes(n))P.stepOff.push(n);if(!on&&n===P.step){}sync();}
+function stepPatch(){const o={};
+ if(!stepOn(3))o.winManual=[];
+ if(!stepOn(4))o.doorOn=false;
+ if(!stepOn(6))o.iwalls=[];
+ if(!stepOn(7)){o.stairs=[];o.outStairs=[];}
+ if(!stepOn(8))o.floorTex='none';
+ return o;}
+function nextEnabled(dir){let n=P.step+dir;while(n>1&&n<9&&!stepOn(n))n+=dir;return Math.max(1,Math.min(9,n));}
+for(const [n,t] of STEPS){const b=document.createElement('button');b.className='stb';b.dataset.s=n;
+ b.innerHTML=`<input type="checkbox" class="stk" title="${STEP_LOCKED.includes(n)?'必要步驟（不能取消）':'取消勾選＝這個步驟不套用到模型'}" ${STEP_LOCKED.includes(n)?'disabled':''} checked><i>${n}</i>${t}`;
+ b.onclick=()=>goStep(n);
+ const k=b.querySelector('.stk');k.onclick=e=>e.stopPropagation();k.onchange=()=>setStepOn(n,k.checked);
+ $('stepbar').appendChild(b);}
+document.querySelectorAll('section[data-step]').forEach(sec=>{const n=+sec.dataset.step;if(STEP_LOCKED.includes(n))return;
+ const bar=document.createElement('div');bar.className='offBar';bar.innerHTML='⛔ 這個步驟已取消勾選：不會套用到模型。<button>重新啟用</button>';bar.querySelector('button').onclick=()=>setStepOn(n,true);
+ sec.insertBefore(bar,sec.children[1]||null);});
 function goStep(n){
- P.step=Math.max(1,Math.min(8,n));
+ P.step=Math.max(1,Math.min(9,n));
  setView(defaultView());
  sync();
 }
-$('prevStep').onclick=()=>goStep(P.step-1);$('nextStep').onclick=()=>goStep(P.step+1);
+$('prevStep').onclick=()=>goStep(nextEnabled(-1));$('nextStep').onclick=()=>goStep(nextEnabled(1));
 function renderFlat(){
  if(viewMode==='3d'||P.mode==='plate')return;
  const el=$('flat');
- if(P.step===3)el.innerHTML=renderWinElev();
- else if(P.step===4)el.innerHTML=renderSkinFlat();
- else if(P.step===5||P.step===6)el.innerHTML=renderPlan();
- else if(P.step===7)el.innerHTML=renderFloorFlat();
- else if(P.step===8&&P.print==='laser'&&lay)el.innerHTML=layoutSVG(lay,true);
+ if(P.step===3||P.step===4)el.innerHTML=renderWinElev();
+ else if(P.step===5)el.innerHTML=renderSkinFlat();
+ else if(P.step===6||P.step===7)el.innerHTML=renderPlan();
+ else if(P.step===8)el.innerHTML=renderFloorFlat();
+ else if(P.step===9&&P.print==='laser'&&lay)el.innerHTML=layoutSVG(lay,true);
  else el.innerHTML='';
  applyZoom();
 }
@@ -2482,17 +2585,17 @@ addEventListener('keydown',e=>{if(e.code==='Space'&&!['input','select','textarea
 addEventListener('keyup',e=>{if(e.code==='Space'){spaceDown=false;if(!PANS)flatEl.style.cursor='';}});
 const cap=e=>{try{flatEl.setPointerCapture(e.pointerId);}catch(_){}};
 flatEl.addEventListener('pointerdown',e=>{
- if(P.step===3){elevDown(e);if(WDRAG)cap(e);}
- else if(P.step===4){skinFlatDown(e);if(DRAW&&DRAW.tool==='rect'||RDRAG)cap(e);}
- else if(P.step===5||P.step===6){planDown(e);if(PDRAG)cap(e);}});
-flatEl.addEventListener('pointermove',e=>{if(P.step===3)elevMove(e);else if(P.step===4)skinFlatMove(e);else if(P.step===5||P.step===6)planMove(e);});
-flatEl.addEventListener('pointerup',e=>{if(P.step===3)elevUp(e);else if(P.step===4)skinFlatUp(e);else if(P.step===5||P.step===6)planUp(e);});
+ if(P.step===3||P.step===4){elevDown(e);if(WDRAG)cap(e);}
+ else if(P.step===5){skinFlatDown(e);if(DRAW&&DRAW.tool==='rect'||RDRAG)cap(e);}
+ else if(P.step===6||P.step===7){planDown(e);if(PDRAG)cap(e);}});
+flatEl.addEventListener('pointermove',e=>{if(P.step===3||P.step===4)elevMove(e);else if(P.step===5)skinFlatMove(e);else if(P.step===6||P.step===7)planMove(e);});
+flatEl.addEventListener('pointerup',e=>{if(P.step===3||P.step===4)elevUp(e);else if(P.step===5)skinFlatUp(e);else if(P.step===6||P.step===7)planUp(e);});
 addEventListener('keydown',e=>{
  const tag=(e.target.tagName||'').toLowerCase(),typing=tag==='input'||tag==='select'||tag==='textarea';
  if(e.key==='Enter'&&DRAW&&DRAW.tool==='poly'){finishDraw();return;}
  if(e.key==='Escape'&&DRAW){DRAW=null;renderFlat();return;}
  if(!typing&&P.step===3&&winSet.size&&P.winManual&&(e.key==='Delete'||e.key==='Backspace')){e.preventDefault();[...winSet].sort((a,b)=>b-a).forEach(i=>P.winManual.splice(i,1));setWinSel([]);renderWinList();sync();return;}
- if(!typing&&P.step===4&&RSEL&&(e.key==='Delete'||e.key==='Backspace')){e.preventDefault();deleteRegion();return;}
+ if(!typing&&P.step===5&&RSEL&&(e.key==='Delete'||e.key==='Backspace')){e.preventDefault();deleteRegion();return;}
  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&!typing){e.preventDefault();e.shiftKey?redo():undo();}
 });
 
@@ -2502,8 +2605,8 @@ function partModes(){
  const roofLaser=P.roofSplit?(P.roofOut==='same'?bodyLaser:P.roofOut==='laser'):bodyLaser;
  return {bodyLaser,roofLaser,anyLaser:bodyLaser||roofLaser,any3d:!bodyLaser||!roofLaser};
 }
-const defaultFlat=()=>P.step>=3&&P.step<=7||(P.step===8&&(partModes().anyLaser||P.splitPanels));
-const defaultView=()=>(P.step===3||P.step===4||P.step===6||P.step===7)?'split':(P.step===5||(P.step===8&&(partModes().anyLaser||P.splitPanels)))?'flat':'3d';
+const defaultFlat=()=>P.step>=3&&P.step<=8||(P.step===9&&(partModes().anyLaser||P.splitPanels));
+const defaultView=()=>(P.step===3||P.step===4||P.step===5||P.step===7||P.step===8)?'split':(P.step===6||(P.step===9&&(partModes().anyLaser||P.splitPanels)))?'flat':'3d';
 const isRoofPanel=n=>/屋頂|坡/.test(n);
 function printChecks(Pe){
  const L=[],pm=partModes(),nz=+P.nozzle;
@@ -2555,8 +2658,9 @@ function sync(){
  $('plateUI').style.display=plateMode?'':'none';
  $('stepbar').style.display=plateMode?'none':'';$('stepNav').style.display=plateMode?'none':'';
  document.querySelectorAll('section[data-step]').forEach(sec=>sec.classList.toggle('on',+sec.dataset.step===P.step));
- document.querySelectorAll('.stb').forEach(b=>{b.classList.toggle('on',+b.dataset.s===P.step);b.classList.toggle('done',+b.dataset.s<P.step);});
- $('prevStep').disabled=P.step<=1;$('nextStep').disabled=P.step>=8;
+ document.querySelectorAll('.stb').forEach(b=>{const n=+b.dataset.s,on=stepOn(n);b.classList.toggle('on',n===P.step);b.classList.toggle('done',n<P.step&&on);b.classList.toggle('off',!on);const k=b.querySelector('.stk');if(k)k.checked=on;});
+ document.querySelectorAll('section[data-step]').forEach(sec=>sec.classList.toggle('secoff',!stepOn(+sec.dataset.step)));
+ $('prevStep').disabled=P.step<=1;$('nextStep').disabled=P.step>=9;
  $('toolHint').textContent=TOOLHINT[P.tool]||'';
  $('roofOutWrap').style.display=P.roofSplit?'':'none';
  if(DRAW&&DRAW.tool!==P.tool)DRAW=null;
@@ -2589,7 +2693,8 @@ function sync(){
   if(k==='tileL2'||k==='tileW2')show=P.floorTex==='cycle';
   if(k==='tileOff')show=P.floorTex==='bond'||P.floorTex==='cycle';
   if(k==='tileSeed')show=P.floorTex==='plank';
-  if(k==='winBodyT')show=P.winGlass||P.winBars;if(k==='doorType'||k==='doorHandle')show=P.doorLeaf;
+  if(k==='winBodyT')show=P.winGlass||P.winBars;if(k==='doorType'||k==='doorHandle'||k==='doorType2')show=P.doorLeaf;
+  if(k==='doorFrameW')show=P.doorFrameOn;if(k==='doorCanopyD')show=P.doorCanopy!=='none';
   if(el.dataset.rr)show=P.roofStyle!=='none';
   if(['lampShape','lampLayout','lampPos','lampD','lampN','lampRows'].includes(k))show=P.lampOn;
   if(k==='lampX'||k==='lampZ')show=P.lampOn&&P.lampPos==='custom';
@@ -2600,7 +2705,7 @@ function sync(){
  $('advBtn').style.borderColor=P.advanced?'var(--cy)':'';$('advBtn').style.color=P.advanced?'var(--cy)':'';
  ensureStairs();if(lastStairFloors!==P.floors){lastStairFloors=P.floors;renderStairList();renderFloorTabs();renderIwList();renderElevTabs();}
  const isPlate=P.wallH<3;
- const Pe={...P,...(pm.bodyLaser?{wall:P.T,iwT:P.T}:{}),plateMode:isPlate,floorH:P.wallH,wallH:isPlate?P.wallH:P.wallH*P.floors};
+ const Pe={...P,...stepPatch(),...(pm.bodyLaser?{wall:P.T,iwT:P.T}:{}),plateMode:isPlate,floorH:P.wallH,wallH:isPlate?P.wallH:P.wallH*P.floors};
  Pe.wins=windowList({...Pe,wins:undefined});
  curP=Pe;
  cur=build(Pe);
@@ -2614,14 +2719,14 @@ function sync(){
   cur.roof=mergeGeometries([posOnly(cur.slab),...cur.extraRoof.map(posOnly)]);
   cur.g=mergeGeometries([posOnly(cur.body),posOnly(cur.roof)]);}
  splitG=(Pe.roofSplit&&!isPlate)?{body:cur.body,roof:cur.roof}:null;
- const lift=(splitG&&(P.step===2||P.step===8))?+P.roofLift:0;
+ const lift=(splitG&&(P.step===2||P.step===9))?+P.roofLift:0;
  const mk=g=>new THREE.Mesh(toCreasedNormals(g.clone(),Math.PI/15),mat),ed=g=>new THREE.LineSegments(new THREE.EdgesGeometry(g,30),new THREE.LineBasicMaterial({color:EDGECOL}));
  if(isPlate){mesh=mk(cur.g);edges=ed(cur.g);scene.add(mesh,edges);}
  else{mesh=mk(cur.body);roofMesh=mk(cur.roof);roofMesh.position.y=lift;edges=ed(cur.body);roofEdges=ed(cur.roof);roofEdges.position.y=lift;scene.add(mesh,roofMesh,edges,roofEdges);}
  edges.visible=!!(P.showEdges||P.xray);if(roofEdges)roofEdges.visible=!!(P.showEdges||P.xray);applyXray();
  skinRoofGroup.position.y=lift;
  rebuildInterior(Pe);
- clearGroup(extraGroup);const slabG=[...buildSlabs(Pe),...buildFloorTiles(Pe)],stairG=buildStairs(Pe),frameG=[...buildFrames(Pe),...buildWinBodies(Pe),...buildDoorLeaves(Pe)],innerCount=slabG.length+stairG.length;annexItems=buildAnnexes(Pe);Pe.annexes=annexItems.map(it=>({type:it.a.type,cx:it.cx,cz:it.cz,fx:it.fx,fz:it.fz,h:it.a.h,p:{...it.pe,roofPlanes:it.planes,roofV:it.v},door:it.door,posts:it.posts,deck:it.deck,roofOnly:it.a.type==='porch'||it.a.type==='carport'}));
+ clearGroup(extraGroup);const slabG=[...buildSlabs(Pe),...buildFloorTiles(Pe)],stairG=buildStairs(Pe),frameG=[...buildFrames(Pe),...buildWinBodies(Pe),...buildDoorLeaves(Pe),...buildDoorExtras(Pe)],innerCount=slabG.length+stairG.length;annexItems=buildAnnexes(Pe);Pe.annexes=annexItems.map(it=>({type:it.a.type,cx:it.cx,cz:it.cz,fx:it.fx,fz:it.fz,h:it.a.h,p:{...it.pe,roofPlanes:it.planes,roofV:it.v},door:it.door,posts:it.posts,deck:it.deck,roofOnly:it.a.type==='porch'||it.a.type==='carport'}));
  extraGeoms=[...slabG,...stairG,...frameG,...annexItems.flatMap(it=>it.geoms)];
  extraGeoms.forEach((g,k)=>{const m=new THREE.Mesh(g,k<innerCount?innerMat():mat);m.userData.inner=k<innerCount;extraGroup.add(m);});
  afterFaces(Pe);
@@ -2636,7 +2741,7 @@ function sync(){
  lay=null;
  if(pm.anyLaser){try{lay=layoutPanels(laserPanels(Pe).filter(pn=>isRoofPanel(pn.name)?pm.roofLaser:pm.bodyLaser),P.sheetW,P.kerf);}catch(e){console.error(e);}}
  else if(P.splitPanels){try{lay=panelLayoutFor(Pe).lay;}catch(e){console.error(e);}}
- if(pm.anyLaser&&lastPrint!=='laser'&&P.step===8)setView('flat');
+ if(pm.anyLaser&&lastPrint!=='laser'&&P.step===9)setView('flat');
  const canFlat=defaultFlat();
  if(!canFlat&&viewMode!=='3d')setView('3d');
  lastPrint=pm.anyLaser?'laser':P.print;
@@ -2646,7 +2751,7 @@ function sync(){
  $('exportTex').style.display=P.texPlate?'':'none';
  $('export').style.display=pm.any3d?'':'none';
  $('exportStep').style.display=(!pm.any3d||!hasBackend)?'none':'';
- skinGroup.visible=skinRoofGroup.visible=!skinTimer&&!pm.bodyLaser;selGroup.visible=P.step===4;iwGroup.visible=extraGroup.visible=true;
+ skinGroup.visible=skinRoofGroup.visible=!skinTimer&&!pm.bodyLaser;selGroup.visible=P.step===5;iwGroup.visible=extraGroup.visible=true;
  $('checks').textContent=printChecks(Pe);
  updateInset();renderFlat();updateStats();refreshSwatches();finishSync();
 }
@@ -2709,8 +2814,8 @@ const cam2=new THREE.PerspectiveCamera(45,300/210,1,3000),ctl2=new OrbitControls
 cam2.position.set(150,130,190);ctl2.target.set(0,20,0);ctl2.enablePan=false;
 let insetOpen=true,insetShow=false,insetFramed='';
 function updateInset(){
- insetShow=insetOpen&&P.mode==='lamp'&&viewMode==='flat'&&P.step>=3&&P.step<=5;
- insetEl.style.display=(P.mode==='lamp'&&viewMode==='flat'&&P.step>=3&&P.step<=5)?'block':'none';
+ insetShow=insetOpen&&P.mode==='lamp'&&viewMode==='flat'&&P.step>=3&&P.step<=6;
+ insetEl.style.display=(P.mode==='lamp'&&viewMode==='flat'&&P.step>=3&&P.step<=6)?'block':'none';
  insetCv.style.display=insetOpen?'block':'none';
  const key=`${P.width}|${P.depth}|${curP.wallH}|${P.rise}`;
  if(key!==insetFramed&&curP){insetFramed=key;const H=(curP.wallH||20)+(P.roof==='flat'?0:P.rise),R=Math.max(P.width,P.depth,H)*1.9,dir=cam2.position.clone().sub(ctl2.target).normalize();
@@ -2747,6 +2852,11 @@ $('fileLoad').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{cons
 $('btnNew').onclick=()=>{if(confirm('清除目前設計並重新開始？（可用 Ctrl+Z 復原）')){restoreSnap(JSON.stringify(DEFAULT_P));commit();}};
 
 addFields($('f7'),[['floorTex','地板紋路','sel',FLOORTEX],['tileLevels','貼在哪些樓層','sel',TILELEVELS],['tileL','磚長（沿 X）',1,60,0.5],['tileW','磚寬（沿 Z）',1,60,0.5],['tileL2','循環用：第二種長度（0=同磚長）',0,60,0.5],['tileW2','循環用：第二種寬度（0=同磚寬）',0,60,0.5],['tileOff','錯位量（% 磚長，每一排累加）',0,100,5],['tileJoint','縫寬',0.2,2,0.1],['tileRelief','磚面凸出量',0.15,1.5,0.05],['tileSeed','木地板隨機種子',1,99,1]]);
+// 門型縮圖選擇器
+(function(){const g=$('doorTypeGrid');if(!g)return;
+ const paint=()=>{g.innerHTML='';for(const [k,t] of Object.entries(DOORTYPES)){const b=document.createElement('button');b.className='dbtn'+(P.doorType===k?' on':'');b.title=t;b.innerHTML=doorThumb(k,P.doorType===k)+`<span>${t.replace(/（.*/,'')}</span>`;
+  b.onclick=()=>{P.doorType=k;if(!P.doorOn)P.doorOn=true;if(!P.doorLeaf)P.doorLeaf=true;REG.forEach(f=>f());paint();sync();};g.appendChild(b);}};
+ REG.push(paint);paint();})();
 // ---------- 記憶體釋放 ----------
 const fmtMB=b=>b==null?'—':(b/1048576).toFixed(0)+' MB';
 function memStats(){
@@ -2827,12 +2937,13 @@ function dataURLtoBlob(u){const a=u.split(','),b=atob(a[1]),n=new Uint8Array(b.l
 const STEP_KEYS={
  1:['annex','width','depth','floors','wallH','wall','floorOn','floorT','slabOn','lampOn','lampTarget','lampShape','lampLayout','lampN','lampRows','lampPos','lampD','lampX','lampZ'],
  2:['roof','rise','ridge','eaveX','eaveZ','roofT','gbBreak','gbHeight','ridgeCap','chimOn','chimX','chimZ','chimW','chimD','chimH','roofStyle','roofRelief','roofScale','roofAge','roofSplit','roofLift','noRoofSkin'],
- 3:['doorOn','doorN','doorGap','doorDir','doorFront','doorBack','doorLeft','doorRight','doorWall','doorStyle','doorW','doorH','doorC','winW','winH','winSill','winRows','winGap','nFront','nBack','nLeft','nRight','winWall','winStyle','winManual','frameOn','frameW','frameD','sillOn','winGlass','winBars','winBodyT','doorLeaf','doorType','doorHandle'],
- 4:['skins','skinType','skinRelief','skinScale','skinRes','skinAge','skinSeed','tool','roofStyle','roofRelief','roofScale','roofAge','noRoofSkin'],
- 5:['iwalls','iwT'],
- 6:['stairs','outStairs'],
- 7:['floorTex','tileL','tileW','tileL2','tileW2','tileOff','tileJoint','tileRelief','tileSeed','tileLevels'],
- 8:['print','roofOut','exportPart','T','kerf','finger','sheetW','engrave','bedW','bedD','nozzle','skinResOut']};
+ 3:['winW','winH','winSill','winRows','winGap','nFront','nBack','nLeft','nRight','winWall','winStyle','winManual','frameOn','frameW','frameD','sillOn','winGlass','winBars','winBodyT'],
+ 4:['doorOn','doorN','doorGap','doorDir','doorFront','doorBack','doorLeft','doorRight','doorWall','doorStyle','doorW','doorH','doorC','doorLeaf','doorType','doorHandle','doorFrameOn','doorFrameW','doorTransomH','doorSide','doorCanopy','doorCanopyD','doorStep','doorType2'],
+ 5:['skins','skinType','skinRelief','skinScale','skinRes','skinAge','skinSeed','tool','roofStyle','roofRelief','roofScale','roofAge','noRoofSkin'],
+ 6:['iwalls','iwT'],
+ 7:['stairs','outStairs'],
+ 8:['floorTex','tileL','tileW','tileL2','tileW2','tileOff','tileJoint','tileRelief','tileSeed','tileLevels'],
+ 9:['print','roofOut','exportPart','T','kerf','finger','sheetW','engrave','bedW','bedD','nozzle','skinResOut']};
 function resetStep(n){
  lastPushT=0; // 重設一定成為獨立的復原步驟
  for(const k of STEP_KEYS[n]||[])P[k]=JSON.parse(JSON.stringify(DEFAULT_P[k]));
