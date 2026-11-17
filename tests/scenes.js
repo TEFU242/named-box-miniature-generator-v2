@@ -45,6 +45,10 @@ const scenes={
  '40':()=>{A({step:1});applyTemplate('garage');setView('3d');cam.position.set(60,110,260);ctl.target.set(0,25,0);ctl.update();P.clip={on:true,mode:'axis',axis:'z',off:20,flip:false,ang:0,face:'',depth:0,show:true};applyClip();},
  '41':()=>{A({step:1});applyTemplate('garage');setView('3d');cam.position.set(110,170,120);ctl.target.set(0,10,0);ctl.update();P.clip={on:true,mode:'axis',axis:'y',off:30,flip:false,ang:0,face:'',depth:0,show:true};applyClip();$('clipPanel').style.display='block';renderClipPanel();},
  '42':()=>{A({step:1});applyTemplate('garage');setView('3d');cam.position.set(-40,90,300);ctl.target.set(-30,25,0);ctl.update();const f=FACES.find(q=>wallOfFace(q)==='front');P.clip={on:true,mode:'face',axis:'z',off:0,flip:false,ang:0,face:f.name,depth:60,show:true};applyClip();$('clipPanel').style.display='block';renderClipPanel();},
+ '43':()=>{A({step:0});applyScale(64);applyTemplate('garage');applyTerrainPreset('tiers');setView('3d');cam.position.set(330,170,420);ctl.target.set(0,20,30);ctl.update();},
+ '44':()=>{A({step:0});applyScale(64);applyTemplate('garage');applyTerrainPreset('tiersLow');P.props=[...P.props,newProp('tree',{x:-110,z:-125}),newProp('pine',{x:20,z:-135}),newProp('bush',{x:80,z:-120}),newProp('rock',{x:-30,z:-118})];sync();setView('3d');cam.position.set(300,170,420);ctl.target.set(0,20,-10);ctl.update();},
+ '45':()=>{A({step:0});applyScale(64);P.width=110;P.depth=125;P.wallH=44;P.roof='gable';P.rise=22;sync();applyTerrainPreset('hills');P.props=[newProp('tree',{x:-120,z:60}),newProp('pine',{x:130,z:-40}),newProp('bush',{x:-80,z:100}),newProp('rock',{x:110,z:90}),newProp('fern',{x:60,z:100})];sync();setView('3d');cam.position.set(260,150,310);ctl.target.set(0,10,0);ctl.update();},
+ '46':()=>{A({step:0});applyScale(64);P.width=110;P.depth=125;P.wallH=44;P.roof='gable';P.rise=22;sync();applyTerrainPreset('street');P.baseFrame=true;sync();goStep(0);setView('split');cam.position.set(240,150,300);ctl.target.set(0,10,0);ctl.update();},
  '8':()=>{A({step:2,roof:'gambrel',rise:34,roofStyle:'asphalt',ridgeCap:true,floors:2});},
 };
 (scenes[SC]||scenes['1'])();
