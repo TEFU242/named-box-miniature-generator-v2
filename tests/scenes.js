@@ -34,6 +34,14 @@ const scenes={
  '29':()=>{A({step:4,floors:2,slabOn:true,floorOn:true,wallH:34,floorH:34,width:140,depth:110,doorOn:true,doorN:2,doorType:'wood',doorHandle:'lever',doorLeaf:true,doorFrameOn:true,doorCanopy:'bracket',doorStep:1.2,nFront:2,frameOn:true,winGlass:true,winBars:true,winStyle:'cross',doorW:15,doorH:26});applyScale(64);Object.assign(P,{doorLeaf:true});sync();ensureDoorList();P.doorList[1].type='stainless';P.doorList[1].handle='bar';selectDoor(1,false);setView('split');cam.position.set(60,36,150);ctl.target.set(0,14,55);ctl.update();},
  '30':()=>{A({step:7,floors:2,slabOn:true,floorOn:true,wallH:44,floorH:44,width:100,depth:100,stairs:[]});ensureStairs();Object.assign(P.stairs[0],{on:true,type:'spiral',struct:'stringer',rail:'both',railStyle:'balu',x:-12,z:-6,spiralR:13,colR:2});sync();P.xray=true;applyXray();setView('3d');cam.position.set(30,38,42);ctl.target.set(-12,16,-6);ctl.update();},
  '31':()=>{A({step:7,floors:3,slabOn:true,floorOn:true,wallH:40,floorH:40,width:130,depth:110,stairs:[],outStairs:[]});ensureStairs();Object.assign(P.stairs[0],{on:true,type:'L',struct:'slab',rail:'both',railStyle:'glass',width:9});snapStairToWall(P.stairs[0],0,'back');Object.assign(P.stairs[1],{on:true,type:'U',struct:'slab',rail:'right',railStyle:'balu',width:9});P.outStairs=[newOutStair('U')];P.outStairs[0].wall='right';P.outStairs[0].c=15;sync();setView('split');P.xray=true;applyXray();cam.position.set(130,95,150);ctl.target.set(0,20,0);ctl.update();},
+ '32':()=>{A({step:1});applyTemplate('garage');setView('3d');cam.position.set(260,150,420);ctl.target.set(0,25,40);ctl.update();},
+ '33':()=>{A({step:1});applyTemplate('garage');setView('3d');cam.position.set(-210,60,330);ctl.target.set(-60,22,60);ctl.update();},
+ '34':()=>{A({step:1});applyTemplate('garage');P.xray=true;applyXray();setView('3d');cam.position.set(150,170,170);ctl.target.set(-10,20,0);ctl.update();},
+ '35':()=>{A({step:6});applyTemplate('garage');goStep(6);setView('flat');},
+ '36':()=>{A({step:1});applyTemplate('garage');setView('3d');cam.position.set(380,110,-80);ctl.target.set(60,30,-20);ctl.update();},
+ '37':()=>{A({step:1});applyTemplate('garage');setView('3d');cam.position.set(-120,120,-300);ctl.target.set(0,30,0);ctl.update();},
+ '38':()=>{A({step:1});applyTemplate('garage');P.xray=true;applyXray();setView('3d');cam.position.set(-80,110,190);ctl.target.set(-20,15,-20);ctl.update();},
+ '39':()=>{A({step:1});applyTemplate('garage');setView('3d');cam.position.set(20,28,190);ctl.target.set(10,25,100);ctl.update();},
  '8':()=>{A({step:2,roof:'gambrel',rise:34,roofStyle:'asphalt',ridgeCap:true,floors:2});},
 };
 (scenes[SC]||scenes['1'])();

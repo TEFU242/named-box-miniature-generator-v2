@@ -159,6 +159,11 @@ def win_cutters(wd, w, d, t):
         bar = 1.4
         ph = (hh - bar) / 2
         return [box(0, y0 + ph / 2, ww, ph), box(0, y1 - ph / 2, ww, ph)]
+    if st == 'grid':
+        bar = 1.0
+        cols, rows = 3, 2
+        pw, ph = (ww - (cols - 1) * bar) / cols, (hh - (rows - 1) * bar) / rows
+        return [box(-ww / 2 + pw / 2 + i * (pw + bar), y0 + ph / 2 + j * (ph + bar), pw, ph) for i in range(cols) for j in range(rows)]
     if st == 'cross':
         bar = 1.2
         pw, ph = (ww - bar) / 2, (hh - bar) / 2

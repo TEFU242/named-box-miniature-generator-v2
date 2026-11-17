@@ -185,7 +185,9 @@ section.secoff>*:not(h2.big):not(.offBar){opacity:.38;pointer-events:none}
   <div id="lampUI">
    <section data-step="1"><h2 class="big">① 樓層設定</h2>
      <div class="scaleBox"><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><b>場景比例</b><select id="scaleSel"></select><button id="scaleApply" title="把牆厚、門窗、屋簷、地板磚等換成這個比例的推薦尺寸">套用推薦尺寸</button></div><div id="scaleHint" class="hint" style="margin:4px 0 0"></div></div>
+     <div class="quick"><button id="tplGarage" title="一鍵產生：鐵皮屋頂、3 個美式車庫門、夾層辦公室、招牌、排水溝、地面與場景配件（依場景比例換算）">🏭 套用「美式修車廠」範本</button></div>
      <div id="f1"></div>
+     <h2>夾層（局部樓板：辦公室、倉儲）</h2><div id="f1m"></div><div class="quick"><button id="mezzOffice">＋ 在夾層加辦公室隔間（兩面牆＋門）</button></div><div class="hint">夾層樓梯會自動接到夾層邊緣；開放邊自動加護欄、鋼柱與鋼梁。夾層上的隔間牆在步驟⑥ 的平面圖可以調整。</div>
      <h2>周邊小型建築（美式住宅常見配置）</h2>
      <div class="quick" id="annexBtns"><button data-an="garage">＋附屬車庫</button><button data-an="detached">＋獨立車庫</button><button data-an="shed">＋工具棚</button><button data-an="porch">＋門廊</button><button data-an="carport">＋車棚</button></div>
      <div class="quick"><button id="annexAmerican">美式住宅組合（車庫＋門廊＋工具棚）</button><button id="annexClear">清除全部附屬建築</button></div>
@@ -200,6 +202,7 @@ section.secoff>*:not(h2.big):not(.offBar){opacity:.38;pointer-events:none}
      <h2>雙折／複折（穀倉、法式屋頂）</h2><div id="f2g"></div>
      <h2>屋脊蓋與煙囪</h2><div id="f2h"></div>
      <h2>屋頂紋路款式（最常見 4 種，單選）</h2><div class="seg" id="roofStyleSeg" style="grid-template-columns:repeat(3,1fr)"></div><div id="f2b"></div><div id="roofInfo" class="hint" style="white-space:pre-line"></div>
+     <h2>排水溝・落水管・山牆百葉（雙斜／單斜屋頂）</h2><div id="f2gu"></div>
      <div class="hint">依搜尋結果：瀝青瓦（美國約 8 成住宅）、陶瓦、石板瓦、金屬立縫板為最常見屋面材。</div>
      <h2>屋頂分離（可拆卸獨立零件）</h2><div id="f2d"></div>
      <div class="hint">分離後屋頂與本體在牆頂線切開：可各自選 3D 列印或雷射切割（例如本體雷射、屋頂光固化）。</div>
@@ -226,8 +229,10 @@ section.secoff>*:not(h2.big):not(.offBar){opacity:.38;pointer-events:none}
      <h2>位置、數量與開口</h2><div id="f3d"></div>
      <div class="hint">門可在右側正視圖拖曳左右移動（Shift 吸附到牆中心與窗戶中心）；門位置的參數化窗戶會自動讓開。勾「生成門板本體」才會做出門板、門把；門板是外加零件，牆上的開口不變。</div>
      <h2>門框・氣窗・側窗・門簷・門前階（外加零件）</h2><div id="f4x"></div>
+     <h2>招牌（像素字）與壁燈</h2><div id="f4s"></div>
      <div class="hint">🚪 氣窗與側窗會把牆的開口加大；側窗只有在勾選「生成門板本體」時才會做出玻璃。</div></section>
    <section data-step="5"><h2 class="big">⑤ 貼皮（拆成平面）</h2>
+     <h2>整棟外牆材質與牆腳裙牆</h2><div id="f5w"></div><div class="hint">鐵皮屋：外牆選「波浪鐵皮」，再開裙牆（下半段磚／混凝土）；屋頂金屬板在步驟② 的屋頂紋路款式。</div>
      <div class="seg" id="toolSeg" style="grid-template-columns:repeat(4,1fr)"></div>
      <div class="hint" id="toolHint"></div>
      <div id="skinChips" class="chips"></div>
@@ -244,6 +249,7 @@ section.secoff>*:not(h2.big):not(.offBar){opacity:.38;pointer-events:none}
      <div class="quick"><button id="addWallX">＋ 橫牆（沿 X）</button><button id="addWallZ">＋ 直牆（沿 Z）</button></div>
      <div class="quick"><button id="preCross">範本：十字分割</button><button id="preT">範本：T 字分割</button></div>
      <div id="f5"></div><div data-advanced id="iwWrap"><div id="iwList"></div></div>
+     <h2>場景配件（車、舉升機、工作台、輪胎、油桶、路燈…）</h2><div id="propList"></div><div class="quick" id="propAddBtns"></div><div class="hint">平面圖上可以直接拖曳配件；室內地板上的配件會自動站在地板面上。</div>
      <div class="hint">右側平面圖：拖曳牆壁可移動位置，拖曳綠色門可沿牆滑動。門會在每層樓重複。</div>
 </section>
    <section data-step="7"><h2 class="big">⑦ 樓梯（室內＋戶外）</h2>
@@ -252,7 +258,8 @@ section.secoff>*:not(h2.big):not(.offBar){opacity:.38;pointer-events:none}
      <div class="quick" id="outAddBtns"></div>
      <div class="hint">🪜 平面圖上可拖曳室內樓梯。台灣住宅常見：級高 16～20cm、級深 25～28cm、梯寬 ≥75cm（共用梯 ≥120cm）、扶手高約 90cm、欄杆間距 ≤11cm。按卡片上的「台灣住宅標準」會依你的樓高換算成模型尺寸。</div></section>
    <section data-step="8"><h2 class="big">⑧ 地板紋路</h2>
-     <div id="f7"></div><div id="floorInfo" class="hint" style="white-space:pre-line"></div></section>
+     <div id="f7"></div><div id="floorInfo" class="hint" style="white-space:pre-line"></div>
+     <h2>地面與停車場</h2><div id="f8g"></div></section>
    <section data-step="9"><h2 class="big">⑨ 輸出模式</h2>
      <div class="seg" id="printSeg" style="grid-template-columns:1fr 1fr 1fr"></div>
      <div id="roofOutWrap" style="display:none"><h2>屋頂輸出方式（屋頂已分離）</h2><div class="seg" id="roofOutSeg" style="grid-template-columns:1fr 1fr 1fr"></div>
@@ -306,7 +313,7 @@ const P={mode:'lamp',step:1,roof:'gable',print:'fdm',width:100,depth:100,wallH:2
  winW:14,winH:12,winSill:5,winRows:1,winGap:4,nFront:2,nBack:1,nLeft:1,nRight:1,winWall:{front:true,back:false,left:true,right:true},winStyle:'fixed',winManual:null,
  skins:{},skinType:'brick',skinRelief:0.8,skinScale:1,skinRes:'0.5',skinResOut:'0.3',skinAge:0,skinSeed:7,roofAge:0,snapOn:true,snapTH:4,tool:'face',
  iwalls:[],iwT:1.6,planFloor:0,elevFloor:'all',annex:[],
- stairs:[],stepOff:[],outStairs:[],floorTex:'none',tileL:8,tileW:8,tileL2:0,tileW2:0,tileOff:50,tileJoint:0.6,tileRelief:0.4,tileSeed:3,tileLevels:'all',doorList:null,fine:true,bevel:0.25,look:'parts',col:{},shadow:true,scale:0,doorOn:false,doorOpen:0,doorLeaf:false,doorType:'wood',doorType2:'same',doorFrameOn:false,doorFrameW:1.4,doorTransomH:0,doorSide:0,doorCanopy:'none',doorCanopyD:5,doorStep:0,doorHandle:'trumpet',winGlass:false,winBars:false,winBodyT:0.8,doorN:1,doorGap:4,doorDir:'right',doorFront:false,doorBack:false,doorLeft:false,doorRight:false,doorWall:'front',doorStyle:'single',doorW:14,doorH:18,doorC:0,floorOn:false,floorT:2,slabOn:false,roofScale:1,roofSplit:false,roofLift:0,roofOut:'same',exportPart:'all',frameOn:false,frameW:2,frameD:1.2,sillOn:true,
+ stairs:[],stepOff:[],outStairs:[],floorTex:'none',tileL:8,tileW:8,tileL2:0,tileW2:0,tileOff:50,tileJoint:0.6,tileRelief:0.4,tileSeed:3,tileLevels:'all',mezzOn:false,mezzX0:-40,mezzX1:-10,mezzZ0:-40,mezzZ1:40,mezzH:44,mezzT:1.5,mezzPosts:true,mezzRail:true,mezzRailStyle:'horiz',mezzStairSide:'right',mezzStairC:-30,mezzStairType:'straight',mezzStairW:0,mezzStairTurn:'right',mezzOfficeH:36,gutterOn:false,gutterW:1.8,gutterSpouts:2,gableVent:false,signOn:false,signText:'AUTO REPAIR',signWall:'front',signC:0,signY:60,signH:6,doorLamp:false,groundOn:false,groundM:20,groundT:1.5,groundCurb:true,groundStripes:true,props:[],ribPitch:2,roofRibs:false,roofRibPitch:6,wallStyle:'none',wallRelief:0.5,wallScale:1,wainOn:false,wainH:15,wainType:'brick',wainScale:1.8,doorList:null,fine:true,bevel:0.25,look:'parts',col:{},shadow:true,scale:0,doorOn:false,doorOpen:0,doorLeaf:false,doorType:'wood',doorType2:'same',doorFrameOn:false,doorFrameW:1.4,doorTransomH:0,doorSide:0,doorCanopy:'none',doorCanopyD:5,doorStep:0,doorHandle:'trumpet',winGlass:false,winBars:false,winBodyT:0.8,doorN:1,doorGap:4,doorDir:'right',doorFront:false,doorBack:false,doorLeft:false,doorRight:false,doorWall:'front',doorStyle:'single',doorW:14,doorH:18,doorC:0,floorOn:false,floorT:2,slabOn:false,roofScale:1,roofSplit:false,roofLift:0,roofOut:'same',exportPart:'all',frameOn:false,frameW:2,frameD:1.2,sillOn:true,
  T:3,kerf:0.15,finger:8,sheetW:600,engrave:true,bedW:256,bedD:256,nozzle:0.4,
  plate:'brick',pw:80,ph:60,relief:0.8,pbase:1.5};
 const DEFAULT_P=JSON.parse(JSON.stringify(P));
@@ -323,7 +330,7 @@ const DOORSTYLES={single:'單扇門',double:'雙開門（中間門框）',mother
 const DOORGRP=new Set(['doorWall','doorStyle','doorN','doorGap','doorDir','doorFront','doorBack','doorLeft','doorRight','doorW','doorH','doorC','doorLeaf','doorType','doorType2','doorHandle','doorOpen','doorFrameOn','doorFrameW','doorTransomH','doorSide','doorCanopy','doorCanopyD','doorStep']);
 const DOORCANOPY={none:'無',flat:'平板雨遮',pitch:'斜面雨遮',bracket:'平板雨遮＋斜撐'};
 const STAIRDIRS={'+x':'向右（+X）','-x':'向左（−X）','+z':'向前（+Z）','-z':'向後（−Z）'};
-const WINSTYLES={fixed:'固定窗（單片）',hung:'上下推拉窗',cross:'十字格窗',arch:'拱形窗'};
+const WINSTYLES={fixed:'固定窗（單片）',hung:'上下推拉窗',cross:'十字格窗',arch:'拱形窗',grid:'工廠格窗（3×2）'};
 const TOOLS={face:'選面',rect:'框選',poly:'畫線',edit:'調整區域'};
 const PLATES={brick:'磚紋貼皮',wood:'木紋貼皮',jp:'日式建築',us:'美式建築'};
 const LAMPSHAPE={circle:'圓形',square:'方形',hex:'六邊形'};
@@ -631,6 +638,7 @@ function winPolys(w){
  const y0=w.y0,y1=w.y0+w.h,c=w.c;
  if(w.style==='hung'){const bar=1.4,ph=(w.h-bar)/2;return [rectPoly(c,y0+ph/2,w.w,ph),rectPoly(c,y1-ph/2,w.w,ph)];}
  if(w.style==='dbl'){const bar=1.4,pw=(w.w-bar)/2;return [rectPoly(c-(pw+bar)/2,(y0+y1)/2,pw,w.h),rectPoly(c+(pw+bar)/2,(y0+y1)/2,pw,w.h)];}
+ if(w.style==='grid'){const bar=1.0,cols=3,rows=2,pw=(w.w-(cols-1)*bar)/cols,ph=(w.h-(rows-1)*bar)/rows,o=[];for(let i=0;i<cols;i++)for(let j=0;j<rows;j++)o.push(rectPoly(c-w.w/2+pw/2+i*(pw+bar),y0+ph/2+j*(ph+bar),pw,ph));return o;}
  if(w.style==='cross'){const bar=1.2,pw=(w.w-bar)/2,ph=(w.h-bar)/2,o=[];for(const sx of [-1,1])for(const sy of [-1,1])o.push(rectPoly(c+sx*(pw+bar)/2,(y0+y1)/2+sy*(ph+bar)/2,pw,ph));return o;}
  if(w.style==='arch'&&w.h>w.w/2+2){const r=w.w/2,bh=w.h-r,pts=[[c-r,y0],[c-r,y0+bh]];
   for(let i=1;i<16;i++){const a=Math.PI-Math.PI*i/16;pts.push([c+r*Math.cos(a),y0+bh+r*Math.sin(a)]);}
@@ -845,6 +853,7 @@ function cutHoles(g,p){
   const st=(door&&!w.main)?'fixed':w.style;
   if(st==='dbl'){const bar=1.4,pw=(w.w-bar)/2;cut.push(box(-(pw+bar)/2,(y0+y1)/2,pw,hh),box((pw+bar)/2,(y0+y1)/2,pw,hh));}
   else if(st==='hung'){const bar=1.4,ph=(hh-bar)/2;cut.push(box(0,y0+ph/2,w.w,ph),box(0,y1-ph/2,w.w,ph));}
+  else if(st==='grid'){const bar=1.0,cols=3,rows=2,pw=(w.w-(cols-1)*bar)/cols,ph=(hh-(rows-1)*bar)/rows;for(let i=0;i<cols;i++)for(let j=0;j<rows;j++)cut.push(box(-w.w/2+pw/2+i*(pw+bar),y0+ph/2+j*(ph+bar),pw,ph));}
   else if(st==='cross'){const bar=1.2,pw=(w.w-bar)/2,ph=(hh-bar)/2;for(const sx of [-1,1])for(const sy of [-1,1])cut.push(box(sx*(pw+bar)/2,(y0+y1)/2+sy*(ph+bar)/2,pw,ph));}
   else if(st==='arch'&&hh>w.w/2+2){const r=w.w/2,bh=hh-r;cut.push(box(0,y0+bh/2,w.w,bh),cyl(y0+bh,r));}
   else cut.push(box(0,(y0+y1)/2,w.w,hh));
@@ -879,11 +888,11 @@ const shadowPlane=new THREE.Mesh(new THREE.PlaneGeometry(900,900),new THREE.Shad
 let gridObj=new THREE.GridHelper(400,40,0x3b82c4,0xc3cfdd);scene.add(gridObj);let EDGECOL=0x0b3d91;
 const mat=new THREE.MeshStandardMaterial({color:0x0077d4,side:THREE.DoubleSide,roughness:.85,metalness:0}); // CAD 式：不透明、霧面，避免半透明造成的疊色與漸層
 const matIn=new THREE.MeshStandardMaterial({color:0xe08a2e,side:THREE.DoubleSide,roughness:.85,metalness:0}); // X 光開啟時，室內牆／樓板／樓梯用暖色凸顯
-const CATS={wall:'牆體',roof:'屋頂',door:'門板',hw:'門把／五金',win:'窗戶玻璃',trim:'窗框／門框／雨遮',stair:'樓梯',rail:'扶手欄杆',floor:'地板／樓板',int:'室內牆',annex:'附屬建築'};
+const CATS={wall:'牆體',roof:'屋頂',door:'門板',hw:'門把／五金',win:'窗戶玻璃',trim:'窗框／門框／雨遮',stair:'樓梯',rail:'扶手欄杆',floor:'地板／樓板',int:'室內牆',annex:'附屬建築',metal:'鋼構／排水溝',wain:'牆腳裙牆',sign:'招牌字',signbg:'招牌底板',ground:'地面（水泥）',curb:'路緣',stripe:'停車線',prop:'場景配件'};
 const LOOKSETS={
- parts:{wall:'#e8e1d2',roof:'#b6553b',door:'#8b5a2b',hw:'#c9ced6',win:'#a8d5ea',trim:'#f6f3ec',stair:'#b38b5a',rail:'#3b4048',floor:'#d1b88f',int:'#f0eadf',annex:'#dcd5c4'},
+ parts:{wall:'#e8e1d2',roof:'#b6553b',door:'#8b5a2b',hw:'#c9ced6',win:'#a8d5ea',trim:'#f6f3ec',stair:'#b38b5a',rail:'#3b4048',floor:'#d1b88f',int:'#f0eadf',annex:'#dcd5c4',metal:'#8f98a3',wain:'#8a8f95',sign:'#f4f1ea',signbg:'#b3202a',ground:'#b9bbbd',curb:'#d8d8d4',stripe:'#f2c200',prop:'#8a8f96'},
  white:Object.fromEntries(Object.keys(CATS).map(k=>[k,'#f1f1ef'])),
- warm:{wall:'#e9d8bd',roof:'#8a4b2a',door:'#6b4423',hw:'#d4a73a',win:'#cfe6ef',trim:'#fff7e6',stair:'#a8743d',rail:'#4a3524',floor:'#c49a64',int:'#efe0c6',annex:'#e0cfb0'}};
+ warm:{wall:'#e9d8bd',roof:'#8a4b2a',door:'#6b4423',hw:'#d4a73a',win:'#cfe6ef',trim:'#fff7e6',stair:'#a8743d',rail:'#4a3524',floor:'#c49a64',int:'#efe0c6',annex:'#e0cfb0',metal:'#9a9a94',wain:'#7d7466',sign:'#fff7e6',signbg:'#8a2a20',ground:'#b8b2a6',curb:'#d8d2c4',stripe:'#e8c32a',prop:'#8a7f70'}};
 const LOOKNAMES={parts:'分色（推薦）',white:'白模',warm:'暖色木質',blue:'單色藍（舊版）',custom:'自訂'};
 function lookColors(){const base=LOOKSETS[P.look]||LOOKSETS.parts;return {...base,...(P.look==='custom'?(P.col||{}):{})};}
 const catM={};
@@ -894,6 +903,9 @@ function matFor(cat){
  if(cat==='wall'||cat==='roof'){m.transparent=!!P.xray;m.opacity=P.xray?0.22:1;m.depthWrite=!P.xray;}
  return m;
 }
+const hexM={};
+function matHex(hex){let m=hexM[hex];if(!m){m=hexM[hex]=new THREE.MeshStandardMaterial({side:THREE.DoubleSide,roughness:0.6,metalness:0.05,color:hex});}return m;}
+const matOf=(g,cat)=>g&&g.userData&&g.userData.color&&P.look!=='blue'?matHex(g.userData.color):matFor(cat);
 const innerMat=(cat)=>P.xray?matIn:matFor(cat||'int');
 const tagC=(arr,cat)=>{for(const g of arr)if(g&&g.userData&&!g.userData.cat)g.userData.cat=cat;return arr;};
 function applyShadows(){
@@ -904,7 +916,7 @@ function applyShadows(){
 }
 function refreshLook(){
  if(mesh&&P.mode!=='plate')mesh.material=matFor('wall');if(roofMesh)roofMesh.material=matFor('roof');
- for(const gr of [iwGroup,extraGroup])gr.children.forEach(m=>{m.material=(m.userData.inner&&P.xray)?matIn:matFor(m.userData.cat||'int');});
+ for(const gr of [iwGroup,extraGroup])gr.children.forEach(m=>{m.material=(m.userData.inner&&P.xray)?matIn:matOf(m.geometry,m.userData.cat||'int');});
  skinGroup.children.forEach(m=>m.material=matFor('wall'));skinRoofGroup.children.forEach(m=>m.material=matFor('roof'));
  applyShadows();
 }
@@ -1141,6 +1153,10 @@ function buildSkinLayers(face,layers,Pe,res){
 function skinLayersFor(f){
  const out=[];
  if(P.roofStyle!=='none'&&Math.abs(f.n[1])>=0.05&&!(P.noRoofSkin||[]).includes(f.name))out.push({type:ROOFSKIN[P.roofStyle],relief:+P.roofRelief,scale:+P.roofScale||1,age:+P.roofAge||0,seed:+P.skinSeed||7,regions:null});
+ if(Math.abs(f.n[1])<0.05){
+  if(P.wallStyle&&P.wallStyle!=='none'&&P.wallStyle!=='ribs')out.push({type:P.wallStyle,relief:+P.wallRelief||0.5,scale:+P.wallScale||1,age:0,seed:+P.skinSeed||7,regions:null});
+  if(P.wainOn&&P.wainH>0&&P.wallStyle!=='ribs'){const {u,v}=faceFrame(f),dt=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],P2=f.pts.map(q=>[dt(q,u),dt(q,v)]),u0=Math.min(...P2.map(a=>a[0]))-1,u1=Math.max(...P2.map(a=>a[0]))+1,v0=Math.min(...P2.map(a=>a[1]))-1;
+   out.push({type:P.wainType||'brick',relief:+P.wallRelief||0.6,scale:+P.wainScale||1.8,age:0,seed:+P.skinSeed||7,regions:[[[u0,v0],[u1,v0],[u1,v0+1+(+P.wainH)],[u0,v0+1+(+P.wainH)]]]});}}
  const u=stepOn(5)?P.skins[f.name]:null;if(u)out.push(...(Array.isArray(u)?u:[u]));
  return out;
 }
@@ -1609,6 +1625,10 @@ function planFloorSVG(pf){
     :`<circle data-iw="${i}" data-end="${k}" cx="${sp.pos}" cy="${a}" r="3.2" fill="#fff" stroke="#ff7a00" stroke-width="1.2" style="cursor:row-resize"/>`;
  });
  ensureStairs();
+ if(pf===0&&curP.mezzOn){const r=mezzRect(curP);s+=`<rect x="${r.x0}" y="${r.z0}" width="${r.x1-r.x0}" height="${r.z1-r.z0}" fill="#cfd8dc" fill-opacity=".25" stroke="#607d8b" stroke-width=".5" stroke-dasharray="3 2" pointer-events="none"/><text x="${r.x0+2}" y="${r.z0+5}" font-size="4" fill="#607d8b" pointer-events="none">夾層</text>`;
+  const ml=mezzStairLayout(curP);if(ml)for(const fl of ml.lay.fl){const [dx,dz]=fl.d,run=fl.n*ml.g.tread,cx=fl.x+dx*run/2,cz=fl.z+dz*run/2;s+=`<rect x="${(cx-(dx?run:fl.w)/2).toFixed(2)}" y="${(cz-(dz?run:fl.w)/2).toFixed(2)}" width="${(dx?run:fl.w).toFixed(2)}" height="${(dz?run:fl.w).toFixed(2)}" fill="#e8d9b0" stroke="#8a6d3b" stroke-width=".4" pointer-events="none"/>`;}}
+ if(pf===0)(curP.props||[]).forEach((pr,pi)=>{const d=PROPS[pr.type];if(!d||pr.on===false)return;const sc=scaleS(),lw=Math.max(1.2,d.fp[0]*sc),ld=Math.max(1.2,d.fp[1]*sc);
+  s+=`<g transform="translate(${(+pr.x||0).toFixed(2)},${(+pr.z||0).toFixed(2)}) rotate(${(+pr.rot||0)})"><rect data-prop="${pi}" x="${-lw/2}" y="${-ld/2}" width="${lw}" height="${ld}" fill="${pr.color||d.col}" fill-opacity=".55" stroke="${PDRAG&&PDRAG.prop===pi?'#ff7a00':'#37474f'}" stroke-width=".4" style="cursor:move"/></g>`;});
  if(pf===0)for(const [oi,os] of (curP.outStairs||[]).entries()){if(!os.on)continue;const o=outLayout(curP,os),pl=o.platform;
   s+=`<rect data-ostair="${oi}" x="${(pl.cx-pl.sx/2).toFixed(2)}" y="${(pl.cz-pl.sz/2).toFixed(2)}" width="${pl.sx.toFixed(2)}" height="${pl.sz.toFixed(2)}" fill="#cfd8dc" stroke="${PDRAG&&PDRAG.ostair===oi?'#ff7a00':'#455a64'}" stroke-width="${PDRAG&&PDRAG.ostair===oi?1.2:.5}" style="cursor:move"/>`;
   if(o.spiral){s+=`<circle data-ostair="${oi}" cx="${o.spiral.cx.toFixed(2)}" cy="${o.spiral.cz.toFixed(2)}" r="${o.spiral.R}" fill="#e8d9b0" stroke="#8a6d3b" stroke-width=".6" style="cursor:move"/><circle cx="${o.spiral.cx.toFixed(2)}" cy="${o.spiral.cz.toFixed(2)}" r="${o.spiral.colR}" fill="#8a6d3b" pointer-events="none"/>`;}
@@ -1636,7 +1656,7 @@ function planFloorSVG(pf){
 let PLANORG={};
 // 每一層樓各有一張獨立的頂視圖，同時並排顯示（不疊在一起）
 function renderPlan(){
- const w=curP.width,d=curP.depth,m=14+((curP.outStairs||[]).some(o=>o.on)?55:0),F=Math.max(1,Math.round(curP.floors||1)),cols=F<=2?F:3,rows=Math.ceil(F/cols),cw=w+2*m+8,ch=d+2*m+18,pf0=Math.min(P.planFloor||0,F-1);
+ const exOut=Math.max(0,...(curP.props||[]).map(q=>Math.max(Math.abs(+q.x||0)-curP.width/2,Math.abs(+q.z||0)-curP.depth/2))),w=curP.width,d=curP.depth,m=14+Math.max(((curP.outStairs||[]).some(o=>o.on)?55:0),exOut+8,curP.groundOn?+curP.groundM||0:0),F=Math.max(1,Math.round(curP.floors||1)),cols=F<=2?F:3,rows=Math.ceil(F/cols),cw=w+2*m+8,ch=d+2*m+18,pf0=Math.min(P.planFloor||0,F-1);
  PLANORG={};
  let s=`<svg id="planSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${cols*cw} ${rows*ch}" style="touch-action:none;user-select:none"><defs><marker id="arr" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0L6,3L0,6z" fill="#b23"/></marker></defs><rect width="${cols*cw}" height="${rows*ch}" fill="#fff"/>`;
  for(let f=0;f<F;f++){const col=f%cols,row=Math.floor(f/cols),ox=col*cw+cw/2,oy=row*ch+ch/2+6,act=f===pf0;PLANORG[f]=[ox,oy];
@@ -1649,6 +1669,8 @@ let PDRAG=null;
 function planPoint(e){const svg=$('planSvg');if(!svg)return null;const q=new DOMPoint(e.clientX,e.clientY).matrixTransform(svg.getScreenCTM().inverse());return [q.x,q.y];}
 const pfOf=e=>{const g=e.target.closest&&e.target.closest('[data-pfg]');return g?+g.dataset.pfg:(P.planFloor||0);};
 function planDown(e){
+ const pt_=e.target.closest&&e.target.closest('[data-prop]');
+ if(pt_){const pi=+pt_.dataset.prop,pr=P.props[pi];if(pr){lastPushT=0;PDRAG={prop:pi,start:planPoint(e),x0:+pr.x||0,z0:+pr.z||0};renderFlat();return;}}
  const ot=e.target.closest&&e.target.closest('[data-ostair]');
  if(ot){const oi=+ot.dataset.ostair,os=P.outStairs[oi];if(os){lastPushT=0;PDRAG={ostair:oi,start:planPoint(e)};if(P.step===7){const cs=[...document.querySelectorAll('#outStairList .stairBox')][oi];if(cs)cs.scrollIntoView({block:'nearest'});}renderFlat();return;}}
  const bg=e.target.closest&&e.target.closest('[data-pbg]');
@@ -1669,6 +1691,7 @@ function planSnap(iw,v){ // 吸附：外牆內緣、其他牆位置、0.5mm 格
 }
 function planMove(e){
  if(!PDRAG)return;
+ if(PDRAG.prop!==undefined){const q=planPoint(e),pr=P.props[PDRAG.prop];if(pr){pr.x=Math.round((PDRAG.x0+q[0]-PDRAG.start[0])*2)/2;pr.z=Math.round((PDRAG.z0+q[1]-PDRAG.start[1])*2)/2;}renderFlat();return;}
  if(PDRAG.ostair!==undefined){const q=planPoint(e),org=PLANORG[0]||[0,0],x=q[0]-org[0],z=q[1]-org[1],W2=curP.width/2,D2=curP.depth/2,os=P.outStairs[PDRAG.ostair];
   if(os){if(Math.abs(z)/D2>=Math.abs(x)/W2){os.wall=z>=0?'front':'back';os.c=Math.round(x*2)/2;}else{os.wall=x>=0?'right':'left';os.c=Math.round(z*2)/2;}
    if(Math.abs(os.c)<1.5)os.c=0;}
@@ -1683,7 +1706,7 @@ function planMove(e){
  else iw.pos=snap(PDRAG.pos0+(x?dz:dx));
  renderFlat();
 }
-function planUp(){if(!PDRAG)return;const wasStair=PDRAG.stair!==undefined||PDRAG.sdir!==undefined||PDRAG.ostair!==undefined;PDRAG=null;renderIwList();if(wasStair)renderStairList();sync();}
+function planUp(){if(!PDRAG)return;const wasStair=PDRAG.stair!==undefined||PDRAG.sdir!==undefined||PDRAG.ostair!==undefined,wasProp=PDRAG.prop!==undefined;PDRAG=null;renderIwList();if(wasStair)renderStairList();if(wasProp)renderPropList();sync();}
 function planDbl(e){
  const t=e.target.closest&&e.target.closest('[data-iw]');if(!t||t.dataset.door!==undefined||t.dataset.end!==undefined)return;
  const iw=P.iwalls[+t.dataset.iw],q=planPoint(e),org=PLANORG[pfOf(e)]||[0,0],pt=[q[0]-org[0],q[1]-org[1]];
@@ -1700,11 +1723,13 @@ function iwSpan(p,iw){
 }
 // 牆的垂直範圍：iw.floor 有值＝只在該樓層（獨立圖層）；沒有＝舊版整棟貫穿
 function iwY(p,iw){
+ if(iw.mezz&&p.mezzOn){const y0=Math.min(+p.mezzH,p.wallH-2);return {y0,y1:Math.min(p.wallH-0.4,y0+(+p.mezzOfficeH||30)),all:false,f:0,mezz:true};}
  const Hf=p.floorH||p.wallH,F=Math.max(1,Math.round(p.floors||1));
  if(iw.floor===undefined||iw.floor===null)return {y0:0,y1:p.wallH,all:true};
  const f=Math.max(0,Math.min(F-1,iw.floor));return {y0:f*Hf,y1:(f+1)*Hf+(f<F-1&&p.slabOn?0.3:0),all:false,f};
 }
 function iwDoors(p,iw){ // 門：獨立圖層的牆只在自己的樓層；舊版牆每層重複
+ if(iw.mezz&&p.mezzOn){const yy=iwY(p,iw);return (iw.doors||[]).map(d=>({c:d.c,w:d.w,y0:yy.y0,y1:yy.y0+Math.min(d.h,yy.y1-yy.y0-1)}));}
  const Hf=p.floorH||p.wallH,F=Math.max(1,Math.round(p.floors||1)),out=[],fs=(iw.floor===undefined||iw.floor===null)?[...Array(F).keys()]:[Math.max(0,Math.min(F-1,iw.floor))];
  for(const f of fs)for(const d of iw.doors||[])out.push({c:d.c,w:d.w,y0:f*Hf,y1:f*Hf+Math.min(d.h,Hf-1.5)});
  return out;
@@ -1718,12 +1743,12 @@ function buildInterior(p){
   const sp=iwSpan(p,iw);if(sp.hi-sp.lo<2)continue;
   const yy=iwY(p,iw),H=yy.y1-yy.y0,yc0=yy.y0+H/2;
   const lo=sp.lo-ext,hi=sp.hi+ext,L=hi-lo,mid=(lo+hi)/2,x=iw.axis==='x';
-  let w=x?brickBox(L,H,T,mid,yc0,sp.pos):brickBox(T,H,L,sp.pos,yc0,mid);
-  for(const d of iwDoors(p,iw)){
+  let w=x?brickBox(L,H,T,mid,yc0,sp.pos):brickBox(T,H,L,sp.pos,yc0,mid),baked=false;
+  for(const d of iwDoors(p,iw)){baked=true;
    const y0=d.y0<=0.01?-2:d.y0,hh=d.y1-y0,yc=(y0+d.y1)/2;
    const c=x?brickBox(d.w,hh,T*3,d.c,yc,sp.pos):brickBox(T*3,hh,d.w,sp.pos,yc,d.c);
    w=ev.evaluate(w,c,SUBTRACTION);w.updateMatrixWorld();}
-  out.push(repairTJ(w.geometry));}
+  if(!baked){w.updateMatrixWorld();const gg=w.geometry.clone();gg.applyMatrix4(w.matrixWorld);out.push(repairTJ(gg));}else out.push(repairTJ(w.geometry));}
  return out;
 }
 function rebuildInterior(Pe){
@@ -1989,7 +2014,7 @@ function perimeterRails(rect,y,attach,st,skipN){
  const edges=[{p0:[rect.cx-hx+ins,rect.cz-hz+ins],p1:[rect.cx+hx-ins,rect.cz-hz+ins],n:[0,-1]},{p0:[rect.cx-hx+ins,rect.cz+hz-ins],p1:[rect.cx+hx-ins,rect.cz+hz-ins],n:[0,1]},
   {p0:[rect.cx-hx+ins,rect.cz-hz+ins],p1:[rect.cx-hx+ins,rect.cz+hz-ins],n:[-1,0]},{p0:[rect.cx+hx-ins,rect.cz-hz+ins],p1:[rect.cx+hx-ins,rect.cz+hz-ins],n:[1,0]}];
  for(const e of edges){
-  if(skipN&&e.n[0]===skipN[0]&&e.n[1]===skipN[1])continue;
+  if(skipN&&(Array.isArray(skipN[0])?skipN:[skipN]).some(q=>q[0]===e.n[0]&&q[1]===e.n[1]))continue;
   const dx=e.p1[0]-e.p0[0],dz=e.p1[1]-e.p0[1],len=Math.hypot(dx,dz),ux=dx/len,uz=dz/len;let segs=[[0,len]];
   for(const at of attach||[]){const rel=[at.x-e.p0[0],at.z-e.p0[1]],t=rel[0]*ux+rel[1]*uz,dist=Math.abs(rel[0]*(-uz)+rel[1]*ux);
    if(dist>1.6||t<-1||t>len+1)continue;const a=t-at.w/2-0.2,b=t+at.w/2+0.2,ns=[];
@@ -2027,17 +2052,9 @@ function spiralGeoms(sp,st){
  return out.filter(Boolean);
 }
 // ====== 戶外樓梯配置 ======
-function outLayout(p,os){
- const Hf=p.floorH||p.wallH,F=Math.max(1,Math.round(p.floors||1)),lev=Math.max(0,Math.min(F,Math.round(os.lev||0)));
- const topY=lev>0?lev*Hf+(p.slabOn?p.floorT:0):(+os.entryH||4),g=gFromRise(os,0,topY,false);
- const WALL={front:{n:[0,1],c:[0,p.depth/2],ax:0},back:{n:[0,-1],c:[0,-p.depth/2],ax:0},left:{n:[-1,0],c:[-p.width/2,0],ax:1},right:{n:[1,0],c:[p.width/2,0],ax:1}}[os.wall]||{n:[0,1],c:[0,p.depth/2],ax:0};
- const nrm=WALL.n,ax=WALL.ax,c0=+os.c||0,platD=Math.max(3,+os.platD||8),W0=ax===0?[c0,WALL.c[1]]:[WALL.c[0],c0];
- let lay,spiral=null;
- if(os.type==='spiral'){
-  const R=os.spiralR||10,ctr=[W0[0]+nrm[0]*(platD+R*0.55),W0[1]+nrm[1]*(platD+R*0.55)],dir=os.spiralCW===false?-1:1,th=(os.spiralDeg||360)*Math.PI/180/g.n,angW=Math.atan2(-nrm[1],-nrm[0]);
-  spiral={cx:ctr[0],cz:ctr[1],y0:0,y1:topY,n:g.n,R,colR:os.colR||1.6,deg:os.spiralDeg||360,cw:dir>0,a0:angW-dir*((os.spiralDeg||360)*Math.PI/180-th/2)};
-  lay={g,fl:[],landing:null,winder:null,end:{x:W0[0]+nrm[0]*platD,z:W0[1]+nrm[1]*platD,d:[-nrm[0],-nrm[1]]}};
- }else{
+// 讓一組樓梯的終點落在「某條邊」上（邊的外法線 nrm、邊上點 W0、沿邊座標 c0、離邊 platD），並沿邊置中
+function attachFlights(g,os,W0,nrm,ax,c0,platD){
+ let lay;
   const l0=layoutFromG(g,{...os,x:0,z:0,dir:'+x'}),want=[-nrm[0],-nrm[1]];let k=0,dd=l0.end.d;
   const rot=(v,kk)=>{let a=v;for(let i=0;i<kk;i++)a=rightOf(a);return a;};
   for(k=0;k<4;k++)if(rot(l0.end.d,k)[0]===want[0]&&rot(l0.end.d,k)[1]===want[1])break;
@@ -2052,6 +2069,20 @@ function outLayout(p,os){
   const sx=ax===0?sh:0,sz=ax===1?sh:0;mapFl.forEach(f=>{f.x+=sx;f.z+=sz;});if(landing){landing.cx+=sx;landing.cz+=sz;}
   const last=mapFl[mapFl.length-1],run=last.n*g.tread;
   lay={g,fl:mapFl,landing,winder,end:{x:last.x+last.d[0]*run,z:last.z+last.d[1]*run,d:last.d},span:Math.max(...us)-Math.min(...us)};
+  return lay;
+}
+function outLayout(p,os){
+ const Hf=p.floorH||p.wallH,F=Math.max(1,Math.round(p.floors||1)),lev=Math.max(0,Math.min(F,Math.round(os.lev||0)));
+ const topY=lev>0?lev*Hf+(p.slabOn?p.floorT:0):(+os.entryH||4),g=gFromRise(os,0,topY,false);
+ const WALL={front:{n:[0,1],c:[0,p.depth/2],ax:0},back:{n:[0,-1],c:[0,-p.depth/2],ax:0},left:{n:[-1,0],c:[-p.width/2,0],ax:1},right:{n:[1,0],c:[p.width/2,0],ax:1}}[os.wall]||{n:[0,1],c:[0,p.depth/2],ax:0};
+ const nrm=WALL.n,ax=WALL.ax,c0=+os.c||0,platD=Math.max(3,+os.platD||8),W0=ax===0?[c0,WALL.c[1]]:[WALL.c[0],c0];
+ let lay,spiral=null;
+ if(os.type==='spiral'){
+  const R=os.spiralR||10,ctr=[W0[0]+nrm[0]*(platD+R*0.55),W0[1]+nrm[1]*(platD+R*0.55)],dir=os.spiralCW===false?-1:1,th=(os.spiralDeg||360)*Math.PI/180/g.n,angW=Math.atan2(-nrm[1],-nrm[0]);
+  spiral={cx:ctr[0],cz:ctr[1],y0:0,y1:topY,n:g.n,R,colR:os.colR||1.6,deg:os.spiralDeg||360,cw:dir>0,a0:angW-dir*((os.spiralDeg||360)*Math.PI/180-th/2)};
+  lay={g,fl:[],landing:null,winder:null,end:{x:W0[0]+nrm[0]*platD,z:W0[1]+nrm[1]*platD,d:[-nrm[0],-nrm[1]]}};
+ }else{
+  lay=attachFlights(g,os,W0,nrm,ax,c0,platD);
  }
  const span=lay.span||os.width,pw=Math.max(+os.platW||10,span+1),cen=[W0[0]+nrm[0]*platD/2,W0[1]+nrm[1]*platD/2];
  const platform={cx:cen[0],cz:cen[1],sx:ax===0?pw:platD,sz:ax===0?platD:pw,y0:0,y1:topY};
@@ -2333,6 +2364,7 @@ function buildWinBodies(p){
   if(p.winBars){
    const bt=T+0.4,r=1.0;
    loc.push(lbox(0,y1-r/2,cz,W,r,bt),lbox(0,y0+r/2,cz,W,r,bt),lbox(-W/2+r/2,ym,cz,r,H,bt),lbox(W/2-r/2,ym,cz,r,H,bt));
+   if(w.style==='grid'){for(const k of [-1,1])loc.push(lbox(k*W/6,ym,cz,1.0,H,bt));loc.push(lbox(0,ym,cz,W,1.0,bt));}
    if(w.style==='dbl'||w.style==='cross')loc.push(lbox(0,ym,cz,1.2,H,bt));
    if(w.style==='hung'||w.style==='cross')loc.push(lbox(0,ym,cz,W,1.2,bt));
   }
@@ -2377,7 +2409,7 @@ function leafParts(type,cx,W,H,tl,cz,arch,y0,opt){
  else if(type==='glass'){const b=1.6;L.push(...ringBars(cx,W,H,b,cz,tl,y0),lbox(cx,y0+H/2,cz,W-2*b+0.2,H-2*b+0.2,0.6));}
  else if(type==='roller'||type==='rollerBig')L.push(...rollerParts(type==='rollerBig',cx,W,H,tl,cz,opt.open||0,opt.s||0.01,opt.room||0));
  else if(type==='sectional'){const Hc=Math.max(4,H*(1-(opt.open||0)));L.push(lbox(cx,y0+Hc/2,cz,W,Hc,tl));const n=Math.max(2,Math.round(Hc/Math.max(3,H/4)));for(let j=1;j<n;j++)L.push(lbox(cx,y0+j*Hc/n,zc,W,0.5,dz));
-  const wn=Math.max(2,Math.round(W/8));if(Hc>H*0.7)for(let i=0;i<wn;i++)L.push(lbox(cx-W/2+(i+0.5)*W/wn,y0+Hc*0.86,zc,W/wn*0.55,Hc*0.1,dz));
+  const wn=Math.max(2,Math.round(W/7));if(Hc>H*0.7)for(let i=0;i<wn;i++){const wx=cx-W/2+(i+0.5)*W/wn,fr=lbox(wx,y0+Hc*0.86,zc-0.05,W/wn*0.66,Hc*0.12,dz*0.9),gl=lbox(wx,y0+Hc*0.86,zc+0.1,W/wn*0.5,Hc*0.085,dz*0.9);gl.userData.cat='win';L.push(fr,gl);}
   for(const sg of [-1,1])L.push(lbox(cx+sg*(W/2+0.4),y0+H/2,cz+0.5,0.8,H,tl+1.0));if((opt.open||0)>0)L.push(lbox(cx,y0+H,cz+0.3,W+1.6,0.8,tl+0.8));}
  else if(type==='carriage'){L.push(slab());const m2=1.3,rows=H>=14?2:1,pw=W-2*m2,ph=(H-2*m2-(rows-1))/rows;
   for(let j=0;j<rows;j++){const yc=y0+m2+ph/2+j*(ph+1);L.push(lbox(cx,yc,zc,pw,ph,dz));L.push(segB([cx-pw/2,yc-ph/2,zc+0.3],[cx+pw/2,yc+ph/2,zc+0.3],0.45,0.35),segB([cx-pw/2,yc+ph/2,zc+0.3],[cx+pw/2,yc-ph/2,zc+0.3],0.45,0.35));}
@@ -2458,6 +2490,7 @@ function buildDoorExtras(p){
   if(dd.canopy==='flat'||dd.canopy==='bracket'){loc.push(lbox(0,cy,cd/2,cw,0.9,cd));}
   if(dd.canopy==='pitch'){loc.push(segB([0,cy+1.6,0.2],[0,cy-0.4,cd],0.8,cw));}
   if(dd.canopy==='bracket'){for(const sx of [-1,1])loc.push(segB([sx*(cw/2-0.8),cy-3.2,0.2],[sx*(cw/2-0.8),cy-0.5,cd-0.4],0.7,0.8));}
+  if(p.doorLamp){const sc_=scaleS(),ay=Ht+(dd.frameOn?fw:0)+Math.max(1.5,300*sc_),L1=Math.max(1.6,600*sc_);const ya=dd.canopy!=='none'?Ht-1:ay;loc.push(lbox(0,ya,0.5,0.8,0.8,1.0),lbox(0,ya,0.9+L1/2,0.6,0.6,L1),lbox(0,ya-0.7,0.9+L1,Math.max(1.6,350*sc_),0.5,Math.max(1.2,260*sc_)),lbox(0,ya-1.0,0.9+L1,Math.max(1.0,200*sc_),0.4,Math.max(0.8,150*sc_)));for(const g of loc.slice(-4))g.userData.cat='metal';}
   if(+dd.step>0){const sh=+dd.step,sd=Math.max(3,sh*2.2+1);loc.push(lbox(0,sh/2,sd/2,W+4,sh,sd));}
   for(const g of loc)out.push(placeLocal(g,p,dd));
  }
@@ -2875,6 +2908,11 @@ function sync(){
   if(k==='tileOff')show=P.floorTex==='bond'||P.floorTex==='cycle';
   if(k==='tileSeed')show=P.floorTex==='plank';
   if(k==='winBodyT')show=P.winGlass||P.winBars;if(k==='doorType'||k==='doorHandle'||k==='doorType2')show=P.doorLeaf;if(k==='doorOpen')show=P.doorLeaf&&['roller','rollerBig','sectional'].includes(P.doorType);
+  if(k&&k.startsWith('mezz')&&k!=='mezzOn')show=!!P.mezzOn;
+  if(k==='gutterW'||k==='gutterSpouts')show=!!P.gutterOn;
+  if(['signWall','signC','signY','signH','signText'].includes(k))show=!!P.signOn;
+  if(k==='wallRelief')show=P.wallStyle!=='none';if(k==='wallScale')show=P.wallStyle!=='none'&&P.wallStyle!=='ribs';if(k==='ribPitch')show=P.wallStyle==='ribs';if(k==='roofRibPitch')show=!!P.roofRibs;if(k==='wainH'||k==='wainType'||k==='wainScale')show=!!P.wainOn;
+  if(['groundM','groundT','groundCurb','groundStripes'].includes(k))show=!!P.groundOn;
   if(k==='doorFrameW')show=P.doorFrameOn;if(k==='doorCanopyD')show=P.doorCanopy!=='none';
   if(Array.isArray(P.doorList)&&DOORGRP.has(k))show=false;
   if(el.dataset.rr)show=P.roofStyle!=='none';
@@ -2908,9 +2946,9 @@ function sync(){
  edges.visible=!!(P.showEdges||P.xray);if(roofEdges)roofEdges.visible=!!(P.showEdges||P.xray);applyXray();
  skinRoofGroup.position.y=lift;
  rebuildInterior(Pe);
- clearGroup(extraGroup);const slabG=tagC([...buildSlabs(Pe),...buildFloorTiles(Pe)],'floor'),stairG=tagC(buildStairs(Pe),'stair'),frameG=[...tagC(buildFrames(Pe),'trim'),...tagC(buildWinBodies(Pe),'win'),...tagC(buildDoorLeaves(Pe),'door'),...tagC(buildDoorExtras(Pe),'trim')],innerCount=slabG.length+stairG.length;annexItems=buildAnnexes(Pe);Pe.annexes=annexItems.map(it=>({type:it.a.type,cx:it.cx,cz:it.cz,fx:it.fx,fz:it.fz,h:it.a.h,p:{...it.pe,roofPlanes:it.planes,roofV:it.v},door:it.door,posts:it.posts,deck:it.deck,roofOnly:it.a.type==='porch'||it.a.type==='carport'}));
+ clearGroup(extraGroup);const slabG=tagC([...buildSlabs(Pe),...buildFloorTiles(Pe)],'floor'),stairG=tagC([...buildStairs(Pe),...buildMezz(Pe)],'stair'),frameG=[...tagC(buildFrames(Pe),'trim'),...tagC(buildGutters(Pe),'metal'),...buildSiding(Pe),...buildSign(Pe),...buildGround(Pe),...buildProps(Pe),...tagC(buildWinBodies(Pe),'win'),...tagC(buildDoorLeaves(Pe),'door'),...tagC(buildDoorExtras(Pe),'trim')],innerCount=slabG.length+stairG.length;annexItems=buildAnnexes(Pe);Pe.annexes=annexItems.map(it=>({type:it.a.type,cx:it.cx,cz:it.cz,fx:it.fx,fz:it.fz,h:it.a.h,p:{...it.pe,roofPlanes:it.planes,roofV:it.v},door:it.door,posts:it.posts,deck:it.deck,roofOnly:it.a.type==='porch'||it.a.type==='carport'}));
  extraGeoms=[...slabG,...stairG,...frameG,...tagC(annexItems.flatMap(it=>it.geoms),'annex')];
- extraGeoms.forEach((g,k)=>{const cat=g.userData.cat||'trim',m=new THREE.Mesh(g,k<innerCount?innerMat(cat):matFor(cat));m.userData.inner=k<innerCount;m.userData.cat=cat;extraGroup.add(m);});
+ extraGeoms.forEach((g,k)=>{const cat=g.userData.cat||'trim',m=new THREE.Mesh(g,k<innerCount?(P.xray?matIn:matOf(g,cat)):matOf(g,cat));m.userData.inner=k<innerCount;m.userData.cat=cat;extraGroup.add(m);});
  applyShadows();
  afterFaces(Pe);
  if(P.step===4)renderDoorCard();
@@ -3134,6 +3172,308 @@ function showScaleModal(){
  $('scaleSkip').onclick=()=>done(0);
 }
 const IS_TEST=/\/_/.test(location.pathname);
+// ======================= 美式修車廠：夾層、招牌、排水溝、地面、場景配件 =======================
+const FONT5={A:'01110,10001,10001,11111,10001,10001,10001',B:'11110,10001,10001,11110,10001,10001,11110',C:'01110,10001,10000,10000,10000,10001,01110',D:'11110,10001,10001,10001,10001,10001,11110',E:'11111,10000,10000,11110,10000,10000,11111',F:'11111,10000,10000,11110,10000,10000,10000',G:'01110,10001,10000,10111,10001,10001,01111',H:'10001,10001,10001,11111,10001,10001,10001',I:'01110,00100,00100,00100,00100,00100,01110',J:'00111,00010,00010,00010,00010,10010,01100',K:'10001,10010,10100,11000,10100,10010,10001',L:'10000,10000,10000,10000,10000,10000,11111',M:'10001,11011,10101,10101,10001,10001,10001',N:'10001,11001,10101,10011,10001,10001,10001',O:'01110,10001,10001,10001,10001,10001,01110',P:'11110,10001,10001,11110,10000,10000,10000',Q:'01110,10001,10001,10001,10101,10010,01101',R:'11110,10001,10001,11110,10100,10010,10001',S:'01111,10000,10000,01110,00001,00001,11110',T:'11111,00100,00100,00100,00100,00100,00100',U:'10001,10001,10001,10001,10001,10001,01110',V:'10001,10001,10001,10001,10001,01010,00100',W:'10001,10001,10001,10101,10101,10101,01010',X:'10001,10001,01010,00100,01010,10001,10001',Y:'10001,10001,01010,00100,00100,00100,00100',Z:'11111,00001,00010,00100,01000,10000,11111',
+ '0':'01110,10001,10011,10101,11001,10001,01110','1':'00100,01100,00100,00100,00100,00100,01110','2':'01110,10001,00001,00010,00100,01000,11111','3':'11110,00001,00001,01110,00001,00001,11110','4':'00010,00110,01010,10010,11111,00010,00010','5':'11111,10000,11110,00001,00001,10001,01110','6':'00110,01000,10000,11110,10001,10001,01110','7':'11111,00001,00010,00100,01000,01000,01000','8':'01110,10001,10001,01110,10001,10001,01110','9':'01110,10001,10001,01111,00001,00010,01100',
+ '-':'00000,00000,00000,11111,00000,00000,00000','&':'01100,10010,10100,01000,10101,10010,01101','.':'00000,00000,00000,00000,00000,01100,01100','/':'00001,00001,00010,00100,01000,10000,10000',' ':'00000,00000,00000,00000,00000,00000,00000'};
+// 像素字：回傳局部座標（x 向右、y 向上、z 向外）的方塊清單；原點在文字左下角
+function textBoxes(text,lh,depth,z0){
+ const px=lh/7,out=[];let x=0;
+ for(const chRaw of String(text||'').toUpperCase()){
+  const g=(FONT5[chRaw]||FONT5[' ']).split(',');
+  for(let r=0;r<7;r++){const row=g[r];let c=0;while(c<5){if(row[c]==='1'){let e=c;while(e<5&&row[e]==='1')e++;
+     const b=lbox(x+(c+e)/2*px,(6-r+0.5)*px,z0+depth/2,(e-c)*px,px,depth);out.push(b);c=e;}else c++;}}
+  x+=6*px;}
+ return {boxes:out,width:Math.max(0,x-px),px};
+}
+function buildSign(p){
+ if(p.plateMode||!p.signOn||!p.signText)return [];
+ const lh=Math.max(1.6,+p.signH||6),t=textBoxes(p.signText,lh,0.5,0.9),mx=lh*0.5,bw=t.width+2*mx,bh=lh+2*mx*0.9;
+ const out=[],letters=t.boxes,board=lbox(0,lh/2,0.45,bw,bh,0.9);
+ const wall=p.signWall||'front',e={wall,c:+p.signC||0},y=+p.signY||20;
+ const L=[...letters];L.forEach(g=>{g.translate(-t.width/2,y-lh/2,0);g.userData.cat='sign';});board.translate(0,y-lh/2,0);board.userData.cat='signbg';
+ // 兩支小吊桿
+ const rod=(dx)=>{const g=lbox(dx,y+bh/2+0.6,0.45,0.5,1.2,0.5);g.userData.cat='metal';return g;};
+ [...L,board,rod(-bw/2+1.2),rod(bw/2-1.2)].forEach(g=>out.push(placeLocal(g,p,e)));
+ return out;
+}
+// ---- 排水溝、落水管、山牆百葉 ----
+function buildGutters(p){
+ if(p.plateMode||!['gable','shed'].includes(p.roof))return [];
+ const out=[],G=gp(p),{W,D,swap,v,planes}=G,fz=D/2+(p.eaveZ||0),fx=W/2+(p.eaveX||0),s=scaleS();
+ const fin2=g=>{if(g){g.userData.cat='metal';if(swap)g.rotateY(Math.PI/2);out.push(g);}};
+ if(p.gutterOn){
+  const gw=Math.max(1.2,+p.gutterW||150*s),gh=gw*0.8,ds=Math.max(0.9,+p.gutterW*0.55||70*s),nsp=Math.max(0,Math.min(2,Math.round(p.gutterSpouts===undefined?2:p.gutterSpouts)));
+  for(const pl of planes){if(Math.abs(pl.b)>1e-6||Math.abs(pl.a)<1e-6)continue;
+   const xe=pl.a>0?-fx:fx,out_=Math.sign(xe),ye=pl.a*xe+pl.c-v,yb=ye-gh+0.15;
+   fin2(aab(xe+out_*0.1-0.25,xe+out_*0.1+0.25,yb,ye+0.2,-fz-0.2,fz+0.2));                         // 背板
+   fin2(aab(Math.min(xe,xe+out_*gw),Math.max(xe,xe+out_*gw),yb,yb+0.5,-fz-0.2,fz+0.2));             // 底
+   fin2(aab(xe+out_*gw-0.25,xe+out_*gw+0.25,yb,yb+gh*0.85,-fz-0.2,fz+0.2));                          // 前緣
+   for(let k=0;k<nsp;k++){const z=(k===0?-1:1)*(D/2-ds/2-0.4),xw=out_*(W/2+ds/2+0.3);
+    fin2(aab(Math.min(xe+out_*gw/2,xw),Math.max(xe+out_*gw/2,xw),yb-ds+0.2,yb+0.4,z-ds/2,z+ds/2));         // 肘管橫段
+    fin2(aab(xw-ds/2,xw+ds/2,0,yb+0.4,z-ds/2,z+ds/2));                                                   // 直立落水管
+    fin2(aab(xw-ds/2-0.3,xw+ds/2+0.3,0,0.8,z-ds/2-0.3,z+ds/2+0.3));}}                                    // 出水口
+ }
+ if(p.gableVent&&['gable'].includes(p.roof)){
+  const vw=Math.max(4,1300*s),vh=Math.max(3,900*s),yc=G.H+G.R*0.36;
+  for(const sg of [-1,1]){const z=sg*(D/2),zs=(a,b)=>[Math.min(z+sg*a,z+sg*b),Math.max(z+sg*a,z+sg*b)];
+   const back=aab(-vw/2,vw/2,yc-vh/2,yc+vh/2,...zs(0.2,0.9));if(back){back.userData.cat='wain';if(swap)back.rotateY(Math.PI/2);out.push(back);}
+   const n=Math.max(3,Math.floor(vh/0.9));
+   for(let j=0;j<n;j++){const yy=yc-vh/2+0.45+j*(vh-0.9)/(n-1),g=segB([-vw/2+0.2,yy-0.3,z+sg*0.85],[vw/2-0.2,yy+0.1,z+sg*1.35],0.32,0.75);if(g)fin2(g);}
+   for(const [x0,x1,y0,y1] of [[-vw/2-0.5,vw/2+0.5,yc+vh/2,yc+vh/2+0.55],[-vw/2-0.5,vw/2+0.5,yc-vh/2-0.55,yc-vh/2],[-vw/2-0.5,-vw/2,yc-vh/2,yc+vh/2],[vw/2,vw/2+0.5,yc-vh/2,yc+vh/2]]){const g=aab(x0,x1,y0,y1,...zs(0.1,1.5));if(g)fin2(g);}}}
+ return out;
+}
+// ---- 地面（水泥地、路緣、停車線）----
+function buildGround(p){
+ if(p.plateMode||!p.groundOn)return [];
+ const m=Math.max(2,+p.groundM||20),t=Math.max(0.6,+p.groundT||1.5),W=p.width+2*m,D=p.depth+2*m,s=scaleS(),out=[],tag=(g,c)=>{if(g){g.userData.cat=c;out.push(g);}};
+ tag(aabRaw(-W/2,W/2,-t,0,-D/2,D/2),'ground');
+ if(p.groundCurb){const cw=Math.max(0.8,150*s),ch=Math.max(0.5,150*s);
+  tag(aab(-W/2,W/2,0,ch,-D/2,-D/2+cw),'curb');tag(aab(-W/2,W/2,0,ch,D/2-cw,D/2),'curb');tag(aab(-W/2,-W/2+cw,0,ch,-D/2,D/2),'curb');tag(aab(W/2-cw,W/2,0,ch,-D/2,D/2),'curb');}
+ if(p.groundStripes){const sp=Math.max(3,2700*s),sw=Math.max(0.5,100*s),z1=D/2-Math.max(1.2,300*s),z0=Math.max(z1-Math.min(m*0.8,5000*s),p.depth/2+(p.eaveZ||0)+1+sw),x0=-W/2+Math.max(m*0.3,4),n=Math.floor((W-2*Math.max(m*0.3,4))/sp);
+  for(let i=0;i<=n;i++)tag(aabRaw(x0+i*sp-sw/2,x0+i*sp+sw/2,0,0.12,z0,z1),'stripe');
+  tag(aabRaw(x0-sw/2,x0+n*sp+sw/2,0,0.12,z0-sw,z0),'stripe');}
+ return out;
+}
+// ---- 夾層（局部樓板）----
+const mezzBase=p=>floorEff(p)?p.floorT:0;
+function mezzRect(p){
+ const Wi=p.width-2*p.wall,Di=p.depth-2*p.wall,cl=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+ let x0=cl(Math.min(p.mezzX0,p.mezzX1),-Wi/2,Wi/2),x1=cl(Math.max(p.mezzX0,p.mezzX1),-Wi/2,Wi/2),z0=cl(Math.min(p.mezzZ0,p.mezzZ1),-Di/2,Di/2),z1=cl(Math.max(p.mezzZ0,p.mezzZ1),-Di/2,Di/2);
+ return {x0,x1,z0,z1,Wi,Di};
+}
+function mezzStairObj(p){
+ const s=scaleS();
+ return {...newStair(0),on:true,chain:false,type:p.mezzStairType||'straight',width:+p.mezzStairW||Math.max(6,1000*s),struct:'stringer',slope:36,riserH:Math.max(1.4,190*s),treadT:Math.max(0.7,40*s),nose:Math.max(0.3,25*s),
+  rail:'both',railStyle:'horiz',railH:Math.max(3,900*s),baluPer:2,turn:p.mezzStairTurn||'right',riserClosed:false};
+}
+function mezzStairLayout(p){
+ if(!p.mezzOn)return null;
+ const r=mezzRect(p),y0=mezzBase(p),h=Math.min(+p.mezzH,p.wallH-2),st=mezzStairObj(p),g=gFromRise(st,y0,h,true);
+ const side=p.mezzStairSide||'right',c=+p.mezzStairC||0;
+ const E={right:{W0:[r.x1,c],n:[1,0],ax:1},left:{W0:[r.x0,c],n:[-1,0],ax:1},front:{W0:[c,r.z1],n:[0,1],ax:0},back:{W0:[c,r.z0],n:[0,-1],ax:0}}[side]||{W0:[r.x1,c],n:[1,0],ax:1};
+ const lay=attachFlights(g,st,E.W0,E.n,E.ax,c,0);
+ return {st,g,lay,side,nrm:E.n,W0:E.W0,r,y0,h};
+}
+function buildMezz(p){
+ if(p.plateMode||!p.mezzOn)return [];
+ const r=mezzRect(p),y0=mezzBase(p),h=Math.min(+p.mezzH,p.wallH-2),t=Math.max(0.8,+p.mezzT||1.5),s=scaleS(),out=[],tag=(g,c)=>{if(g){g.userData.cat=c;out.push(g);}};
+ if(r.x1-r.x0<4||r.z1-r.z0<4||h-t<y0+3)return out;
+ // 樓板（鋪板）
+ tag(aabRaw(r.x0,r.x1,h-t,h,r.z0,r.z1),'floor');
+ // 鋼梁（周邊＋中間 I 型梁的簡化）
+ const bh=Math.max(1.6,300*s),bw=Math.max(0.9,140*s),cs=Math.max(1.0,200*s);
+ tag(aab(r.x0,r.x1,h-t-bh,h-t,r.z0,r.z0+bw),'metal');tag(aab(r.x0,r.x1,h-t-bh,h-t,r.z1-bw,r.z1),'metal');
+ tag(aab(r.x0,r.x0+bw,h-t-bh,h-t,r.z0,r.z1),'metal');tag(aab(r.x1-bw,r.x1,h-t-bh,h-t,r.z0,r.z1),'metal');
+ const nb=Math.max(0,Math.floor((r.z1-r.z0)/Math.max(8,1500*s))-1);for(let i=1;i<=nb;i++){const z=r.z0+i*(r.z1-r.z0)/(nb+1);tag(aab(r.x0,r.x1,h-t-bh*0.7,h-t,z-bw/2,z+bw/2),'metal');}
+ // 立柱：開放邊的角落與跨距中間
+ const wallAt={x0:Math.abs(r.x0+r.Wi/2)<0.6,x1:Math.abs(r.x1-r.Wi/2)<0.6,z0:Math.abs(r.z0+r.Di/2)<0.6,z1:Math.abs(r.z1-r.Di/2)<0.6};
+ if(p.mezzPosts!==false){
+  const pts=[];
+  const addP=(x,z)=>{if(!pts.some(q=>Math.hypot(q[0]-x,q[1]-z)<1))pts.push([x,z]);};
+  const spanMax=Math.max(10,4500*s);
+  for(const [x,z,wallEdges] of [[r.x0,r.z0,wallAt.x0&&wallAt.z0],[r.x1,r.z0,wallAt.x1&&wallAt.z0],[r.x1,r.z1,wallAt.x1&&wallAt.z1],[r.x0,r.z1,wallAt.x0&&wallAt.z1]])if(!wallEdges)addP(x,z);
+  if(!wallAt.x1){const n=Math.ceil((r.z1-r.z0)/spanMax);for(let i=1;i<n;i++)addP(r.x1,r.z0+i*(r.z1-r.z0)/n);}
+  if(!wallAt.z1){const n=Math.ceil((r.x1-r.x0)/spanMax);for(let i=1;i<n;i++)addP(r.x0+i*(r.x1-r.x0)/n,r.z1);}
+  if(!wallAt.z0){const n=Math.ceil((r.x1-r.x0)/spanMax);for(let i=1;i<n;i++)addP(r.x0+i*(r.x1-r.x0)/n,r.z0);}
+  if(!wallAt.x0){const n=Math.ceil((r.z1-r.z0)/spanMax);for(let i=1;i<n;i++)addP(r.x0,r.z0+i*(r.z1-r.z0)/n);}
+  for(const [x,z] of pts){const ix=x<(r.x0+r.x1)/2?1:-1,iz=z<(r.z0+r.z1)/2?1:-1,cx=x+(Math.abs(x-r.x0)<0.1?cs/2:Math.abs(x-r.x1)<0.1?-cs/2:0),cz=z+(Math.abs(z-r.z0)<0.1?cs/2:Math.abs(z-r.z1)<0.1?-cs/2:0);
+   tag(aab(cx-cs/2,cx+cs/2,y0,h-t-bh,cz-cs/2,cz+cs/2),'metal');tag(aab(cx-cs*0.9,cx+cs*0.9,y0,y0+0.5,cz-cs*0.9,cz+cs*0.9),'metal');}}
+ // 樓梯
+ const ml=mezzStairLayout(p);
+ const attach=[];
+ if(ml){const {st,g,lay}=ml;for(const fl of lay.fl)out.push(...tagC(flightGeoms(fl,g,st,y0),'metal'));
+  if(lay.landing){out.push(...tagC(lay.winder?winderGeoms(lay,st,y0):slabBlock(lay.landing,st,y0),'metal'));
+   const at=[];lay.fl.forEach(f=>{const run=f.n*g.tread;at.push({x:f.x,z:f.z,w:f.w},{x:f.x+f.d[0]*run,z:f.z+f.d[1]*run,w:f.w});});
+   out.push(...perimeterRails({cx:lay.landing.cx,cz:lay.landing.cz,sx:lay.landing.sx,sz:lay.landing.sz},lay.landing.y1,at,st,null));}
+  attach.push({x:lay.end.x,z:lay.end.z,w:st.width});}
+ // 安全欄杆（開放邊）
+ if(p.mezzRail!==false){
+  const rst={...mezzStairObj(p),railStyle:p.mezzRailStyle||'horiz',railH:Math.max(3,1100*s)};
+  const skip=[];if(wallAt.z0)skip.push([0,-1]);if(wallAt.z1)skip.push([0,1]);if(wallAt.x0)skip.push([-1,0]);if(wallAt.x1)skip.push([1,0]);
+  out.push(...perimeterRails({cx:(r.x0+r.x1)/2,cz:(r.z0+r.z1)/2,sx:r.x1-r.x0,sz:r.z1-r.z0},h,attach,rst,skip));}
+ return out;
+}
+// ---- 鐵皮外牆肋條、牆腳裙牆、轉角收邊、金屬屋面立縫肋條（3D，三角面少、可列印）----
+function sidingSubtract(lo,hi,blocks){
+ let segs=[[lo,hi]];
+ for(const [a,b] of blocks){const ns=[];for(const [s0,s1] of segs){if(b<=s0||a>=s1){ns.push([s0,s1]);continue;}if(a>s0)ns.push([s0,a]);if(b<s1)ns.push([b,s1]);}segs=ns;}
+ return segs.filter(q=>q[1]-q[0]>0.35);
+}
+function buildSiding(p){
+ if(p.plateMode)return [];
+ const out=[],G=gp(p),W=p.width,D=p.depth,H=p.wallH,s=scaleS();
+ const tag=(g,c)=>{if(g){g.userData.cat=c;out.push(g);}};
+ const ribsOn=p.wallStyle==='ribs',wainPanel=ribsOn&&p.wainOn;
+ if(ribsOn||wainPanel){
+  const topAt=(x,z)=>Math.max(2,G.topY(G.swap?-z:x,G.swap?x:z,true)),pitch=Math.max(0.8,+p.ribPitch||2),rw=Math.max(0.55,pitch*0.38),rd=Math.max(0.3,+p.wallRelief||0.5),wh=wainPanel?Math.max(2,+p.wainH||15):0,wt=Math.max(0.5,rd*1.3);
+  const wins=windowList(p);
+  for(const wall of ['front','back','left','right']){
+   const zW=wall==='front'||wall==='back',sg=(wall==='front'||wall==='right')?1:-1,L=zW?W:D,off=sg*(zW?D:W)/2;
+   const ops=wins.filter(w=>w.wall===wall).map(w=>({u0:w.c-w.w/2-0.25,u1:w.c+w.w/2+0.25,y0:w.y0<=0.01?-1:w.y0-0.25,y1:w.y0+w.h+0.25}));
+   const topU=u=>zW?topAt(u,off):topAt(off,u);
+   const box=(u0,u1,y0,y1,d0,d1)=>{const a=Math.min(off+sg*d0,off+sg*d1),b=Math.max(off+sg*d0,off+sg*d1);return zW?aabRaw(u0,u1,y0,y1,a,b):aabRaw(a,b,y0,y1,u0,u1);};
+   if(wainPanel){
+    const segs=sidingSubtract(-L/2,L/2,ops.filter(o=>o.y0<wh).map(o=>[o.u0,o.u1]));
+    for(const [a,b] of segs){tag(box(a,b,0,wh,-0.05,wt),'wain');tag(box(a,b,wh,wh+0.5,-0.05,wt+0.3),'wain');}
+   }
+   if(ribsOn){
+    const n=Math.floor((L-2*1.2)/pitch);
+    for(let i=0;i<=n;i++){const u=-L/2+1.2+(L-2.4)*i/Math.max(1,n),yb=Math.min(topU(u)-0.2,topU(u)),blocks=ops.filter(o=>u>o.u0&&u<o.u1).map(o=>[o.y0,o.y1]);
+     for(const [a,b] of sidingSubtract(wh+(wainPanel?0.5:0.2),yb,blocks))tag(box(u-rw/2,u+rw/2,a,b,-0.05,rd),'wall');}
+   }
+  }
+  // 轉角收邊
+  if(ribsOn){const cw=Math.max(1.0,150*s),ct=Math.max(0.7,rd*1.4);
+   for(const sx of [-1,1])for(const sz of [-1,1]){const x=sx*W/2,z=sz*D/2,hh=Math.max(4,Math.min(topAt(x,z)+0.5,H+0.2));
+    tag(aabRaw(Math.min(x,x+sx*ct)-(sx>0?0:0),Math.max(x,x+sx*ct),0,hh,Math.min(z,z+sz*cw),Math.max(z,z+sz*cw)),'trim');tag(aabRaw(Math.min(x,x+sx*cw),Math.max(x,x+sx*cw),0,hh,Math.min(z,z+sz*ct),Math.max(z,z+sz*ct)),'trim');}}
+ }
+ // 金屬屋面立縫肋條
+ if(p.roofRibs&&['gable','shed'].includes(p.roof)){
+  const {W:pw,D:pd,swap,planes}=G,fx=pw/2+(p.eaveX||0),fz=pd/2+(p.eaveZ||0),rp=Math.max(2,+p.roofRibPitch||6),rt=Math.max(0.5,rp*0.1),n=Math.floor((2*fz-2)/rp);
+  for(const pl of planes){if(Math.abs(pl.b)>1e-6||Math.abs(pl.a)<1e-6)continue;
+   const xe=pl.a>0?-fx:fx,x0=pl.a>0?-fx:0,x1=pl.a>0?0:fx,ya=x=>pl.a*x+pl.c;
+   for(let i=0;i<=n;i++){const z=-fz+1+(2*fz-2)*i/Math.max(1,n),g=segB([x0,ya(x0)+rt*0.5,z],[x1,ya(x1)+rt*0.5,z],rt,Math.max(0.5,rp*0.14));
+    if(g){g.userData.cat='roof';if(swap)g.rotateY(Math.PI/2);out.push(g);}}}}
+ return out;
+}
+// ---- 場景配件 ----
+const PROPS={
+ car:{n:'轎車',fp:[4600,1800],col:'#c0392b'},pickup:{n:'皮卡',fp:[5400,2000],col:'#2f5d9e'},tire:{n:'單一輪胎',fp:[700,300],col:'#2a2a2a'},tires:{n:'輪胎堆',fp:[700,700],col:'#2a2a2a'},drum:{n:'油桶',fp:[600,600],col:'#1f5fa8'},
+ dumpster:{n:'垃圾箱',fp:[1900,1250],col:'#2e6b3a'},lift:{n:'雙柱舉升機',fp:[3600,1300],col:'#e0a020'},bench:{n:'工作台',fp:[2000,750],col:'#8a6a3a'},chest:{n:'工具車',fp:[700,500],col:'#b3261e'},
+ shelf:{n:'零件貨架',fp:[1800,600],col:'#2f6cb0'},pole:{n:'電線桿／路燈',fp:[300,300],col:'#6b4a2b'},pylon:{n:'立柱招牌',fp:[2400,400],col:'#b3202a'},bollard:{n:'警示柱',fp:[200,200],col:'#f2c200'},ridgevent:{n:'屋頂通風機',fp:[700,700],col:'#aab2ba'},compressor:{n:'空壓機',fp:[1500,500],col:'#c23b22'},tirerack:{n:'輪胎架',fp:[2000,700],col:'#3a6ea5'},cone:{n:'交通錐',fp:[350,350],col:'#f26b21'},fence:{n:'圍籬',fp:[6000,100],col:'#9aa3ad'}};
+function propGeoms(pr,p){
+ const s=scaleS(),mm=v=>v*s,out=[],tg=(g,c,col)=>{if(g){g.userData.cat=c||'prop';if(col)g.userData.color=col;out.push(g);}return g;};
+ const cb=(x,y,z,w,h,d,c,col)=>tg(lbox(mm(x),mm(y),mm(z),mm(w),mm(h),mm(d)),c,col);
+ const cy=(x,y,z,r,len,ax,c,col,seg)=>{const g=new THREE.CylinderGeometry(mm(r),mm(r),mm(len),seg||18);if(ax==='x')g.rotateZ(Math.PI/2);else if(ax==='z')g.rotateX(Math.PI/2);g.translate(mm(x),mm(y),mm(z));return tg(fin(g),c,col);};
+ const col=pr.color||PROPS[pr.type].col;
+ switch(pr.type){
+ case 'car':{const L=4600,W=1800;
+  cb(0,500,0,L,550,W,'prop',col);cb(80,900,0,L*0.5,420,W*0.9,'prop',col);                        // 車身、車廂
+  cb(80,905,0,L*0.5-120,330,W*0.9+8,'win');                                                      // 車窗
+  cb(L*0.34,720,0,L*0.28,60,W*0.96,'prop',col);cb(-L*0.4,740,0,L*0.18,50,W*0.96,'prop',col);   // 引擎蓋、行李箱蓋
+  for(const sx of [-1,1])for(const sz of [-1,1])cy(sx*L*0.3,300,sz*(W/2-130),300,230,'z','prop','#1c1c1c');
+  for(const sx of [-1,1])cb(sx*(L/2-40),420,0,80,160,W*0.85,'prop','#2c2c2c');
+  for(const sz of [-1,1]){cb(L*0.47,560,sz*W*0.33,40,90,200,'prop','#f7e7a1');cb(-L*0.47,560,sz*W*0.33,40,90,200,'prop','#b3202a');}
+  break;}
+ case 'pickup':{const L=5400,W=2000;
+  cb(0,520,0,L,520,W,'prop',col);cb(L*0.12,1000,0,L*0.28,480,W*0.92,'prop',col);cb(L*0.12,1005,0,L*0.28-100,360,W*0.92+8,'win');
+  cb(-L*0.25,860,W/2-60,L*0.42,300,80,'prop',col);cb(-L*0.25,860,-W/2+60,L*0.42,300,80,'prop',col);cb(-L*0.46,860,0,80,300,W,'prop',col);
+  for(const sx of [-1,1])for(const sz of [-1,1])cy(sx*L*0.3,340,sz*(W/2-140),340,260,'z','prop','#1c1c1c');
+  break;}
+ case 'tire':cy(0,330,0,330,230,'z','prop','#2a2a2a',22);cy(0,330,0,150,236,'z','prop','#9aa3ad',16);break;
+ case 'tires':for(let i=0;i<4;i++){cy(0,115+i*230,0,330,230,'y','prop','#2a2a2a',22);}break;
+ case 'drum':cy(0,440,0,290,880,'y','prop',col);for(const y of [200,680])cy(0,y,0,300,50,'y','prop',col);cy(0,885,0,230,20,'y','prop','#444');break;
+ case 'dumpster':cb(0,500,0,1800,1000,1200,'prop',col);cb(0,1045,0,1900,90,1300,'prop','#1f4a29');cb(0,60,0,1700,120,1100,'prop','#222');for(const sx of [-1,1])cb(sx*600,950,0,40,900,1210,'prop','#1f4a29');break;
+ case 'lift':{const hh=+pr.h||1100;
+  for(const sx of [-1,1]){cb(sx*1700,1900,0,260,3800,300,'prop',col);cb(sx*1700,30,0,900,60,800,'prop','#555');cb(sx*1700,hh,0,380,420,420,'prop','#555');
+   for(const sz of [-1,1]){cb(sx*1700-sx*450,hh,sz*480,1000,90,110,'prop','#444');cy(sx*1700-sx*900,hh+60,sz*480,60,70,'y','prop','#888');}}
+  cb(0,3750,0,3500,250,300,'prop',col);break;}
+ case 'bench':cb(0,900,0,2000,50,700,'prop','#a07a46');for(const sx of [-1,1])for(const sz of [-1,1])cb(sx*940,450,sz*320,60,900,60,'prop','#444');cb(0,250,0,1900,40,650,'prop','#555');cb(0,1350,-340,2000,900,30,'prop','#c9a86a');
+  cb(-500,1000,0,300,100,200,'prop','#b3261e');cb(300,1020,50,200,140,200,'prop','#2f6cb0');break;
+ case 'chest':cb(0,500,0,700,1000,500,'prop',col);cb(0,1030,0,720,60,520,'prop','#7a1a14');for(let i=0;i<5;i++)cb(0,150+i*170,260,560,20,20,'prop','#d0d0d0');break;
+ case 'shelf':for(const sx of [-1,1])for(const sz of [-1,1])cb(sx*880,1000,sz*280,50,2000,50,'prop',col);for(let i=0;i<4;i++){cb(0,200+i*560,0,1800,40,600,'prop','#e07a1f');if(i%2===0){cb(-400,200+i*560+170,0,500,300,420,'prop','#b08a58');cb(350,200+i*560+120,0,600,200,400,'prop','#8f6b3f');}}break;
+ case 'pole':cy(0,4250,0,110,8500,'y','prop',col,12);cb(380,8100,0,1500,90,90,'prop',col);cb(1050,8000,0,500,120,260,'prop','#9aa3ad');cb(0,7600,0,60,60,60,'prop','#888');break;
+ case 'pylon':{cy(-900,2000,0,130,4000,'y','prop','#666',12);cy(900,2000,0,130,4000,'y','prop','#666',12);cb(0,4300,0,2400,1100,220,'prop',col);
+  const t=textBoxes(pr.text||'AUTO',mm(300),mm(30),mm(110));const w=t.width;t.boxes.forEach(g=>{g.translate(-w/2,mm(4300)-mm(150),0);g.userData.cat='sign';out.push(g);});break;}
+ case 'compressor':cy(0,620,0,300,1300,'x','prop',col,20);for(const sx of [-1,1]){cb(sx*480,300,0,60,600,420,'prop','#444');cy(sx*650,620,0,300,10,'x','prop','#888',20);}cb(900,760,0,350,380,300,'prop','#2a2a2a');cb(0,960,0,200,100,200,'prop','#888');cy(-200,980,0,60,60,'y','prop','#b3202a',10);break;
+ case 'tirerack':for(const sx of [-1,1])for(const sz of [-1,1])cb(sx*980,1000,sz*320,60,2000,60,'prop',col);for(const y of [500,1100,1700]){cb(0,y,-320,2000,60,60,'prop',col);cb(0,y,320,2000,60,60,'prop',col);for(let i=0;i<3;i++)cy(-650+i*650,y+300,0,300,230,'z','prop','#2a2a2a',20);}break;
+ case 'ridgevent':cy(0,150,0,380,300,'y','prop',col,18);cy(0,450,0,260,300,'y','prop',col,18);{const g=new THREE.SphereGeometry(mm(300),16,10,0,Math.PI*2,0,Math.PI/2);g.translate(0,mm(600),0);tg(fin(g),'prop',col);}for(let i=0;i<8;i++){const a=i*Math.PI/4;cb(Math.cos(a)*260,450,Math.sin(a)*260,30,260,30,'prop','#8a9199');}break;
+ case 'bollard':cy(0,500,0,70,1000,'y','prop',col,12);cy(0,1000,0,80,40,'y','prop','#222',12);break;
+ case 'cone':{const g=new THREE.CylinderGeometry(mm(25),mm(150),mm(700),16);g.translate(0,mm(350),0);tg(fin(g),'prop',col);cb(0,15,0,360,30,360,'prop','#222');break;}
+ case 'fence':{const L=+pr.len||6000,n=Math.max(1,Math.round(L/2000));for(let i=0;i<=n;i++)cb(-L/2+i*L/n,900,0,70,1800,70,'prop','#7c858f');cb(0,1780,0,L,50,50,'prop','#7c858f');cb(0,60,0,L,40,40,'prop','#7c858f');cb(0,900,0,L,1650,12,'prop','#b8c0c8');break;}
+ }
+ const rot=(+pr.rot||0)*Math.PI/180;
+ const y0=(pr.inside!==false&&pr.type!=='ridgevent'&&Math.abs(pr.x)<p.width/2-p.wall&&Math.abs(pr.z)<p.depth/2-p.wall&&floorEff(p))?p.floorT:0;
+ for(const g of out){g.rotateY(-rot);g.translate(+pr.x||0,y0+(+pr.y||0),+pr.z||0);}
+ return out;
+}
+function buildProps(p){
+ if(p.plateMode||!(p.props||[]).length)return [];
+ const out=[];for(const pr of p.props)if(PROPS[pr.type]&&pr.on!==false)out.push(...propGeoms(pr,p));
+ return out;
+}
+function newProp(type,over){
+ const s=scaleS(),d=PROPS[type];const Wi=P.width,Dp=P.depth;
+ return {type,on:true,x:0,z:Math.round((Dp/2+Math.max(10,5000*s))*2)/2,rot:0,y:0,...(over||{})};
+}
+
+addFields($('f1m'),[['mezzOn','加夾層','chk'],['mezzH','夾層樓面高度',10,120,0.5],['mezzT','夾層板厚',0.8,4,0.1],['mezzX0','範圍 X 起（室內座標）',-150,150,0.5],['mezzX1','範圍 X 終',-150,150,0.5],['mezzZ0','範圍 Z 起',-150,150,0.5],['mezzZ1','範圍 Z 終',-150,150,0.5],['mezzPosts','鋼柱','chk'],['mezzRail','開放邊護欄','chk'],['mezzRailStyle','護欄樣式','sel',RAILSTYLE],['mezzStairSide','樓梯接在夾層哪一邊','sel',{right:'右邊（+X）',left:'左邊（−X）',front:'前邊（+Z）',back:'後邊（−Z）'}],['mezzStairC','樓梯沿邊位置',-150,150,0.5],['mezzStairType','樓梯形式','sel',{straight:'直跑',L:'L 型',U:'U 型'}],['mezzStairW','樓梯寬（0=自動 1m）',0,30,0.5],['mezzOfficeH','辦公室隔間高度',10,80,0.5]]);
+addFields($('f2gu'),[['roofRibs','金屬屋面立縫肋條（3D，雙斜／單斜）','chk'],['roofRibPitch','屋面肋條間距',2,12,0.5],['gutterOn','加排水溝與落水管','chk'],['gutterW','排水溝寬',0.8,5,0.1],['gutterSpouts','每側落水管數（0～2）',0,2,1],['gableVent','山牆百葉通風口','chk']]);
+addFields($('f4s'),[['signOn','加招牌','chk'],['signWall','招牌所在牆','sel',OUTWALLS],['signC','沿牆位置（0=置中）',-150,150,0.5],['signY','招牌中心高度',5,150,0.5],['signH','字高',2,20,0.5],['doorLamp','每扇門上方加壁燈','chk']]);
+{const row=document.createElement('div');row.className='row';row.dataset.k='signText';row.innerHTML='<label>招牌文字</label><input type="text" maxlength="24" style="grid-column:span 2;width:100%">';const inp=row.querySelector('input');inp.value=P.signText||'';inp.oninput=()=>{P.signText=inp.value;syncSoon();};REG.push(()=>{inp.value=P.signText||'';});$('f4s').insertBefore(row,$('f4s').children[1]||null);}
+addFields($('f5w'),[['wallStyle','整棟外牆材質','sel',{none:'（無）',ribs:'鐵皮肋條（3D，推薦鐵皮屋）',corrugated:'波浪鐵皮（浮雕貼皮，面數多）',metal:'金屬立縫板',usLap:'美式搭接板',usBatten:'美式直立板條',brick:'磚紋',stucco:'灰泥粗面',concrete:'混凝土'}],['wallRelief','牆面浮雕深度',0.2,2,0.05],['ribPitch','鐵皮肋條間距',0.8,6,0.1],['wallScale','牆面紋路密度（倍率，浮雕貼皮用）',0.2,3,0.05],['wainOn','加牆腳裙牆（下半段不同材質）','chk'],['wainH','裙牆高度',3,60,0.5],['wainType','裙牆材質','sel',{brick:'磚紋',concrete:'混凝土',ashlar:'切石砌',stucco:'灰泥粗面'}],['wainScale','裙牆紋路（倍率，大＝粗）',0.5,4,0.1]]);
+addFields($('f8g'),[['groundOn','加地面（水泥地）','chk'],['groundM','地面向外擴（四周）',5,80,1],['groundT','地面厚度',0.6,4,0.1],['groundCurb','路緣','chk'],['groundStripes','停車線','chk']]);
+
+// ---- 場景配件：清單、新增、平面拖曳 ----
+function renderPropList(){
+ const el=$('propList');if(!el)return;P.props=P.props||[];
+ const btns=$('propAddBtns');
+ if(btns&&!btns.dataset.ok){btns.dataset.ok='1';btns.innerHTML=Object.entries(PROPS).map(([k,v])=>`<button data-pa="${k}">＋${v.n}</button>`).join('');
+  btns.querySelectorAll('[data-pa]').forEach(b=>b.onclick=()=>{lastPushT=0;const t=b.dataset.pa;const o=newProp(t);if(['lift','bench','chest','shelf'].includes(t)){o.z=0;}P.props.push(o);renderPropList();sync();});}
+ el.innerHTML=P.props.length?'':'<div class="hint">還沒有配件。按下方按鈕新增；車輛、舉升機、工作台等會依場景比例縮放。</div>';
+ P.props.forEach((pr,i)=>{const c=document.createElement('div');c.className='stairBox';const d=PROPS[pr.type]||{n:pr.type};
+  c.innerHTML=`<div style="display:flex;gap:8px;align-items:center;justify-content:space-between"><label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" data-pf="on" ${pr.on!==false?'checked':''} style="accent-color:var(--cy)"><b>${i+1}. ${d.n}</b></label><span><button class="sw" data-dup="1">複製</button> <button class="sw" data-del="1">刪除</button></span></div>
+   <div class="mini" style="margin-top:6px"><div><label>X</label><input type="number" step="0.5" data-pf="x" value="${+(+pr.x||0).toFixed(1)}"></div><div><label>Z</label><input type="number" step="0.5" data-pf="z" value="${+(+pr.z||0).toFixed(1)}"></div><div><label>旋轉°</label><input type="number" step="15" data-pf="rot" value="${+pr.rot||0}"></div><div><label>抬高</label><input type="number" step="0.5" data-pf="y" value="${+pr.y||0}"></div>
+   ${['car','pickup','drum','dumpster','chest','shelf','pylon','bench','cone','bollard'].includes(pr.type)?`<div style="grid-column:span 2"><label>顏色</label><input type="color" data-pf="color" value="${pr.color||d.col}"></div>`:''}
+   ${pr.type==='lift'?`<div style="grid-column:span 2"><label>升起高度（真實 mm）</label><input type="number" step="100" data-pf="h" value="${pr.h||1100}"></div>`:''}
+   ${pr.type==='fence'?`<div style="grid-column:span 2"><label>長度（真實 mm）</label><input type="number" step="500" data-pf="len" value="${pr.len||6000}"></div>`:''}
+   ${pr.type==='pylon'?`<div style="grid-column:span 2"><label>文字</label><input type="text" data-pf="text" value="${pr.text||'AUTO'}"></div>`:''}</div>`;
+  c.querySelectorAll('[data-pf]').forEach(inp=>{const k=inp.dataset.pf;inp.onchange=()=>{if(inp.type==='checkbox')pr[k]=inp.checked;else if(inp.type==='number')pr[k]=+inp.value||0;else pr[k]=inp.value;sync();};});
+  c.querySelector('[data-del]').onclick=()=>{lastPushT=0;P.props.splice(i,1);renderPropList();sync();};
+  c.querySelector('[data-dup]').onclick=()=>{lastPushT=0;P.props.splice(i+1,0,{...pr,x:(+pr.x||0)+6,z:(+pr.z||0)+6});renderPropList();sync();};
+  el.appendChild(c);});
+}
+REG.push(renderPropList);
+// 夾層辦公室隔間
+function addMezzOffice(){
+ lastPushT=0;P.mezzOn=true;const r=mezzRect(P),s=scaleS(),od=Math.min(r.z1-r.z0-4,Math.max(12,5500*s)),dw=Math.max(6,900*s),dh=Math.max(10,2100*s);
+ P.iwalls=(P.iwalls||[]).filter(w=>!w.mezz);
+ P.iwalls.push({axis:'x',floor:0,mezz:true,pos:r.z1-od,a0:r.x0,a1:r.x1,doors:[{c:r.x0+Math.max(8,1600*s),w:dw,h:dh}]});
+ P.iwalls.push({axis:'z',floor:0,mezz:true,pos:r.x1,a0:r.z1-od,a1:r.z1,doors:[]});
+ REG.forEach(f=>f());renderIwList();sync();
+}
+$('mezzOffice').onclick=addMezzOffice;
+// ---- 範本：美式修車廠 ----
+function applyTemplate(key){
+ if(key!=='garage')return;
+ lastPushT=0;const d=P.scale>0?P.scale:64;P.scale=d;
+ const s=1/d,r=(v,mn)=>Math.max(mn||0,Math.round(v*s*100)/100),set=(k,v)=>{if(SETTERS[k])SETTERS[k](v);else P[k]=v;};
+ applyScale(d,true);
+ for(const [k,v] of Object.entries({width:r(18300,30),depth:r(12200,30),floors:1,wallH:r(5500,20),wall:r(150,1.4),floorT:r(150,1.2),roofT:r(130,1.2),eaveX:r(450,2),eaveZ:r(350,2),rise:r(1000,6),gutterW:r(200,1.4),iwT:r(120,1.2)}))set(k,v);
+ Object.assign(P,{roof:'gable',ridge:60,floorOn:true,slabOn:false,lampOn:false,roofStyle:'none',roofRibs:true,roofRibPitch:r(450,4),ridgeCap:true,chimOn:false,
+  gutterOn:true,gutterSpouts:2,gableVent:true,wallStyle:'ribs',ribPitch:r(190,1.4),wallRelief:0.5,wallScale:1,wainOn:true,wainType:'brick',wainScale:2.2,wainH:r(1200,8),
+  winStyle:'grid',frameOn:true,sillOn:false,winGlass:true,winBars:true,floorTex:'none',look:'custom',col:{...LOOKSETS.parts,wall:'#cfd3d6',roof:'#8f99a3',door:'#ecebe6',trim:'#e4e4de',win:'#9cc7de',floor:'#a5a8aa',int:'#e8e5db',ground:'#a9acaf',metal:'#7f8891',wain:'#7b8289',curb:'#d6d6d0',stair:'#7f8891',rail:'#d9a21b'},annexes:[],stairs:[],outStairs:[]});
+ const Wi=P.width-2*P.wall,Di=P.depth-2*P.wall,mx=m=>Math.round(m*1000*s*100)/100;
+ // 窗：前牆辦公室窗、後牆高窗、兩側山牆各一
+ const wl=[{wall:'front',c:mx(-5.0),w:r(2200,8),h:r(1300,6),y0:r(1000,3),style:'grid'},{wall:'left',c:0,w:r(1800,8),h:r(1100,6),y0:r(2600,8),style:'grid'},{wall:'right',c:0,w:r(1800,8),h:r(1100,6),y0:r(2600,8),style:'grid'}];
+ for(const x of [-6,-1,4])wl.push({wall:'back',c:mx(x),w:r(2400,8),h:r(1000,6),y0:r(2800,8),style:'grid'});
+ P.winManual=wl;P.winWall={front:true,back:true,left:true,right:true};
+ // 門：人員出入口＋3 個美式分節式車庫門
+ const bay=(x)=>({wall:'front',c:mx(x),w:r(3000,16),h:r(3600,20),style:'single',type:'sectional',handle:'none',open:0,leaf:true,frameOn:true,frameW:r(180,1),transomH:0,side:0,canopy:'none',canopyD:5,step:0});
+ P.doorOn=true;P.doorList=[{wall:'front',c:mx(-7.6),w:r(950,7),h:r(2100,12),style:'single',type:'steel',handle:'lever',open:0,leaf:true,frameOn:true,frameW:r(150,1),transomH:0,side:0,canopy:'flat',canopyD:r(900,3),step:0},bay(-1.0),bay(3.0),bay(7.0),{wall:'back',c:mx(7.5),w:r(950,7),h:r(2100,12),style:'single',type:'steel',handle:'lever',open:0,leaf:true,frameOn:true,frameW:r(150,1),transomH:0,side:0,canopy:'flat',canopyD:r(900,3),step:0}];P.doorLamp=true;
+ // 招牌
+ Object.assign(P,{signOn:true,signText:'AUTO REPAIR',signWall:'front',signC:mx(3.0),signY:r(4500,40),signH:r(700,4)});
+ // 夾層（左側 5.5m、全深）＋樓梯＋辦公室
+ Object.assign(P,{mezzOn:true,mezzX0:-Wi/2,mezzX1:-Wi/2+mx(5.5),mezzZ0:-Di/2,mezzZ1:Di/2,mezzH:r(2900,24),mezzT:r(150,1.2),mezzPosts:true,mezzRail:true,mezzRailStyle:'horiz',mezzStairSide:'right',mezzStairC:-Di/2+mx(1.6),mezzStairType:'straight',mezzStairW:0,mezzOfficeH:r(2400,18)});
+ addMezzOffice();
+ // 地面
+ Object.assign(P,{groundOn:true,groundM:Math.min(80,r(6000,10)),groundT:r(200,1.2),groundCurb:true,groundStripes:true});
+ // 配件
+ const D2=P.depth/2,W2=P.width/2,lh=Math.round(1100);
+ P.props=[
+  {type:'lift',on:true,x:mx(2.6),z:mx(-0.5),rot:0,y:0,h:lh},{type:'car',on:true,x:mx(2.6),z:mx(-0.5),rot:90,y:mx(1.25),color:'#2f5d9e'},
+  {type:'bench',on:true,x:mx(6.6),z:-D2+mx(0.5)+r(350,0),rot:0,y:0},{type:'chest',on:true,x:mx(8.3),z:-D2+mx(0.6),rot:0,y:0},
+  {type:'shelf',on:true,x:mx(-6.6),z:mx(-1.2),rot:90,y:0},{type:'compressor',on:true,x:mx(-1.2),z:-D2+mx(0.5),rot:0,y:0},{type:'tirerack',on:true,x:mx(1.6),z:-D2+mx(0.5),rot:0,y:0},{type:'tires',on:true,x:mx(-2.2),z:mx(-4.7),rot:0,y:0},{type:'drum',on:true,x:mx(-1.4),z:mx(-5.2),rot:0,y:0},{type:'drum',on:true,x:mx(-2.2),z:mx(-5.5),rot:0,y:0,color:'#b3261e'},
+  {type:'pickup',on:true,x:mx(4.2),z:D2+mx(6.5),rot:90,y:0,color:'#8d1f1f'},{type:'car',on:true,x:mx(-3.0),z:D2+mx(7.5),rot:80,y:0,color:'#e8e8e2'},
+  {type:'dumpster',on:true,x:W2+mx(1.2),z:-D2+mx(2.5),rot:0,y:0},{type:'tires',on:true,x:W2+mx(1.0),z:mx(1.0),rot:0,y:0},{type:'drum',on:true,x:W2+mx(1.0),z:mx(2.3),rot:0,y:0},
+  {type:'pole',on:true,x:-W2-mx(2.0),z:D2+mx(3.0),rot:0,y:0},{type:'pylon',on:true,x:-W2+mx(2.0),z:D2+mx(10.0),rot:0,y:0,text:'AUTO'},
+  {type:'ridgevent',on:true,x:mx(-4.5),z:0,rot:0,y:r(5500+1000,0)-0.3},{type:'ridgevent',on:true,x:mx(1.5),z:0,rot:0,y:r(5500+1000,0)-0.3},{type:'ridgevent',on:true,x:mx(6.5),z:0,rot:0,y:r(5500+1000,0)-0.3},
+  {type:'bollard',on:true,x:mx(-2.6),z:D2+mx(1.0),rot:0,y:0},{type:'bollard',on:true,x:mx(8.6),z:D2+mx(1.0),rot:0,y:0},{type:'cone',on:true,x:mx(6.0),z:D2+mx(3.2),rot:0,y:0}];
+ REG.forEach(f=>f());paintScale();renderPropList();renderIwList();renderStairList();sync();
+}
+$('tplGarage').onclick=()=>{if(confirm('套用「美式修車廠」範本？會覆蓋目前的尺寸、門窗、屋頂等設定（可用 Ctrl+Z 復原）'))applyTemplate('garage');};
+
 // ---------- 記憶體釋放 ----------
 const fmtMB=b=>b==null?'—':(b/1048576).toFixed(0)+' MB';
 function memStats(){
@@ -3232,14 +3572,14 @@ $('btnPng').onclick=()=>{ren.render(scene,cam);saveFile(`冠名盒子_${new Date
 function dataURLtoBlob(u){const a=u.split(','),b=atob(a[1]),n=new Uint8Array(b.length);for(let i=0;i<b.length;i++)n[i]=b.charCodeAt(i);return n;}
 // ---------- 重設本步驟（恢復該步驟的預設值，可用 Ctrl+Z 復原）----------
 const STEP_KEYS={
- 1:['annex','width','depth','floors','wallH','wall','floorOn','floorT','slabOn','lampOn','lampTarget','lampShape','lampLayout','lampN','lampRows','lampPos','lampD','lampX','lampZ'],
- 2:['roof','rise','ridge','eaveX','eaveZ','roofT','gbBreak','gbHeight','ridgeCap','chimOn','chimX','chimZ','chimW','chimD','chimH','roofStyle','roofRelief','roofScale','roofAge','roofSplit','roofLift','noRoofSkin'],
+ 1:['mezzOn','mezzX0','mezzX1','mezzZ0','mezzZ1','mezzH','mezzT','mezzPosts','mezzRail','mezzRailStyle','mezzStairSide','mezzStairC','mezzStairType','mezzStairW','mezzOfficeH','annex','width','depth','floors','wallH','wall','floorOn','floorT','slabOn','lampOn','lampTarget','lampShape','lampLayout','lampN','lampRows','lampPos','lampD','lampX','lampZ'],
+ 2:['roofRibs','roofRibPitch','gutterOn','gutterW','gutterSpouts','gableVent','roof','rise','ridge','eaveX','eaveZ','roofT','gbBreak','gbHeight','ridgeCap','chimOn','chimX','chimZ','chimW','chimD','chimH','roofStyle','roofRelief','roofScale','roofAge','roofSplit','roofLift','noRoofSkin'],
  3:['winW','winH','winSill','winRows','winGap','nFront','nBack','nLeft','nRight','winWall','winStyle','winManual','frameOn','frameW','frameD','sillOn','winGlass','winBars','winBodyT'],
- 4:['doorOn','doorList','doorN','doorGap','doorDir','doorFront','doorBack','doorLeft','doorRight','doorWall','doorStyle','doorW','doorH','doorC','doorLeaf','doorType','doorHandle','doorFrameOn','doorFrameW','doorOpen','doorTransomH','doorSide','doorCanopy','doorCanopyD','doorStep','doorType2'],
- 5:['skins','skinType','skinRelief','skinScale','skinRes','skinAge','skinSeed','tool','roofStyle','roofRelief','roofScale','roofAge','noRoofSkin'],
- 6:['iwalls','iwT'],
+ 4:['signOn','signText','signWall','signC','signY','signH','doorLamp','doorOn','doorList','doorN','doorGap','doorDir','doorFront','doorBack','doorLeft','doorRight','doorWall','doorStyle','doorW','doorH','doorC','doorLeaf','doorType','doorHandle','doorFrameOn','doorFrameW','doorOpen','doorTransomH','doorSide','doorCanopy','doorCanopyD','doorStep','doorType2'],
+ 5:['ribPitch','wallStyle','wallRelief','wallScale','wainOn','wainH','wainType','wainScale','skins','skinType','skinRelief','skinScale','skinRes','skinAge','skinSeed','tool','roofStyle','roofRelief','roofScale','roofAge','noRoofSkin'],
+ 6:['iwalls','iwT','props'],
  7:['stairs','outStairs'],
- 8:['floorTex','tileL','tileW','tileL2','tileW2','tileOff','tileJoint','tileRelief','tileSeed','tileLevels'],
+ 8:['groundOn','groundM','groundT','groundCurb','groundStripes','floorTex','tileL','tileW','tileL2','tileW2','tileOff','tileJoint','tileRelief','tileSeed','tileLevels'],
  9:['print','roofOut','exportPart','T','kerf','finger','sheetW','engrave','bedW','bedD','nozzle','skinResOut']};
 function resetStep(n){
  lastPushT=0; // 重設一定成為獨立的復原步驟
