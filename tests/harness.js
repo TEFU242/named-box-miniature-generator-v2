@@ -651,6 +651,9 @@ T('AJ 地形','取消勾選「地形」步驟：格線地板回到 y=0',()=>{ter
 T('AJ 地形','坡道太長會自動縮短在基地內（變陡），並在資訊欄警告',()=>{ter({terrainMode:'tiers',tierBld:'upper',tierH:10,tierAccess:'ramp',tierAccessSide:'front',tierRampDeg:10,tierX0:-70,tierX1:70,tierZ0:-60,tierZ1:60});const s=siteRect(curP);const g=buildGround(curP);const zmax=Math.max(...g.map(x=>gbb(x).max.z));return {ok:zmax<=s.D/2+0.01&&$('terrInfo').textContent.includes('坡道會被縮短'),detail:`最外 z=${zmax.toFixed(1)}／基地 ${s.D/2}`};});
 
 // ---------- 蒐集 STEP 測試狀態 ----------
+T('AK ナミヤ','套用範本：2 層、店面、招牌、屋架、矮屋都產生',()=>{applyTemplate('namiya');sync();const ok=curP.floors===2&&curP.shopOn&&curP.signRich&&curP.signRich.on&&curP.roofFraming&&curP.annex.length===1&&extraGeoms.length>10;return {ok,detail:'extra='+extraGeoms.length};});
+T('AK ナミヤ','屋頂可沿屋脊切成兩片平放（底面朝下、無 NaN）',()=>{applyTemplate('namiya');sync();const h=roofHalves(curP,cur.roof);if(!h)return {ok:false,detail:'null'};const bad=h.some(g=>{g.computeBoundingBox();const b=g.boundingBox;return !isFinite(b.min.y)||Math.abs(b.min.y)>0.01;});return {ok:!bad,detail:h.length+' 片'};});
+T('AK ナミヤ','分件分類：同時有 FDM 與光固化，且有 STL 幾何',()=>{applyTemplate('namiya');sync();const g=partGroups(curP,[]);const f=g.filter(x=>x.proc==='FDM').length,o=g.length-f;return {ok:f>=4&&o>=4&&g.every(x=>x.geometry&&x.geometry.attributes.position.count>0),detail:'FDM '+f+' 光固化 '+o};});
 T('J 蒐集 STEP 測試','產生 9 組 STEP 輸入',()=>{
  reset();sync();snapStep();
  reset();P.floors=2;P.slabOn=true;P.roofSplit=true;P.frameOn=true;P.ridgeCap=true;P.chimOn=true;P.eaveX=8;P.eaveZ=8;P.iwalls=[newIwall('x'),newIwall('z')];sync();snapStep();
