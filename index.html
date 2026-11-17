@@ -132,6 +132,10 @@ section.secoff>*:not(h2.big):not(.offBar){opacity:.38;pointer-events:none}
 .doorSel .dch{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0}.doorSel .dch button{border:1px solid var(--line);background:var(--inp);color:var(--txt);border-radius:14px;padding:3px 10px;cursor:pointer;font-size:12px}
 .doorSel .dch button.on{border-color:#ff7a00;color:#c25a00;background:#fff4e5;font-weight:700}.doorSel.flash{animation:dflash 1.2s}
 @keyframes dflash{0%{box-shadow:0 0 0 0 rgba(255,122,0,.9)}100%{box-shadow:0 0 0 14px rgba(255,122,0,0)}}
+.vrow #clipBtn.on{border-color:#e53935;color:#e53935;background:rgba(229,57,53,.08)}
+#clipPanel{position:absolute;right:12px;bottom:238px;z-index:7;width:300px;max-height:70%;overflow:auto;background:var(--panel);border:1px solid #e53935;border-radius:10px;padding:10px 12px;box-shadow:0 8px 28px rgba(0,0,0,.3);font-size:12.5px;color:var(--txt)}
+#clipPanel h4{margin:0 0 6px;color:#e53935;display:flex;justify-content:space-between;align-items:center}#clipPanel .cr{display:flex;align-items:center;gap:8px;margin:7px 0}#clipPanel .cr input[type=range]{flex:1}
+#clipPanel .cb{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0}#clipPanel .cb button{border:1px solid var(--line);background:var(--inp);color:var(--txt);border-radius:7px;padding:4px 9px;cursor:pointer;font-size:12px}#clipPanel .cb button.on{border-color:#e53935;color:#e53935;background:rgba(229,57,53,.08);font-weight:700}
 .dgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:4px 0 8px}
 .dbtn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 2px;border:1px solid var(--line);background:var(--inp);border-radius:8px;cursor:pointer;color:var(--txt);font-size:11px;line-height:1.2}
 .dbtn:hover{border-color:var(--cy)}.dbtn.on{border-color:var(--cy);background:var(--sel);color:var(--cy);font-weight:700}
@@ -249,7 +253,6 @@ section.secoff>*:not(h2.big):not(.offBar){opacity:.38;pointer-events:none}
      <div class="quick"><button id="addWallX">＋ 橫牆（沿 X）</button><button id="addWallZ">＋ 直牆（沿 Z）</button></div>
      <div class="quick"><button id="preCross">範本：十字分割</button><button id="preT">範本：T 字分割</button></div>
      <div id="f5"></div><div data-advanced id="iwWrap"><div id="iwList"></div></div>
-     <h2>場景配件（車、舉升機、工作台、輪胎、油桶、路燈…）</h2><div id="propList"></div><div class="quick" id="propAddBtns"></div><div class="hint">平面圖上可以直接拖曳配件；室內地板上的配件會自動站在地板面上。</div>
      <div class="hint">右側平面圖：拖曳牆壁可移動位置，拖曳綠色門可沿牆滑動。門會在每層樓重複。</div>
 </section>
    <section data-step="7"><h2 class="big">⑦ 樓梯（室內＋戶外）</h2>
@@ -258,9 +261,11 @@ section.secoff>*:not(h2.big):not(.offBar){opacity:.38;pointer-events:none}
      <div class="quick" id="outAddBtns"></div>
      <div class="hint">🪜 平面圖上可拖曳室內樓梯。台灣住宅常見：級高 16～20cm、級深 25～28cm、梯寬 ≥75cm（共用梯 ≥120cm）、扶手高約 90cm、欄杆間距 ≤11cm。按卡片上的「台灣住宅標準」會依你的樓高換算成模型尺寸。</div></section>
    <section data-step="8"><h2 class="big">⑧ 地板紋路</h2>
-     <div id="f7"></div><div id="floorInfo" class="hint" style="white-space:pre-line"></div>
-     <h2>地面與停車場</h2><div id="f8g"></div></section>
-   <section data-step="9"><h2 class="big">⑨ 輸出模式</h2>
+     <div id="f7"></div><div id="floorInfo" class="hint" style="white-space:pre-line"></div></section>
+   <section data-step="9"><h2 class="big">⑨ 場景（地面・配件）</h2>
+     <h2>地面與停車場</h2><div id="f8g"></div>
+     <h2>場景配件（車、舉升機、工作台、輪胎、油桶、路燈…）</h2><div id="propList"></div><div class="quick" id="propAddBtns"></div><div class="hint">平面圖上可以直接拖曳配件；室內地板上的配件會自動站在地板面上。</div></section>
+   <section data-step="10"><h2 class="big">⑩ 輸出模式</h2>
      <div class="seg" id="printSeg" style="grid-template-columns:1fr 1fr 1fr"></div>
      <div id="roofOutWrap" style="display:none"><h2>屋頂輸出方式（屋頂已分離）</h2><div class="seg" id="roofOutSeg" style="grid-template-columns:1fr 1fr 1fr"></div>
       <h2>匯出哪一部分</h2><div class="seg" id="partSeg" style="grid-template-columns:1fr 1fr 1fr"></div></div>
@@ -284,13 +289,14 @@ section.secoff>*:not(h2.big):not(.offBar){opacity:.38;pointer-events:none}
 </div>
 <div id="memPanel" style="display:none"></div><div id="lookPanel" style="display:none"></div>
 <div id="view"><div id="dim"></div>
-  <div id="tags"></div><div id="hoverTip"></div><div id="stats"></div>
+  <div id="tags"></div><div id="hoverTip"></div><div id="stats"></div><div id="clipPanel" style="display:none"></div>
   <div id="vbar">
    <div id="vcubeWrap">
     <svg id="axes" width="86" height="86" viewBox="-43 -43 86 86"></svg>
     <div id="vcube"></div>
    </div>
    <div class="vrow"><button class="edgeLbl" id="projP" title="透視：近大遠小">透視</button><button class="edgeLbl" id="projO" title="正交：CAD 平行投影，沒有透視變形">正交</button></div>
+   <div class="vrow"><button class="edgeLbl" id="clipBtn" title="剖面：選一個方向或一個牆面，拉參數看裡面">✂ 剖面：關</button></div>
    <div class="vrow"><button class="edgeLbl" id="xrayBtn" title="X 光：外殼半透明，顯示室內牆、樓板、樓梯">X光：關</button><label class="edgeLbl"><input type="checkbox" id="edgeChk">顯示線條</label></div>
   </div>
   <div id="vsw" style="display:none"><button data-v="3d">3D</button><button data-v="flat">平面圖</button><button data-v="split">並排</button></div>
@@ -313,7 +319,7 @@ const P={mode:'lamp',step:1,roof:'gable',print:'fdm',width:100,depth:100,wallH:2
  winW:14,winH:12,winSill:5,winRows:1,winGap:4,nFront:2,nBack:1,nLeft:1,nRight:1,winWall:{front:true,back:false,left:true,right:true},winStyle:'fixed',winManual:null,
  skins:{},skinType:'brick',skinRelief:0.8,skinScale:1,skinRes:'0.5',skinResOut:'0.3',skinAge:0,skinSeed:7,roofAge:0,snapOn:true,snapTH:4,tool:'face',
  iwalls:[],iwT:1.6,planFloor:0,elevFloor:'all',annex:[],
- stairs:[],stepOff:[],outStairs:[],floorTex:'none',tileL:8,tileW:8,tileL2:0,tileW2:0,tileOff:50,tileJoint:0.6,tileRelief:0.4,tileSeed:3,tileLevels:'all',mezzOn:false,mezzX0:-40,mezzX1:-10,mezzZ0:-40,mezzZ1:40,mezzH:44,mezzT:1.5,mezzPosts:true,mezzRail:true,mezzRailStyle:'horiz',mezzStairSide:'right',mezzStairC:-30,mezzStairType:'straight',mezzStairW:0,mezzStairTurn:'right',mezzOfficeH:36,gutterOn:false,gutterW:1.8,gutterSpouts:2,gableVent:false,signOn:false,signText:'AUTO REPAIR',signWall:'front',signC:0,signY:60,signH:6,doorLamp:false,groundOn:false,groundM:20,groundT:1.5,groundCurb:true,groundStripes:true,props:[],ribPitch:2,roofRibs:false,roofRibPitch:6,wallStyle:'none',wallRelief:0.5,wallScale:1,wainOn:false,wainH:15,wainType:'brick',wainScale:1.8,doorList:null,fine:true,bevel:0.25,look:'parts',col:{},shadow:true,scale:0,doorOn:false,doorOpen:0,doorLeaf:false,doorType:'wood',doorType2:'same',doorFrameOn:false,doorFrameW:1.4,doorTransomH:0,doorSide:0,doorCanopy:'none',doorCanopyD:5,doorStep:0,doorHandle:'trumpet',winGlass:false,winBars:false,winBodyT:0.8,doorN:1,doorGap:4,doorDir:'right',doorFront:false,doorBack:false,doorLeft:false,doorRight:false,doorWall:'front',doorStyle:'single',doorW:14,doorH:18,doorC:0,floorOn:false,floorT:2,slabOn:false,roofScale:1,roofSplit:false,roofLift:0,roofOut:'same',exportPart:'all',frameOn:false,frameW:2,frameD:1.2,sillOn:true,
+ stairs:[],stepOff:[],outStairs:[],floorTex:'none',tileL:8,tileW:8,tileL2:0,tileW2:0,tileOff:50,tileJoint:0.6,tileRelief:0.4,tileSeed:3,tileLevels:'all',mezzOn:false,mezzX0:-40,mezzX1:-10,mezzZ0:-40,mezzZ1:40,mezzH:44,mezzT:1.5,mezzPosts:true,mezzRail:true,mezzRailStyle:'horiz',mezzStairSide:'right',mezzStairC:-30,mezzStairType:'straight',mezzStairW:0,mezzStairTurn:'right',mezzOfficeH:36,gutterOn:false,gutterW:1.8,gutterSpouts:2,gableVent:false,signOn:false,signText:'AUTO REPAIR',signWall:'front',signC:0,signY:60,signH:6,doorLamp:false,groundOn:false,groundM:20,groundT:1.5,groundCurb:true,groundStripes:true,props:[],ribPitch:2,roofRibs:false,roofRibPitch:6,wallStyle:'none',wallRelief:0.5,wallScale:1,wainOn:false,wainH:15,wainType:'brick',wainScale:1.8,doorList:null,clip:{on:false,mode:'axis',axis:'z',off:0,flip:false,ang:0,face:'',depth:0,show:true},fine:true,bevel:0.25,look:'parts',col:{},shadow:true,scale:0,doorOn:false,doorOpen:0,doorLeaf:false,doorType:'wood',doorType2:'same',doorFrameOn:false,doorFrameW:1.4,doorTransomH:0,doorSide:0,doorCanopy:'none',doorCanopyD:5,doorStep:0,doorHandle:'trumpet',winGlass:false,winBars:false,winBodyT:0.8,doorN:1,doorGap:4,doorDir:'right',doorFront:false,doorBack:false,doorLeft:false,doorRight:false,doorWall:'front',doorStyle:'single',doorW:14,doorH:18,doorC:0,floorOn:false,floorT:2,slabOn:false,roofScale:1,roofSplit:false,roofLift:0,roofOut:'same',exportPart:'all',frameOn:false,frameW:2,frameD:1.2,sillOn:true,
  T:3,kerf:0.15,finger:8,sheetW:600,engrave:true,bedW:256,bedD:256,nozzle:0.4,
  plate:'brick',pw:80,ph:60,relief:0.8,pbase:1.5};
 const DEFAULT_P=JSON.parse(JSON.stringify(P));
@@ -2541,8 +2547,8 @@ function setView(m){viewMode=m;
  $('zoomBar').style.display=m==='3d'?'none':'flex';
  if(m!=='3d')renderFlat();updateInset();}
 document.querySelectorAll('#vsw button').forEach(b=>b.onclick=()=>setView(b.dataset.v));
-const STEPS=[[1,'樓層'],[2,'屋頂'],[3,'窗戶'],[4,'門'],[5,'貼皮'],[6,'室內'],[7,'樓梯'],[8,'地板'],[9,'輸出']];
-const STEP_LOCKED=[1,2,9],stepOn=n=>!(P.stepOff||[]).includes(n);
+const STEPS=[[1,'樓層'],[2,'屋頂'],[3,'窗戶'],[4,'門'],[5,'貼皮'],[6,'室內'],[7,'樓梯'],[8,'地板'],[9,'場景'],[10,'輸出']];
+const STEP_LOCKED=[1,2,10],stepOn=n=>!(P.stepOff||[]).includes(n);
 function setStepOn(n,on){P.stepOff=(P.stepOff||[]).filter(x=>x!==n);if(!on&&!STEP_LOCKED.includes(n))P.stepOff.push(n);if(!on&&n===P.step){}sync();}
 function stepPatch(){const o={};
  if(!stepOn(3))o.winManual=[];
@@ -2550,8 +2556,9 @@ function stepPatch(){const o={};
  if(!stepOn(6))o.iwalls=[];
  if(!stepOn(7)){o.stairs=[];o.outStairs=[];}
  if(!stepOn(8))o.floorTex='none';
+ if(!stepOn(9)){o.props=[];o.groundOn=false;}
  return o;}
-function nextEnabled(dir){let n=P.step+dir;while(n>1&&n<9&&!stepOn(n))n+=dir;return Math.max(1,Math.min(9,n));}
+function nextEnabled(dir){let n=P.step+dir;while(n>1&&n<10&&!stepOn(n))n+=dir;return Math.max(1,Math.min(10,n));}
 for(const [n,t] of STEPS){const b=document.createElement('button');b.className='stb';b.dataset.s=n;
  b.innerHTML=`<input type="checkbox" class="stk" title="${STEP_LOCKED.includes(n)?'必要步驟（不能取消）':'取消勾選＝這個步驟不套用到模型'}" ${STEP_LOCKED.includes(n)?'disabled':''} checked><i>${n}</i>${t}`;
  b.onclick=()=>goStep(n);
@@ -2561,7 +2568,7 @@ document.querySelectorAll('section[data-step]').forEach(sec=>{const n=+sec.datas
  const bar=document.createElement('div');bar.className='offBar';bar.innerHTML='⛔ 這個步驟已取消勾選：不會套用到模型。<button>重新啟用</button>';bar.querySelector('button').onclick=()=>setStepOn(n,true);
  sec.insertBefore(bar,sec.children[1]||null);});
 function goStep(n){
- P.step=Math.max(1,Math.min(9,n));
+ P.step=Math.max(1,Math.min(10,n));
  setView(defaultView());
  sync();
 }
@@ -2571,9 +2578,9 @@ function renderFlat(){
  const el=$('flat');
  if(P.step===3||P.step===4)el.innerHTML=renderWinElev();
  else if(P.step===5)el.innerHTML=renderSkinFlat();
- else if(P.step===6||P.step===7)el.innerHTML=renderPlan();
+ else if(P.step===6||P.step===7||P.step===9)el.innerHTML=renderPlan();
  else if(P.step===8)el.innerHTML=renderFloorFlat();
- else if(P.step===9&&P.print==='laser'&&lay)el.innerHTML=layoutSVG(lay,true);
+ else if(P.step===10&&P.print==='laser'&&lay)el.innerHTML=layoutSVG(lay,true);
  else el.innerHTML='';
  applyZoom();
 }
@@ -2801,9 +2808,9 @@ const cap=e=>{try{flatEl.setPointerCapture(e.pointerId);}catch(_){}};
 flatEl.addEventListener('pointerdown',e=>{
  if(P.step===3||P.step===4){elevDown(e);if(WDRAG)cap(e);}
  else if(P.step===5){skinFlatDown(e);if(DRAW&&DRAW.tool==='rect'||RDRAG)cap(e);}
- else if(P.step===6||P.step===7){planDown(e);if(PDRAG)cap(e);}});
-flatEl.addEventListener('pointermove',e=>{if(P.step===3||P.step===4)elevMove(e);else if(P.step===5)skinFlatMove(e);else if(P.step===6||P.step===7)planMove(e);});
-flatEl.addEventListener('pointerup',e=>{if(P.step===3||P.step===4)elevUp(e);else if(P.step===5)skinFlatUp(e);else if(P.step===6||P.step===7)planUp(e);});
+ else if(P.step===6||P.step===7||P.step===9){planDown(e);if(PDRAG)cap(e);}});
+flatEl.addEventListener('pointermove',e=>{if(P.step===3||P.step===4)elevMove(e);else if(P.step===5)skinFlatMove(e);else if(P.step===6||P.step===7||P.step===9)planMove(e);});
+flatEl.addEventListener('pointerup',e=>{if(P.step===3||P.step===4)elevUp(e);else if(P.step===5)skinFlatUp(e);else if(P.step===6||P.step===7||P.step===9)planUp(e);});
 addEventListener('keydown',e=>{
  const tag=(e.target.tagName||'').toLowerCase(),typing=tag==='input'||tag==='select'||tag==='textarea';
  if(e.key==='Enter'&&DRAW&&DRAW.tool==='poly'){finishDraw();return;}
@@ -2819,8 +2826,8 @@ function partModes(){
  const roofLaser=P.roofSplit?(P.roofOut==='same'?bodyLaser:P.roofOut==='laser'):bodyLaser;
  return {bodyLaser,roofLaser,anyLaser:bodyLaser||roofLaser,any3d:!bodyLaser||!roofLaser};
 }
-const defaultFlat=()=>P.step>=3&&P.step<=8||(P.step===9&&(partModes().anyLaser||P.splitPanels));
-const defaultView=()=>(P.step===3||P.step===4||P.step===5||P.step===7||P.step===8)?'split':(P.step===6||(P.step===9&&(partModes().anyLaser||P.splitPanels)))?'flat':'3d';
+const defaultFlat=()=>P.step>=3&&P.step<=9||(P.step===10&&(partModes().anyLaser||P.splitPanels));
+const defaultView=()=>(P.step===3||P.step===4||P.step===5||P.step===7||P.step===8||P.step===9)?'split':(P.step===6||(P.step===10&&(partModes().anyLaser||P.splitPanels)))?'flat':'3d';
 const isRoofPanel=n=>/屋頂|坡/.test(n);
 function printChecks(Pe){
  const L=[],pm=partModes(),nz=+P.nozzle;
@@ -2874,7 +2881,7 @@ function sync(){
  document.querySelectorAll('section[data-step]').forEach(sec=>sec.classList.toggle('on',+sec.dataset.step===P.step));
  document.querySelectorAll('.stb').forEach(b=>{const n=+b.dataset.s,on=stepOn(n);b.classList.toggle('on',n===P.step);b.classList.toggle('done',n<P.step&&on);b.classList.toggle('off',!on);const k=b.querySelector('.stk');if(k)k.checked=on;});
  document.querySelectorAll('section[data-step]').forEach(sec=>sec.classList.toggle('secoff',!stepOn(+sec.dataset.step)));
- $('prevStep').disabled=P.step<=1;$('nextStep').disabled=P.step>=9;
+ $('prevStep').disabled=P.step<=1;$('nextStep').disabled=P.step>=10;
  $('toolHint').textContent=TOOLHINT[P.tool]||'';
  $('roofOutWrap').style.display=P.roofSplit?'':'none';
  if(DRAW&&DRAW.tool!==P.tool)DRAW=null;
@@ -2939,7 +2946,7 @@ function sync(){
   cur.roof=mergeGeometries([posOnly(cur.slab),...cur.extraRoof.map(posOnly)]);
   cur.g=mergeGeometries([posOnly(cur.body),posOnly(cur.roof)]);}
  splitG=(Pe.roofSplit&&!isPlate)?{body:cur.body,roof:cur.roof}:null;
- const lift=(splitG&&(P.step===2||P.step===9))?+P.roofLift:0;
+ const lift=(splitG&&(P.step===2||P.step===10))?+P.roofLift:0;
  const mk=(g,cat)=>new THREE.Mesh(toCreasedNormals(g.clone(),Math.PI/15),cat?matFor(cat):mat),ed=g=>new THREE.LineSegments(new THREE.EdgesGeometry(g,30),new THREE.LineBasicMaterial({color:EDGECOL}));
  if(isPlate){mesh=mk(cur.g);edges=ed(cur.g);scene.add(mesh,edges);}
  else{mesh=mk(cur.body,'wall');roofMesh=mk(cur.roof,'roof');roofMesh.position.y=lift;edges=ed(cur.body);roofEdges=ed(cur.roof);roofEdges.position.y=lift;scene.add(mesh,roofMesh,edges,roofEdges);}
@@ -2951,6 +2958,7 @@ function sync(){
  extraGeoms.forEach((g,k)=>{const cat=g.userData.cat||'trim',m=new THREE.Mesh(g,k<innerCount?(P.xray?matIn:matOf(g,cat)):matOf(g,cat));m.userData.inner=k<innerCount;m.userData.cat=cat;extraGroup.add(m);});
  applyShadows();
  afterFaces(Pe);
+ applyClip();
  if(P.step===4)renderDoorCard();
  {const fi=$('floorInfo');if(fi){const lv=floorLevels(Pe);fi.textContent=!lv.length?'⚠️ 沒有地板：請先在步驟①勾選「加地板」或「加樓板」。':P.floorTex==='none'?'選一種地板紋路後，右側平面圖會顯示磚的排列；磚會避開樓梯與燈孔開口。':`${lv.map(f=>`${f+1}F`).join('、')} 共 ${lv.reduce((a,f)=>a+floorTileData(Pe,f).rects.length,0)} 塊磚（凸出 ${P.tileRelief}mm，縫寬 ${P.tileJoint}mm）`;}}
  const totalH=Pe.plateMode?Pe.wall:Pe.wallH+(flat?0:P.rise);
@@ -2963,7 +2971,7 @@ function sync(){
  lay=null;
  if(pm.anyLaser){try{lay=layoutPanels(laserPanels(Pe).filter(pn=>isRoofPanel(pn.name)?pm.roofLaser:pm.bodyLaser),P.sheetW,P.kerf);}catch(e){console.error(e);}}
  else if(P.splitPanels){try{lay=panelLayoutFor(Pe).lay;}catch(e){console.error(e);}}
- if(pm.anyLaser&&lastPrint!=='laser'&&P.step===9)setView('flat');
+ if(pm.anyLaser&&lastPrint!=='laser'&&P.step===10)setView('flat');
  const canFlat=defaultFlat();
  if(!canFlat&&viewMode!=='3d')setView('3d');
  lastPrint=pm.anyLaser?'laser':P.print;
@@ -3474,6 +3482,89 @@ function applyTemplate(key){
 }
 $('tplGarage').onclick=()=>{if(confirm('套用「美式修車廠」範本？會覆蓋目前的尺寸、門窗、屋頂等設定（可用 Ctrl+Z 復原）'))applyTemplate('garage');};
 
+
+// ---------- 剖面：選方向或選一個牆面，拉參數看裡面 ----------
+const clipPlane=new THREE.Plane(new THREE.Vector3(0,0,-1),0);let clipLines=null,clipHelper=null,clipPick=false;
+const clipState=()=>{if(!P.clip)P.clip={on:false,mode:'axis',axis:'z',off:0,flip:false,ang:0,face:'',depth:0,show:true};return P.clip;};
+function clipFromState(){
+ const c=clipState(),n=new THREE.Vector3(),pt=new THREE.Vector3();
+ let mode=c.mode;
+ if(mode==='face'){const f=FACES.find(q=>q.name===c.face);if(f){n.set(-f.n[0],-f.n[1],-f.n[2]);pt.set(...f.pts[0]);pt.addScaledVector(n,+c.depth||0);}else mode='axis';}
+ if(mode==='axis'){const a=c.axis||'z';n.set(a==='x'?-1:0,a==='y'?-1:0,a==='z'?-1:0);
+  const rad=(+c.ang||0)*Math.PI/180;if(a==='y')n.applyAxisAngle(new THREE.Vector3(1,0,0),rad);else n.applyAxisAngle(new THREE.Vector3(0,1,0),rad);
+  pt.set(a==='x'?+c.off||0:0,a==='y'?+c.off||0:0,a==='z'?+c.off||0:0);if(c.flip)n.negate();}
+ clipPlane.setFromNormalAndCoplanarPoint(n.normalize(),pt);
+ return clipPlane;
+}
+// 平面與三角網格的交線（每條線 6 個數）。geoms：[{g,dy}]，dy＝該物件的 Y 位移（屋頂拉開時）
+function sectionSegments(items,plane){
+ const out=[],n=plane.normal,c=plane.constant,A=[0,0,0],B=[0,0,0],C=[0,0,0],V=[A,B,C],D=[0,0,0];
+ for(const {g,dy} of items){
+  const pos=g.attributes.position,idx=g.index,cnt=idx?idx.count:pos.count,off=n.y*(dy||0);
+  for(let i=0;i<cnt;i+=3){
+   for(let k=0;k<3;k++){const j=idx?idx.getX(i+k):i+k;V[k][0]=pos.getX(j);V[k][1]=pos.getY(j)+(dy||0);V[k][2]=pos.getZ(j);D[k]=n.x*V[k][0]+n.y*V[k][1]+n.z*V[k][2]+c;}
+   if((D[0]>0&&D[1]>0&&D[2]>0)||(D[0]<0&&D[1]<0&&D[2]<0))continue;
+   const pts=[];
+   for(const [a,b] of [[0,1],[1,2],[2,0]]){const da=D[a],db=D[b];if((da>0)===(db>0)&&da!==0&&db!==0)continue;if(da===db)continue;const t=da/(da-db);if(t<0||t>1)continue;pts.push(V[a][0]+(V[b][0]-V[a][0])*t,V[a][1]+(V[b][1]-V[a][1])*t,V[a][2]+(V[b][2]-V[a][2])*t);}
+   if(pts.length>=6)out.push(pts[0],pts[1],pts[2],pts[3],pts[4],pts[5]);
+  }}
+ return out;
+}
+const CLIPSKIP=new Set(['prop','ground','curb','stripe']);
+function buildClipVisuals(){
+ if(clipLines){scene.remove(clipLines);clipLines.geometry.dispose();clipLines.material.dispose();clipLines=null;}
+ if(clipHelper){scene.remove(clipHelper);clipHelper.geometry.dispose();clipHelper.material.dispose();clipHelper=null;}
+ const c=clipState();if(!c.on||!cur||P.mode==='plate')return;
+ const items=[];const lift=roofMesh?roofMesh.position.y:0;
+ if(cur.body)items.push({g:cur.body,dy:0});if(cur.roof)items.push({g:cur.roof,dy:lift});
+ for(const g of iwGeoms)items.push({g,dy:0});for(const g of extraGeoms){if(!CLIPSKIP.has(g.userData&&g.userData.cat))items.push({g,dy:0});}
+ const segs=sectionSegments(items,clipPlane);
+ if(segs.length){const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(segs,3));
+  clipLines=new THREE.LineSegments(geo,new THREE.LineBasicMaterial({color:0xe53935,depthTest:false,transparent:true}));clipLines.renderOrder=999;clipLines.userData.clipLines=true;scene.add(clipLines);}
+ if(c.show!==false){const S=Math.max(P.width,P.depth,(curP.wallH||20)+(curP.rise||0))*1.25,q=new THREE.PlaneGeometry(S,S);
+  clipHelper=new THREE.Mesh(q,new THREE.MeshBasicMaterial({color:0x2196f3,transparent:true,opacity:0.07,side:THREE.DoubleSide,depthWrite:false}));
+  clipHelper.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),clipPlane.normal);clipHelper.position.copy(clipPlane.coplanarPoint(new THREE.Vector3()));clipHelper.renderOrder=998;clipHelper.userData.clipHelper=true;scene.add(clipHelper);}
+}
+function applyClip(){
+ const c=clipState(),on=!!c.on;ren.localClippingEnabled=true;if(on)clipFromState();
+ const objs=[mesh,roofMesh,edges,roofEdges,...extraGroup.children,...iwGroup.children,...skinGroup.children,...skinRoofGroup.children],seen=new Set();
+ for(const o of objs){if(!o)continue;for(const m of (Array.isArray(o.material)?o.material:[o.material])){if(!m||seen.has(m))continue;seen.add(m);
+  if(m.userData.clipOn!==on||on){m.clippingPlanes=on?[clipPlane]:null;m.clipShadows=true;if(m.userData.clipOn!==on)m.needsUpdate=true;m.userData.clipOn=on;}}}
+ buildClipVisuals();
+ const b=$('clipBtn');if(b){b.textContent=on?'✂ 剖面：開':'✂ 剖面：關';b.classList.toggle('on',on);}
+}
+function clipRange(axis){
+ const H=(curP?curP.wallH+(curP.rise||0):P.wallH)+2;
+ return axis==='x'?[-P.width/2-4,P.width/2+4]:axis==='z'?[-P.depth/2-4,P.depth/2+4]:[-1,H];
+}
+function clipSet(patch,redraw){Object.assign(clipState(),patch);applyClip();if(redraw)renderClipPanel();}
+function renderClipPanel(){
+ const el=$('clipPanel'),c=clipState();if(!el)return;
+ const ax=c.axis||'z',[lo,hi]=clipRange(ax),fm=c.mode==='face',f=fm?FACES.find(q=>q.name===c.face):null,maxD=Math.max(10,Math.min(P.width,P.depth)*0.9);
+ const real=v=>P.scale>0?`（約 ${(v*P.scale/1000).toFixed(2)} m）`:'';
+ el.innerHTML=`<h4><span>✂ 剖面</span><label style="font-weight:400;font-size:12px;color:var(--txt);display:flex;gap:5px;align-items:center;cursor:pointer"><input type="checkbox" id="clOn" ${c.on?'checked':''}>啟用</label></h4>
+  <div class="cb"><button data-cm="axis:z" class="${!fm&&ax==='z'?'on':''}">前後切（Z）</button><button data-cm="axis:x" class="${!fm&&ax==='x'?'on':''}">左右切（X）</button><button data-cm="axis:y" class="${!fm&&ax==='y'?'on':''}">水平切（Y）</button><button data-cm="face" class="${fm?'on':''}">${clipPick?'👆 點 3D 畫面的一個面…':'選一個面'}</button></div>
+  ${fm?`<div class="hint" style="margin:2px 0">${f?'已選：'+f.name+'（往內推進去看剖面）':'還沒選面：按上面的「選一個面」，再點 3D 畫面裡的牆或屋頂'}</div><div class="cr"><span>往內深度</span><input type="range" id="clD" min="0" max="${maxD}" step="0.5" value="${+c.depth||0}"><b id="clDv">${(+c.depth||0).toFixed(1)}mm</b></div>`
+  :`<div class="cr"><span>位置</span><input type="range" id="clO" min="${lo}" max="${hi}" step="0.5" value="${Math.max(lo,Math.min(hi,+c.off||0))}"><b id="clOv">${(+c.off||0).toFixed(1)}mm</b></div><div class="hint" style="margin:0">${real(+c.off||0)}</div>
+  <div class="cr"><span>旋轉</span><input type="range" id="clA" min="-90" max="90" step="1" value="${+c.ang||0}"><b id="clAv">${+c.ang||0}°</b></div>`}
+  <div class="cb"><button id="clFlip" class="${c.flip?'on':''}">⇄ 反向（切掉另一側）</button><button id="clReset">重設</button></div>
+  <div class="cr"><label style="display:flex;gap:5px;align-items:center;cursor:pointer"><input type="checkbox" id="clShow" ${c.show!==false?'checked':''}>顯示剖切面與紅色剖面線</label></div>
+  <div class="hint" style="margin:2px 0 0">紅線是被切到的牆、樓板、屋頂的輪廓；配件與地面不畫剖面線。</div>`;
+ const on=(id,fn)=>{const e=$(id);if(e)e.oninput=fn;};
+ $('clOn').onchange=e=>{clipSet({on:e.target.checked});if(e.target.checked&&c.mode==='axis'&&!c.touched)c.touched=true;renderClipPanel();};
+ el.querySelectorAll('[data-cm]').forEach(b=>b.onclick=()=>{const m=b.dataset.cm;if(m==='face'){clipPick=!clipPick;clipSet({mode:'face',on:true},true);ren.domElement.style.cursor=clipPick?'crosshair':'';}
+  else{clipPick=false;ren.domElement.style.cursor='';const a=m.split(':')[1],[l,h]=clipRange(a);clipSet({mode:'axis',axis:a,off:Math.round((l+h)/2*2)/2,ang:0,on:true},true);}});
+ on('clO',e=>{$('clOv').textContent=(+e.target.value).toFixed(1)+'mm';clipSet({off:+e.target.value});});
+ on('clD',e=>{$('clDv').textContent=(+e.target.value).toFixed(1)+'mm';clipSet({depth:+e.target.value});});
+ on('clA',e=>{$('clAv').textContent=e.target.value+'°';clipSet({ang:+e.target.value});});
+ $('clFlip').onclick=()=>clipSet({flip:!clipState().flip},true);
+ $('clReset').onclick=()=>{clipPick=false;ren.domElement.style.cursor='';P.clip={on:false,mode:'axis',axis:'z',off:0,flip:false,ang:0,face:'',depth:0,show:true};applyClip();renderClipPanel();};
+ $('clShow').onchange=e=>clipSet({show:e.target.checked});
+}
+$('clipBtn').onclick=e=>{e.stopPropagation();const el=$('clipPanel');if(el.style.display==='none'){renderClipPanel();el.style.display='block';}else{el.style.display='none';clipPick=false;ren.domElement.style.cursor='';}};
+ren.domElement.addEventListener('pointerup',e=>{if(!clipPick||e.button!==0)return;const mv=downXY?Math.hypot(e.clientX-downXY[0],e.clientY-downXY[1]):0;if(mv>4)return;const n=pickAt(e);if(!n)return;e.stopImmediatePropagation();clipPick=false;ren.domElement.style.cursor='';clipSet({mode:'face',face:n,depth:0,on:true},true);setHover(null);},true);
+ren.domElement.addEventListener('pointermove',e=>{if(clipPick&&!e.buttons)setHover(pickAt(e),e);},true);
+
 // ---------- 記憶體釋放 ----------
 const fmtMB=b=>b==null?'—':(b/1048576).toFixed(0)+' MB';
 function memStats(){
@@ -3577,10 +3668,11 @@ const STEP_KEYS={
  3:['winW','winH','winSill','winRows','winGap','nFront','nBack','nLeft','nRight','winWall','winStyle','winManual','frameOn','frameW','frameD','sillOn','winGlass','winBars','winBodyT'],
  4:['signOn','signText','signWall','signC','signY','signH','doorLamp','doorOn','doorList','doorN','doorGap','doorDir','doorFront','doorBack','doorLeft','doorRight','doorWall','doorStyle','doorW','doorH','doorC','doorLeaf','doorType','doorHandle','doorFrameOn','doorFrameW','doorOpen','doorTransomH','doorSide','doorCanopy','doorCanopyD','doorStep','doorType2'],
  5:['ribPitch','wallStyle','wallRelief','wallScale','wainOn','wainH','wainType','wainScale','skins','skinType','skinRelief','skinScale','skinRes','skinAge','skinSeed','tool','roofStyle','roofRelief','roofScale','roofAge','noRoofSkin'],
- 6:['iwalls','iwT','props'],
+ 6:['iwalls','iwT'],
  7:['stairs','outStairs'],
- 8:['groundOn','groundM','groundT','groundCurb','groundStripes','floorTex','tileL','tileW','tileL2','tileW2','tileOff','tileJoint','tileRelief','tileSeed','tileLevels'],
- 9:['print','roofOut','exportPart','T','kerf','finger','sheetW','engrave','bedW','bedD','nozzle','skinResOut']};
+ 8:['floorTex','tileL','tileW','tileL2','tileW2','tileOff','tileJoint','tileRelief','tileSeed','tileLevels'],
+ 9:['groundOn','groundM','groundT','groundCurb','groundStripes','props'],
+ 10:['print','roofOut','exportPart','T','kerf','finger','sheetW','engrave','bedW','bedD','nozzle','skinResOut']};
 function resetStep(n){
  lastPushT=0; // 重設一定成為獨立的復原步驟
  for(const k of STEP_KEYS[n]||[])P[k]=JSON.parse(JSON.stringify(DEFAULT_P[k]));

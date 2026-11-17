@@ -37,11 +37,14 @@ const scenes={
  '32':()=>{A({step:1});applyTemplate('garage');setView('3d');cam.position.set(260,150,420);ctl.target.set(0,25,40);ctl.update();},
  '33':()=>{A({step:1});applyTemplate('garage');setView('3d');cam.position.set(-210,60,330);ctl.target.set(-60,22,60);ctl.update();},
  '34':()=>{A({step:1});applyTemplate('garage');P.xray=true;applyXray();setView('3d');cam.position.set(150,170,170);ctl.target.set(-10,20,0);ctl.update();},
- '35':()=>{A({step:6});applyTemplate('garage');goStep(6);setView('flat');},
+ '35':()=>{A({step:9});applyTemplate('garage');goStep(9);setView('flat');},
  '36':()=>{A({step:1});applyTemplate('garage');setView('3d');cam.position.set(380,110,-80);ctl.target.set(60,30,-20);ctl.update();},
  '37':()=>{A({step:1});applyTemplate('garage');setView('3d');cam.position.set(-120,120,-300);ctl.target.set(0,30,0);ctl.update();},
  '38':()=>{A({step:1});applyTemplate('garage');P.xray=true;applyXray();setView('3d');cam.position.set(-80,110,190);ctl.target.set(-20,15,-20);ctl.update();},
  '39':()=>{A({step:1});applyTemplate('garage');setView('3d');cam.position.set(20,28,190);ctl.target.set(10,25,100);ctl.update();},
+ '40':()=>{A({step:1});applyTemplate('garage');setView('3d');cam.position.set(60,110,260);ctl.target.set(0,25,0);ctl.update();P.clip={on:true,mode:'axis',axis:'z',off:20,flip:false,ang:0,face:'',depth:0,show:true};applyClip();},
+ '41':()=>{A({step:1});applyTemplate('garage');setView('3d');cam.position.set(110,170,120);ctl.target.set(0,10,0);ctl.update();P.clip={on:true,mode:'axis',axis:'y',off:30,flip:false,ang:0,face:'',depth:0,show:true};applyClip();$('clipPanel').style.display='block';renderClipPanel();},
+ '42':()=>{A({step:1});applyTemplate('garage');setView('3d');cam.position.set(-40,90,300);ctl.target.set(-30,25,0);ctl.update();const f=FACES.find(q=>wallOfFace(q)==='front');P.clip={on:true,mode:'face',axis:'z',off:0,flip:false,ang:0,face:f.name,depth:60,show:true};applyClip();$('clipPanel').style.display='block';renderClipPanel();},
  '8':()=>{A({step:2,roof:'gambrel',rise:34,roofStyle:'asphalt',ridgeCap:true,floors:2});},
 };
 (scenes[SC]||scenes['1'])();
