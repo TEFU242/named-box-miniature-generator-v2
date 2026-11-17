@@ -28,6 +28,9 @@ const scenes={
  '23':()=>{A({step:8,floorOn:true,floors:2,slabOn:true,floorTex:'bond',tileL:12,tileW:5,tileOff:50,tileJoint:0.7,stairs:[]});ensureStairs();P.stairs[0].on=true;sync();},
  '24':()=>{A({step:4,wallH:36,floorH:36,width:130,depth:100,doorOn:true,doorLeaf:true,doorType:'french',doorHandle:'lever',doorW:26,doorH:26,doorTransomH:5,doorSide:6,doorFrameOn:true,doorCanopy:'pitch',doorStep:1,doorFront:false,doorBack:true,doorType2:'barn',nFront:0,nLeft:1,nRight:1,nBack:0,winGlass:true,winBars:true});setView('3d');cam.position.set(55,30,150);ctl.target.set(0,16,50);ctl.update();},
  '25':()=>{A({step:4,wallH:30,floorH:30,doorOn:true,doorLeaf:true,doorType:'dutch',doorH:24,doorW:14,doorFront:false,doorLeft:true,doorRight:true,doorBack:true,doorType2:'slider',nFront:0,nLeft:0,nRight:0,nBack:0});setView('3d');cam.position.set(60,28,120);ctl.target.set(0,14,50);ctl.update();},
+ '26':()=>{A({step:4,floors:1,scale:64});applyScale(64);Object.assign(P,{doorOn:true,doorLeaf:true,doorType:'rollerBig',doorFront:false,doorW:56,doorH:37,doorOpen:30,wallH:48,nFront:0,nBack:0,nLeft:0,nRight:0});sync();setView('3d');cam.position.set(40,30,175);ctl.target.set(0,18,55);ctl.update();},
+ '27':()=>{A({step:4,floors:1});applyScale(64);Object.assign(P,{doorOn:true,doorLeaf:true,doorType:'roller',doorW:38,doorH:37,doorOpen:0,wallH:48,nFront:0,nBack:0,nLeft:0,nRight:0});sync();setView('3d');cam.position.set(30,26,160);ctl.target.set(0,18,55);ctl.update();},
+ '28':()=>{A({step:1});showScaleModal();},
  '8':()=>{A({step:2,roof:'gambrel',rise:34,roofStyle:'asphalt',ridgeCap:true,floors:2});},
 };
 (scenes[SC]||scenes['1'])();
